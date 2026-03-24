@@ -111,14 +111,6 @@ npm run dev
 - [ ] 結果表示ページ
 - [ ] アクセスパスワード認証
 
-## 元のシステムからの主な変更点
-
-1. **Pages Router → App Router**: Next.js 16 App Router + Turbopackを採用
-2. **Recoil → Zustand**: より軽量でシンプルな状態管理
-3. **Laravel → Supabase**: バックエンドをSupabaseに統合
-4. **JWT Cookie → Supabase Auth**: 認証システムをSupabaseに移行
-5. **Emotion → Tailwind CSS 4**: CSS-in-JSからユーティリティファーストCSSへ
-6. **React 18 → React 19**: 最新のReact機能を活用
 
 ## ライセンス
 
