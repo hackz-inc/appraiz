@@ -4,21 +4,17 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminAuthGuard } from '@/components/guards'
 import { Container, Button, Card } from '@/components/ui'
+import { CreateHackathonModal } from '@/components/features/hackathon'
 import { auth } from '@/lib/auth'
 import { useAuth } from '@/hooks/useAuth'
-import { createClient } from '@/lib/supabase/client'
-
-interface Hackathon {
-  id: string
-  name: string
-  scoring_date: string
-  created_at: string
-}
+import { useModalStore } from '@/stores'
+import { hackathons, type Hackathon } from '@/lib/hackathons'
 
 function AdminDashboardContent() {
   const router = useRouter()
   const { user } = useAuth()
-  const [hackathons, setHackathons] = useState<Hackathon[]>([])
+  const { openModal } = useModalStore()
+  const [hackathonsList, setHackathonsList] = useState<Hackathon[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -27,14 +23,8 @@ function AdminDashboardContent() {
 
   const loadHackathons = async () => {
     try {
-      const supabase = createClient()
-      const { data, error } = await supabase
-        .from('hackathon')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setHackathons(data || [])
+      const data = await hackathons.getAll()
+      setHackathonsList(data)
     } catch (error) {
       console.error('Failed to load hackathons:', error)
     } finally {
@@ -77,7 +67,7 @@ function AdminDashboardContent() {
           </h2>
           <Button
             variant="primary"
-            onClick={() => router.push('/admin/hackathons/create')}
+            onClick={() => openModal('isCreateHackathonModalOpen')}
           >
             + 新規作成
           </Button>
@@ -87,7 +77,7 @@ function AdminDashboardContent() {
           <div className="text-center py-12">
             <div className="inline-block animate-spin h-12 w-12 border-4 border-yellow-primary border-t-transparent rounded-full" />
           </div>
-        ) : hackathons.length === 0 ? (
+        ) : hackathonsList.length === 0 ? (
           <Card>
             <div className="text-center py-12">
               <p className="text-black-lighten1 mb-4">
@@ -95,7 +85,7 @@ function AdminDashboardContent() {
               </p>
               <Button
                 variant="primary"
-                onClick={() => router.push('/admin/hackathons/create')}
+                onClick={() => openModal('isCreateHackathonModalOpen')}
               >
                 最初のハッカソンを作成
               </Button>
@@ -103,7 +93,7 @@ function AdminDashboardContent() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {hackathons.map((hackathon) => (
+            {hackathonsList.map((hackathon) => (
               <Card
                 key={hackathon.id}
                 variant="elevated"
@@ -145,6 +135,9 @@ function AdminDashboardContent() {
           </div>
         )}
       </Container>
+
+      {/* Modals */}
+      <CreateHackathonModal />
     </div>
   )
 }
