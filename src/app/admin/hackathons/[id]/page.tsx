@@ -1,70 +1,30 @@
-'use client'
-
-import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Container, Button, Card } from '@/components/ui'
-import { teams } from '@/lib/teams'
-import { scoringItems } from '@/lib/scoring'
-import { useHackathon } from '@/hooks/useHackathons'
-import { useTeams } from '@/hooks/useTeams'
-import { useScoringItems } from '@/hooks/useScoringItems'
+import { getHackathonById } from '@/lib/server/hackathons'
+import { getTeamsByHackathon } from '@/lib/server/teams'
+import { getScoringItemsByHackathon } from '@/lib/server/scoring'
+import { BackButton } from './BackButton'
+import { DeleteTeamButton } from './DeleteTeamButton'
+import { DeleteScoringItemButton } from './DeleteScoringItemButton'
 
-export default function HackathonDetailPage() {
-  const router = useRouter()
-  const params = useParams()
-  const hackathonId = params.id as string
+export default async function HackathonDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id: hackathonId } = await params
 
-  const { hackathon, isLoading: hackathonLoading } = useHackathon(hackathonId)
-  const { teams: teamList, mutate: mutateTeams } = useTeams(hackathonId)
-  const { scoringItems: itemsList, mutate: mutateItems } = useScoringItems(hackathonId)
-
-  const loading = hackathonLoading
-
-  const handleDeleteTeam = async (teamId: string) => {
-    if (!confirm('このチームを削除しますか？')) return
-    try {
-      await teams.delete(teamId)
-      mutateTeams()
-    } catch (error) {
-      console.error('Failed to delete team:', error)
-      alert('チームの削除に失敗しました')
-    }
-  }
-
-  const handleDeleteItem = async (itemId: string) => {
-    if (!confirm('この採点項目を削除しますか？')) return
-    try {
-      await scoringItems.delete(itemId)
-      mutateItems()
-    } catch (error) {
-      console.error('Failed to delete scoring item:', error)
-      alert('採点項目の削除に失敗しました')
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="inline-block animate-spin h-12 w-12 border-4 border-yellow-primary border-t-transparent rounded-full" />
-      </div>
-    )
-  }
-
-  if (!hackathon) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>ハッカソンが見つかりません</p>
-      </div>
-    )
-  }
+  const [hackathon, teamList, itemsList] = await Promise.all([
+    getHackathonById(hackathonId),
+    getTeamsByHackathon(hackathonId),
+    getScoringItemsByHackathon(hackathonId),
+  ])
 
   return (
     <div className="min-h-screen bg-black-lighten5">
       <Container className="py-8">
         <div className="mb-6">
-          <Button variant="secondary" onClick={() => router.push('/admin')}>
-            ← 戻る
-          </Button>
+          <BackButton />
         </div>
 
         <Card variant="elevated" className="mb-8">
@@ -92,7 +52,7 @@ export default function HackathonDetailPage() {
               <Button variant="primary">+ チーム追加</Button>
             </Link>
           </div>
-          {!teamList || teamList.length === 0 ? (
+          {teamList.length === 0 ? (
             <Card>
               <p className="text-center text-black-lighten1">
                 チームが登録されていません
@@ -111,13 +71,7 @@ export default function HackathonDetailPage() {
                         編集
                       </Button>
                     </Link>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleDeleteTeam(team.id)}
-                    >
-                      削除
-                    </Button>
+                    <DeleteTeamButton teamId={team.id} hackathonId={hackathonId} />
                   </div>
                 </Card>
               ))}
@@ -133,7 +87,7 @@ export default function HackathonDetailPage() {
               <Button variant="primary">+ 採点項目追加</Button>
             </Link>
           </div>
-          {!itemsList || itemsList.length === 0 ? (
+          {itemsList.length === 0 ? (
             <Card>
               <p className="text-center text-black-lighten1">
                 採点項目が登録されていません
@@ -158,13 +112,7 @@ export default function HackathonDetailPage() {
                           編集
                         </Button>
                       </Link>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => handleDeleteItem(item.id)}
-                      >
-                        削除
-                      </Button>
+                      <DeleteScoringItemButton itemId={item.id} hackathonId={hackathonId} />
                     </div>
                   </div>
                 </Card>
