@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminAuthGuard } from '@/components/guards'
 import { Container, Button, Card } from '@/components/ui'
@@ -8,29 +7,13 @@ import { CreateHackathonModal } from '@/components/features/hackathon'
 import { auth } from '@/lib/auth'
 import { useAuth } from '@/hooks/useAuth'
 import { useModalStore } from '@/stores'
-import { hackathons, type Hackathon } from '@/lib/hackathons'
+import { useHackathons } from '@/hooks/useHackathons'
 
 function AdminDashboardContent() {
   const router = useRouter()
   const { user } = useAuth()
   const { openModal } = useModalStore()
-  const [hackathonsList, setHackathonsList] = useState<Hackathon[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    loadHackathons()
-  }, [])
-
-  const loadHackathons = async () => {
-    try {
-      const data = await hackathons.getAll()
-      setHackathonsList(data)
-    } catch (error) {
-      console.error('Failed to load hackathons:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { hackathons: hackathonsList, isLoading: loading } = useHackathons()
 
   const handleSignOut = async () => {
     await auth.signOut()
@@ -77,7 +60,7 @@ function AdminDashboardContent() {
           <div className="text-center py-12">
             <div className="inline-block animate-spin h-12 w-12 border-4 border-yellow-primary border-t-transparent rounded-full" />
           </div>
-        ) : hackathonsList.length === 0 ? (
+        ) : !hackathonsList || hackathonsList.length === 0 ? (
           <Card>
             <div className="text-center py-12">
               <p className="text-black-lighten1 mb-4">

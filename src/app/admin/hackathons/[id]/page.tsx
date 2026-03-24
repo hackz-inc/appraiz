@@ -1,49 +1,30 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Container, Button, Card } from '@/components/ui'
-import { hackathons, type Hackathon } from '@/lib/hackathons'
-import { teams, type Team } from '@/lib/teams'
-import { scoringItems, type ScoringItem } from '@/lib/scoring'
+import { teams } from '@/lib/teams'
+import { scoringItems } from '@/lib/scoring'
+import { useHackathon } from '@/hooks/useHackathons'
+import { useTeams } from '@/hooks/useTeams'
+import { useScoringItems } from '@/hooks/useScoringItems'
 
 export default function HackathonDetailPage() {
   const router = useRouter()
   const params = useParams()
   const hackathonId = params.id as string
 
-  const [hackathon, setHackathon] = useState<Hackathon | null>(null)
-  const [teamList, setTeamList] = useState<Team[]>([])
-  const [itemsList, setItemsList] = useState<ScoringItem[]>([])
-  const [loading, setLoading] = useState(true)
+  const { hackathon, isLoading: hackathonLoading } = useHackathon(hackathonId)
+  const { teams: teamList, mutate: mutateTeams } = useTeams(hackathonId)
+  const { scoringItems: itemsList, mutate: mutateItems } = useScoringItems(hackathonId)
 
-  useEffect(() => {
-    loadData()
-  }, [hackathonId])
-
-  const loadData = async () => {
-    try {
-      const [h, t, items] = await Promise.all([
-        hackathons.getById(hackathonId),
-        teams.getByHackathon(hackathonId),
-        scoringItems.getByHackathon(hackathonId),
-      ])
-      setHackathon(h)
-      setTeamList(t)
-      setItemsList(items)
-    } catch (error) {
-      console.error('Failed to load data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const loading = hackathonLoading
 
   const handleDeleteTeam = async (teamId: string) => {
     if (!confirm('このチームを削除しますか？')) return
     try {
       await teams.delete(teamId)
-      await loadData()
+      mutateTeams()
     } catch (error) {
       console.error('Failed to delete team:', error)
       alert('チームの削除に失敗しました')
@@ -54,7 +35,7 @@ export default function HackathonDetailPage() {
     if (!confirm('この採点項目を削除しますか？')) return
     try {
       await scoringItems.delete(itemId)
-      await loadData()
+      mutateItems()
     } catch (error) {
       console.error('Failed to delete scoring item:', error)
       alert('採点項目の削除に失敗しました')
@@ -111,7 +92,7 @@ export default function HackathonDetailPage() {
               <Button variant="primary">+ チーム追加</Button>
             </Link>
           </div>
-          {teamList.length === 0 ? (
+          {!teamList || teamList.length === 0 ? (
             <Card>
               <p className="text-center text-black-lighten1">
                 チームが登録されていません
@@ -152,7 +133,7 @@ export default function HackathonDetailPage() {
               <Button variant="primary">+ 採点項目追加</Button>
             </Link>
           </div>
-          {itemsList.length === 0 ? (
+          {!itemsList || itemsList.length === 0 ? (
             <Card>
               <p className="text-center text-black-lighten1">
                 採点項目が登録されていません
