@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
+import type { Database } from '@/lib/supabase/client'
 
 // 16文字のランダムなアクセスパスワードを生成
 const generateAccessPassword = (): string => {
@@ -18,15 +19,15 @@ export async function createHackathon(input: CreateHackathonInput) {
   try {
     const supabase = createAdminClient()
 
-    const { data, error } = await supabase
-      .from('hackathon')
-      .insert([
-        {
-          name: input.name,
-          scoring_date: input.scoring_date,
-          access_password: generateAccessPassword(),
-        },
-      ])
+    const insertData: Database['public']['Tables']['hackathon']['Insert'] = {
+      name: input.name,
+      scoring_date: input.scoring_date,
+      access_password: generateAccessPassword(),
+    }
+
+    const { data, error } = await (supabase
+      .from('hackathon') as any)
+      .insert(insertData)
       .select()
       .single()
 

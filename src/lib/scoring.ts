@@ -60,8 +60,8 @@ export interface TeamScoreResult {
 export const scoringItems = {
   async getByHackathon(hackathonId: string) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('scoring_item')
+    const { data, error } = await (supabase
+      .from('scoring_item') as any)
       .select('*')
       .eq('hackathon_id', hackathonId)
       .order('created_at')
@@ -72,8 +72,8 @@ export const scoringItems = {
 
   async create(input: CreateScoringItemInput) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('scoring_item')
+    const { data, error } = await (supabase
+      .from('scoring_item') as any)
       .insert([input])
       .select()
       .single()
@@ -84,8 +84,8 @@ export const scoringItems = {
 
   async update(id: string, input: Partial<CreateScoringItemInput>) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('scoring_item')
+    const { data, error } = await (supabase
+      .from('scoring_item') as any)
       .update(input)
       .eq('id', id)
       .select()
@@ -97,8 +97,8 @@ export const scoringItems = {
 
   async delete(id: string) {
     const supabase = createClient()
-    const { error } = await supabase
-      .from('scoring_item')
+    const { error } = await (supabase
+      .from('scoring_item') as any)
       .delete()
       .eq('id', id)
 
@@ -111,8 +111,8 @@ export const scoring = {
     const supabase = createClient()
 
     // Create scoring result
-    const { data: result, error: resultError } = await supabase
-      .from('scoring_result')
+    const { data: result, error: resultError } = await (supabase
+      .from('scoring_result') as any)
       .insert([
         {
           judge_name: input.judge_name,
@@ -132,8 +132,8 @@ export const scoring = {
       scoring_result_id: result.id,
     }))
 
-    const { error: itemsError } = await supabase
-      .from('scoring_item_result')
+    const { error: itemsError } = await (supabase
+      .from('scoring_item_result') as any)
       .insert(itemResults)
 
     if (itemsError) throw new Error(itemsError.message)
@@ -143,8 +143,8 @@ export const scoring = {
 
   async getResultsByTeam(teamId: string) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('scoring_result')
+    const { data, error } = await (supabase
+      .from('scoring_result') as any)
       .select(`
         *,
         scoring_item_result (
@@ -162,24 +162,24 @@ export const scoring = {
     const supabase = createClient()
 
     // Get all teams for this hackathon
-    const { data: teams, error: teamsError } = await supabase
-      .from('team')
+    const { data: teams, error: teamsError } = await (supabase
+      .from('team') as any)
       .select('id, name')
       .eq('hackathon_id', hackathonId)
 
     if (teamsError) throw new Error(teamsError.message)
 
     // Get all scoring items
-    const { data: items, error: itemsError } = await supabase
-      .from('scoring_item')
+    const { data: items, error: itemsError } = await (supabase
+      .from('scoring_item') as any)
       .select('id, name, max_score')
       .eq('hackathon_id', hackathonId)
 
     if (itemsError) throw new Error(itemsError.message)
 
     // Get all scoring results and item results
-    const { data: results, error: resultsError } = await supabase
-      .from('scoring_result')
+    const { data: results, error: resultsError } = await (supabase
+      .from('scoring_result') as any)
       .select(`
         id,
         team_id,
@@ -188,21 +188,21 @@ export const scoring = {
           scoring_item_id
         )
       `)
-      .in('team_id', teams.map(t => t.id))
+      .in('team_id', teams.map((t: any) => t.id))
 
     if (resultsError) throw new Error(resultsError.message)
 
     // Calculate scores for each team
-    const teamScores: TeamScoreResult[] = teams.map(team => {
-      const teamResults = results.filter(r => r.team_id === team.id)
+    const teamScores: TeamScoreResult[] = teams.map((team: any) => {
+      const teamResults = results.filter((r: any) => r.team_id === team.id)
 
-      const itemScores = items.map(item => {
-        const itemResults = teamResults.flatMap(r =>
-          r.scoring_item_result.filter(sir => sir.scoring_item_id === item.id)
+      const itemScores = items.map((item: any) => {
+        const itemResults = teamResults.flatMap((r: any) =>
+          r.scoring_item_result.filter((sir: any) => sir.scoring_item_id === item.id)
         )
 
         const avgScore = itemResults.length > 0
-          ? itemResults.reduce((sum, ir) => sum + ir.score, 0) / itemResults.length
+          ? itemResults.reduce((sum: number, ir: any) => sum + ir.score, 0) / itemResults.length
           : 0
 
         return {
@@ -213,7 +213,7 @@ export const scoring = {
         }
       })
 
-      const totalScore = itemScores.reduce((sum, is) => sum + is.average_score, 0)
+      const totalScore = itemScores.reduce((sum: number, is: any) => sum + is.average_score, 0)
       const averageScore = itemScores.length > 0 ? totalScore / itemScores.length : 0
 
       return {

@@ -18,8 +18,8 @@ export interface CreateHackathonInput {
 export const hackathons = {
   async getAll() {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('hackathon')
+    const { data, error } = await (supabase
+      .from('hackathon') as any)
       .select('*')
       .order('scoring_date', { ascending: false })
 
@@ -32,8 +32,8 @@ export const hackathons = {
 
   async getById(id: string) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('hackathon')
+    const { data, error } = await (supabase
+      .from('hackathon') as any)
       .select('*')
       .eq('id', id)
       .single()
@@ -47,8 +47,8 @@ export const hackathons = {
 
   async create(input: CreateHackathonInput) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('hackathon')
+    const { data, error } = await (supabase
+      .from('hackathon') as any)
       .insert([input])
       .select()
       .single()
@@ -62,8 +62,8 @@ export const hackathons = {
 
   async update(id: string, input: Partial<CreateHackathonInput>) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('hackathon')
+    const { data, error } = await (supabase
+      .from('hackathon') as any)
       .update(input)
       .eq('id', id)
       .select()
@@ -78,8 +78,8 @@ export const hackathons = {
 
   async delete(id: string) {
     const supabase = createClient()
-    const { error } = await supabase
-      .from('hackathon')
+    const { error } = await (supabase
+      .from('hackathon') as any)
       .delete()
       .eq('id', id)
 
@@ -90,8 +90,8 @@ export const hackathons = {
 
   async verifyPassword(hackathonId: string, password: string) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('hackathon')
+    const { data, error } = await (supabase
+      .from('hackathon') as any)
       .select('access_password')
       .eq('id', hackathonId)
       .single()

@@ -176,12 +176,104 @@ export type Database = {
           updated_at?: string
         }
       }
+      hackathon_guest: {
+        Row: {
+          id: number
+          hackathon_id: string
+          guest_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          hackathon_id: string
+          guest_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          hackathon_id?: string
+          guest_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      presentation_order: {
+        Row: {
+          id: number
+          order: number
+          team_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          order: number
+          team_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          order?: number
+          team_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      confirmed_team_order: {
+        Row: {
+          id: number
+          hackathon_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          hackathon_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          hackathon_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      team_social: {
+        Row: {
+          id: number
+          team_id: string
+          platform: string
+          url: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          team_id: string
+          platform: string
+          url: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          team_id?: string
+          platform?: string
+          url?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
 
 // Client-side Supabase client for use in Client Components
-export const createClient = () => {
+export const createClient = (): ReturnType<typeof createBrowserClient<Database>> => {
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!

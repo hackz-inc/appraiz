@@ -24,8 +24,8 @@ export const auth = {
 
       // Create corresponding record in admin or guest table
       if (data.role === 'admin') {
-        const { error: adminError } = await supabase
-          .from('admin')
+        const { error: adminError } = await (supabase
+          .from('admin') as any)
           .insert({
             id: authData.user.id,
             email: data.email,
@@ -33,8 +33,8 @@ export const auth = {
 
         if (adminError) throw adminError
       } else if (data.role === 'guest') {
-        const { error: guestError } = await supabase
-          .from('guest')
+        const { error: guestError } = await (supabase
+          .from('guest') as any)
           .insert({
             id: authData.user.id,
             email: data.email,

@@ -16,8 +16,8 @@ export interface CreateTeamInput {
 export const teams = {
   async getByHackathon(hackathonId: string) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('team')
+    const { data, error } = await (supabase
+      .from('team') as any)
       .select('*')
       .eq('hackathon_id', hackathonId)
       .order('name')
@@ -28,8 +28,8 @@ export const teams = {
 
   async getById(id: string) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('team')
+    const { data, error } = await (supabase
+      .from('team') as any)
       .select('*')
       .eq('id', id)
       .single()
@@ -40,8 +40,8 @@ export const teams = {
 
   async create(input: CreateTeamInput) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('team')
+    const { data, error } = await (supabase
+      .from('team') as any)
       .insert([input])
       .select()
       .single()
@@ -52,8 +52,8 @@ export const teams = {
 
   async update(id: string, input: Partial<CreateTeamInput>) {
     const supabase = createClient()
-    const { data, error } = await supabase
-      .from('team')
+    const { data, error } = await (supabase
+      .from('team') as any)
       .update(input)
       .eq('id', id)
       .select()
@@ -65,8 +65,8 @@ export const teams = {
 
   async delete(id: string) {
     const supabase = createClient()
-    const { error } = await supabase
-      .from('team')
+    const { error } = await (supabase
+      .from('team') as any)
       .delete()
       .eq('id', id)
 
