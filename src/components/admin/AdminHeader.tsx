@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Container, Breadcrumb } from "@/components/ui";
-import { SignOutButton } from "@/app/admin/_components/SignOutButton";
-import styles from './AdminHeader.module.css';
+import styles from "./AdminHeader.module.css";
+import { SignOutButton } from "./SignOutButton";
 
 interface BreadcrumbItem {
 	label: string;
@@ -22,12 +22,8 @@ export const AdminHeader = ({ breadcrumbs }: AdminHeaderProps) => {
 					<div className={styles.left}>
 						<Link href="/admin" className={styles.logoLink}>
 							<div className={styles.logo}>
-								<h1 className={styles.title}>
-									Appraiz
-								</h1>
-								<p className={styles.subtitle}>
-									管理画面
-								</p>
+								<h1 className={styles.title}>Appraiz</h1>
+								<p className={styles.subtitle}>管理画面</p>
 							</div>
 						</Link>
 					</div>

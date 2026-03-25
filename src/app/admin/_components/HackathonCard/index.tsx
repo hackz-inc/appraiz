@@ -1,34 +1,30 @@
-import { Button, Card } from "@/components/ui";
 import Link from "next/link";
-import styles from "./HackathonCardList.module.css";
+import { Card } from "@/components/ui";
+import type { Hackathon } from "@/lib/hackathons";
+import styles from "./index.module.css";
 
-type Props = {
-	hackathon: {
-		id: string;
-		name: string;
-		scoring_date: string;
-	};
-};
+interface HackathonCardProps {
+	hackathon: Hackathon;
+}
 
-export function HackathonCard({ hackathon }: Props) {
+export function HackathonCard({ hackathon }: HackathonCardProps) {
 	return (
-		<Card key={hackathon.id}>
+		<Card>
 			<div className={styles.cardContent}>
 				<h3 className={styles.hackathonTitle}>{hackathon.name}</h3>
 				<div className={styles.hackathonMeta}>
-					<span>
-						{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
-					</span>
+					{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
 				</div>
 			</div>
+
 			<div className={styles.buttonGroup}>
 				<Link
-					key={hackathon.id}
 					href={`/admin/hackathons/${hackathon.id}`}
-					className={styles.cardLink}
+					className={styles.link}
 				>
-					⚙️ 設定
+					フォーム一覧
 				</Link>
+
 				<Link
 					href={`/admin/hackathons/${hackathon.id}/results`}
 					className={styles.link}
