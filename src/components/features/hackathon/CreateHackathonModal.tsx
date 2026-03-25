@@ -6,13 +6,15 @@ import { useModalStore } from '@/stores'
 import { createHackathon } from './actions'
 
 export const CreateHackathonModal = () => {
-  const { isCreateHackathonModalOpen, closeModal } = useModalStore()
+  const { isOpen, type, closeModal } = useModalStore()
   const [formData, setFormData] = useState({
     name: '',
     scoringDate: '',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const isCreateHackathonModalOpen = isOpen && type === 'createHackathon'
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -22,7 +24,7 @@ export const CreateHackathonModal = () => {
     setFormData({ name: '', scoringDate: '' })
     setError('')
     setLoading(false)
-    closeModal('isCreateHackathonModalOpen')
+    closeModal()
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

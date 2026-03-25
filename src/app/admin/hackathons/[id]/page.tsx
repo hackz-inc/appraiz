@@ -18,8 +18,8 @@ export default function HackathonDetailPage() {
   const { teams: teamList, isLoading: teamsLoading } = useTeams(hackathonId)
   const { scoringItems: itemsList, isLoading: itemsLoading } = useScoringItems(hackathonId)
 
-  // 初回ロード時のみローディング画面を表示（キャッシュがない場合）
-  const loading = (hackathonLoading && !hackathon) || (teamsLoading && !teamList) || (itemsLoading && !itemsList)
+  // 初回ロード時のみローディング画面を表示
+  const loading = hackathonLoading || teamsLoading || itemsLoading
 
   if (loading) {
     return (
