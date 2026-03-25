@@ -35,7 +35,9 @@ export const AdminHeader = ({
 								aria-label="メニューを開く"
 							>
 								<div
-									className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerOpen : ""}`}
+									className={`${styles.hamburger} ${
+										isMenuOpen ? styles.hamburgerOpen : ""
+									}`}
 								>
 									<span></span>
 									<span></span>
@@ -45,7 +47,7 @@ export const AdminHeader = ({
 						)}
 						<Link href="/admin" className={styles.logoLink}>
 							<div className={styles.logo}>
-								<h1 className={styles.title}>Appraiz</h1>
+								<h1 className={styles.title}>Apprai'z</h1>
 								<p className={styles.subtitle}>管理画面</p>
 							</div>
 						</Link>

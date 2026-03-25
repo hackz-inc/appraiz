@@ -12,7 +12,7 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-	title: "Appraiz - ハッカソン採点システム",
+	title: "Apprai'z - ハッカソン採点システム",
 	description: "ハッカソンのスコアリングシステム",
 };
 

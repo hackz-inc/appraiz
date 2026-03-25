@@ -1,4 +1,4 @@
-# Appraiz - ハッカソン採点システム
+# Apprai'z - ハッカソン採点システム
 
 Next.js App Router + Supabaseで構築されたハッカソン採点システムです。legacy-scoring-systemをベースに、モダンなスタックで再構築しています。
 
