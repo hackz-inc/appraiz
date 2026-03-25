@@ -3,16 +3,19 @@
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Container, Button, Card } from '@/components/ui'
+import { useAuth } from '@/hooks/useAuth'
 import { useHackathon } from '@/hooks/useHackathons'
 import { useTeams } from '@/hooks/useTeams'
 import { useScoringItems } from '@/hooks/useScoringItems'
 import { BackButton } from './BackButton'
 import { DeleteTeamButton } from './DeleteTeamButton'
 import { DeleteScoringItemButton } from './DeleteScoringItemButton'
+import { SignOutButton } from '../../SignOutButton'
 
 export default function HackathonDetailPage() {
   const params = useParams()
   const hackathonId = params.id as string
+  const { user } = useAuth()
 
   const { hackathon, isLoading: hackathonLoading } = useHackathon(hackathonId)
   const { teams: teamList, isLoading: teamsLoading } = useTeams(hackathonId)
@@ -38,6 +41,24 @@ export default function HackathonDetailPage() {
 
   return (
     <div className="min-h-screen bg-black-lighten5">
+      {/* Header */}
+      <header className="bg-white border-b border-black-lighten3 shadow-sm">
+        <Container>
+          <div className="py-4 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-black-primary">
+                Appraiz 管理画面
+              </h1>
+              <p className="text-sm text-black-lighten1 mt-1">
+                {user?.email}
+              </p>
+            </div>
+            <SignOutButton />
+          </div>
+        </Container>
+      </header>
+
+      {/* Main Content */}
       <Container className="py-8">
         <div className="mb-6">
           <BackButton />
