@@ -10,6 +10,7 @@ import { Sidebar } from "@/components/admin/Sidebar";
 import { useHackathon } from "@/hooks/useHackathons";
 import { useTeams } from "@/hooks/useTeams";
 import { useScoringItems } from "@/hooks/useScoringItems";
+import { useGuests } from "@/hooks/useGuests";
 import { DeleteTeamButton } from "./DeleteTeamButton";
 import { DeleteScoringItemButton } from "./DeleteScoringItemButton";
 
@@ -21,6 +22,7 @@ export default function HackathonDetailPage() {
 	const { teams: teamList, isLoading: teamsLoading } = useTeams(hackathonId);
 	const { scoringItems: itemsList, isLoading: itemsLoading } =
 		useScoringItems(hackathonId);
+	const { guests: guestsList, isLoading: guestsLoading } = useGuests(hackathonId);
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [currentHash, setCurrentHash] = useState("");
@@ -59,7 +61,7 @@ export default function HackathonDetailPage() {
 	}, []);
 
 	// 初回ロード時のみローディング画面を表示
-	const loading = hackathonLoading || teamsLoading || itemsLoading;
+	const loading = hackathonLoading || teamsLoading || itemsLoading || guestsLoading;
 
 	if (loading) {
 		return (
@@ -114,6 +116,12 @@ export default function HackathonDetailPage() {
 			icon: "📋",
 			type: "criteria" as const,
 		})),
+		...(guestsList || []).map((guest) => ({
+			id: guest.id,
+			label: guest.name,
+			icon: "🎤",
+			type: "guest" as const,
+		})),
 	];
 
 	const handleMenuToggle = () => {
@@ -158,6 +166,8 @@ export default function HackathonDetailPage() {
 				items={sidebarItems}
 				isOpen={isSidebarOpen}
 				currentHash={currentHash}
+				onClose={() => setIsSidebarOpen(false)}
+				hackathonId={hackathonId}
 			/>
 
 			{/* Main Content */}
@@ -227,11 +237,11 @@ export default function HackathonDetailPage() {
 				</div>
 
 				{/* Guest Section */}
-				<div className="mb-10">
+				<div id="guests-section" className="mb-10">
 					<div className="flex items-center justify-between mb-6">
 						<div>
 							<h2 className="text-2xl font-black text-black-primary mb-1 flex items-center gap-2">
-								<span>👥</span>
+								<span>🎤</span>
 								<span>ゲスト</span>
 							</h2>
 							<p className="text-sm text-black-lighten1">
@@ -242,24 +252,56 @@ export default function HackathonDetailPage() {
 							<Button variant="primary">⚙️ ゲスト管理</Button>
 						</Link>
 					</div>
-					<Card
-						variant="elevated"
-						className="bg-gradient-to-br from-white to-purple/10"
-					>
-						<div className="text-center py-8">
-							<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple/20 mb-4">
-								<span className="text-3xl">👥</span>
+					{!guestsList || guestsList.length === 0 ? (
+						<Card
+							variant="elevated"
+							className="bg-gradient-to-br from-white to-purple/10"
+						>
+							<div className="text-center py-12">
+								<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple/20 mb-4">
+									<span className="text-3xl">🎤</span>
+								</div>
+								<p className="text-black-lighten1 font-medium mb-2">
+									ゲストがまだ招待されていません
+								</p>
+								<Link href={`/admin/hackathons/${hackathonId}/guests`}>
+									<Button variant="secondary" size="sm">
+										⚙️ ゲスト管理ページへ
+									</Button>
+								</Link>
 							</div>
-							<p className="text-black-lighten1 font-medium mb-2">
-								ゲスト管理ページで招待者を設定できます
-							</p>
-							<Link href={`/admin/hackathons/${hackathonId}/guests`}>
-								<Button variant="secondary" size="sm">
-									⚙️ ゲスト管理ページへ
-								</Button>
-							</Link>
+						</Card>
+					) : (
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							{guestsList.map((guest) => (
+								<Card key={guest.id} id={`guest-${guest.id}`}>
+									<div className="flex items-start gap-3">
+										<div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-purple/20 flex-shrink-0">
+											<span className="text-xl">🎤</span>
+										</div>
+										<div className="flex-1">
+											<h3 className="text-lg font-bold text-black-primary mb-1">
+												{guest.name}
+											</h3>
+											<p className="text-sm text-black-lighten2 mb-3">
+												{guest.company_name}
+											</p>
+											<div className="flex gap-2">
+												<Link
+													href={`/admin/hackathons/${hackathonId}/guests`}
+													className="flex-1"
+												>
+													<Button variant="secondary" size="sm" fullWidth>
+														⚙️ 管理
+													</Button>
+												</Link>
+											</div>
+										</div>
+									</div>
+								</Card>
+							))}
 						</div>
-					</Card>
+					)}
 				</div>
 
 				{/* Criteria Section */}

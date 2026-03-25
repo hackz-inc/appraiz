@@ -3,9 +3,13 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { Container, Button, Card } from "@/components/ui";
 import { AdminHeader } from "@/components/admin/AdminHeader";
+import { Sidebar } from "@/components/admin/Sidebar";
 import { useHackathon } from "@/hooks/useHackathons";
+import { useTeams } from "@/hooks/useTeams";
+import { useScoringItems } from "@/hooks/useScoringItems";
 import { guests, type GuestWithInviteStatus } from "@/lib/guests";
 
 export default function GuestManagementPage() {
@@ -14,12 +18,18 @@ export default function GuestManagementPage() {
 	const hackathonId = params.id as string;
 
 	const { hackathon, isLoading: hackathonLoading } = useHackathon(hackathonId);
+	const { teams: teamList } = useTeams(hackathonId);
+	const { scoringItems: itemsList } = useScoringItems(hackathonId);
 	const [guestList, setGuestList] = useState<GuestWithInviteStatus[]>([]);
 	const [selectedGuestIds, setSelectedGuestIds] = useState<string[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
 	const [error, setError] = useState("");
 	const [successMessage, setSuccessMessage] = useState("");
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [windowWidth, setWindowWidth] = useState(
+		typeof window !== "undefined" ? window.innerWidth : 1280
+	);
 
 	useEffect(() => {
 		const loadGuests = async () => {
@@ -43,6 +53,23 @@ export default function GuestManagementPage() {
 
 		loadGuests();
 	}, [hackathonId]);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowWidth(window.innerWidth);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	useEffect(() => {
+		if (windowWidth >= 1280) {
+			setIsSidebarOpen(true);
+		} else {
+			setIsSidebarOpen(false);
+		}
+	}, [windowWidth]);
 
 	const handleCheckboxChange = (guestId: string) => {
 		setSelectedGuestIds((prev) =>
@@ -108,6 +135,33 @@ export default function GuestManagementPage() {
 		);
 	}
 
+	const sidebarItems = [
+		...(teamList || []).map((team) => ({
+			id: team.id,
+			label: team.name,
+			icon: "👥",
+			type: "team" as const,
+		})),
+		...(itemsList || []).map((item) => ({
+			id: item.id,
+			label: item.name,
+			icon: "📋",
+			type: "criteria" as const,
+		})),
+		...(guestList || [])
+			.filter((g) => g.isInvited)
+			.map((guest) => ({
+				id: guest.id,
+				label: guest.name,
+				icon: "🎤",
+				type: "guest" as const,
+			})),
+	];
+
+	const handleMenuToggle = () => {
+		setIsSidebarOpen(!isSidebarOpen);
+	};
+
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-black-lighten5 via-white to-yellow-lighten1">
 			<AdminHeader
@@ -116,6 +170,37 @@ export default function GuestManagementPage() {
 					{ label: hackathon.name, href: `/admin/hackathons/${hackathonId}` },
 					{ label: "ゲスト管理" },
 				]}
+				showMenuButton
+				isMenuOpen={isSidebarOpen}
+				onMenuToggle={handleMenuToggle}
+			/>
+
+			<AnimatePresence>
+				{isSidebarOpen && windowWidth < 1280 && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.3 }}
+						onClick={handleMenuToggle}
+						style={{
+							position: "fixed",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							backgroundColor: "rgba(0, 0, 0, 0.5)",
+							zIndex: 999,
+						}}
+					/>
+				)}
+			</AnimatePresence>
+
+			<Sidebar
+				items={sidebarItems}
+				isOpen={isSidebarOpen}
+				onClose={() => setIsSidebarOpen(false)}
+				hackathonId={hackathonId}
 			/>
 
 			<Container className="py-10">

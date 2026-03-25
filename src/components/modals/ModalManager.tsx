@@ -2,9 +2,9 @@
 
 import { Modal } from "@/components/ui";
 import { useModalStore } from "@/stores";
-import { CreateHackathonContent } from "./contents/CreateHackathonContent";
 import { EditHackathonContent } from "./contents/EditHackathonContent";
 import { DeleteHackathonContent } from "./contents/DeleteHackathonContent";
+import { CreateHackathonContent } from "./contents/CreateHackathonContent";
 
 export const ModalManager = () => {
 	const { isOpen, type, config, closeModal } = useModalStore();

@@ -33,19 +33,35 @@
 .section {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 8px;
+}
+
+.sectionTitleLink {
+	text-decoration: none;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+	padding: 8px;
+	margin: -8px;
+}
+
+.sectionTitleLink:hover {
+	background: var(--black-lighten5);
+}
+
+.sectionTitleLink:hover .sectionTitle {
+	color: var(--black-primary);
 }
 
 .sectionTitle {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	font-size: 0.75rem;
+	font-size: 0.875rem;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	color: var(--black-lighten2);
-	padding: 0 8px;
+	transition: color 0.2s ease;
 }
 
 .sectionIcon {
@@ -105,4 +121,14 @@
 	color: var(--black-lighten2);
 	text-align: center;
 	line-height: 1.5;
+}
+
+.sectionCount {
+	padding: 8px 12px;
+	font-size: 0.875rem;
+	color: var(--black-lighten1);
+	font-weight: 600;
+	background: var(--black-lighten5);
+	border-radius: 6px;
+	text-align: center;
 }
