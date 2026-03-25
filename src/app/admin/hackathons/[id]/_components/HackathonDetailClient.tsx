@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Container, Button, Card } from "@/components/ui";
 import { AdminHeader } from "@/components/admin/AdminHeader";
@@ -26,6 +27,9 @@ export function HackathonDetailClient({
 	scoringItems,
 	guests,
 }: Props) {
+	const searchParams = useSearchParams();
+	const tab = searchParams.get("tab") || "overview";
+
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [windowWidth, setWindowWidth] = useState(
 		typeof window !== "undefined" ? window.innerWidth : 1280,
@@ -49,24 +53,10 @@ export function HackathonDetailClient({
 	}, [windowWidth]);
 
 	const sidebarItems = [
-		...(teams || []).map((team) => ({
-			id: team.id,
-			label: team.name,
-			icon: "👥",
-			type: "team" as const,
-		})),
-		...(scoringItems || []).map((item) => ({
-			id: item.id,
-			label: item.name,
-			icon: "📋",
-			type: "criteria" as const,
-		})),
-		...(guests || []).map((guest) => ({
-			id: guest.id,
-			label: guest.name,
-			icon: "🎤",
-			type: "guest" as const,
-		})),
+		{ id: "overview", label: "概要", icon: "📊", type: "tab" as const },
+		{ id: "teams", label: "チーム", icon: "👥", type: "tab" as const },
+		{ id: "criteria", label: "採点項目", icon: "📋", type: "tab" as const },
+		{ id: "guests", label: "ゲスト", icon: "🎤", type: "tab" as const },
 	];
 
 	const handleMenuToggle = () => {
@@ -119,8 +109,71 @@ export function HackathonDetailClient({
 					marginLeft: windowWidth >= 1280 && isSidebarOpen ? "280px" : "0",
 				}}
 			>
-				{/* Teams Section */}
-				<div id="teams-section" className="mb-10">
+				{/* Overview Tab */}
+				{tab === "overview" && (
+					<>
+						{/* Teams Section */}
+						<div id="teams-section" className="mb-10">
+							<div className="flex items-center justify-between mb-6">
+								<div>
+									<h2 className="text-2xl font-black text-black-primary mb-1 flex items-center gap-2">
+										<span>👥</span>
+										<span>チーム</span>
+									</h2>
+									<p className="text-sm text-black-lighten1">
+										参加チームを管理します
+									</p>
+								</div>
+								<Link href={`/admin/hackathons/${hackathon.id}?tab=teams`}>
+									<Button variant="secondary">チーム一覧へ</Button>
+								</Link>
+							</div>
+							<p>チーム {teams.length} 件</p>
+						</div>
+
+						{/* Guests Section */}
+						<div id="guests-section" className="mb-10">
+							<div className="flex items-center justify-between mb-6">
+								<div>
+									<h2 className="text-2xl font-black text-black-primary mb-1 flex items-center gap-2">
+										<span>🎤</span>
+										<span>ゲスト</span>
+									</h2>
+									<p className="text-sm text-black-lighten1">
+										共同開催者を管理します
+									</p>
+								</div>
+								<Link href={`/admin/hackathons/${hackathon.id}?tab=guests`}>
+									<Button variant="secondary">ゲスト一覧へ</Button>
+								</Link>
+							</div>
+							<p>ゲスト {guests.length} 件</p>
+						</div>
+
+						{/* Criteria Section */}
+						<div id="criteria-section">
+							<div className="flex items-center justify-between mb-6">
+								<div>
+									<h2 className="text-2xl font-black text-black-primary mb-1 flex items-center gap-2">
+										<span>📋</span>
+										<span>採点項目</span>
+									</h2>
+									<p className="text-sm text-black-lighten1">
+										評価基準を管理します
+									</p>
+								</div>
+								<Link href={`/admin/hackathons/${hackathon.id}?tab=criteria`}>
+									<Button variant="secondary">採点項目一覧へ</Button>
+								</Link>
+							</div>
+							<p>採点項目 {scoringItems.length} 件</p>
+						</div>
+					</>
+				)}
+
+				{/* Teams Tab */}
+				{tab === "teams" && (
+					<div id="teams-section" className="mb-10">
 					<div className="flex items-center justify-between mb-6">
 						<div>
 							<h2 className="text-2xl font-black text-black-primary mb-1 flex items-center gap-2">
