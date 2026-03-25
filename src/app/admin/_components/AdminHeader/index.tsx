@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Container, Breadcrumb } from "@/components/ui";
-import styles from "./AdminHeader.module.css";
+import styles from "./index.module.css";
 
 interface BreadcrumbItem {
 	label: string;
@@ -49,6 +51,7 @@ export const AdminHeader = ({
 							</div>
 						</Link>
 					</div>
+					{/* <SignOutButton /> */}
 				</div>
 
 				{breadcrumbs && breadcrumbs.length > 0 && (

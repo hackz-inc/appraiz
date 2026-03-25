@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Button, TextInput, Container, Card } from "@/components/ui";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { useHackathon } from "@/hooks/useHackathons";
 import { scoringItems } from "@/lib/scoring";
 
 export default function NewCriteriaPage() {
 	const router = useRouter();
 	const params = useParams();
 	const hackathonId = params.id as string;
+	const { hackathon } = useHackathon(hackathonId);
 
 	const [formData, setFormData] = useState({
 		name: "",
@@ -44,8 +47,23 @@ export default function NewCriteriaPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-black-lighten5 p-4 py-12">
-			<Container maxWidth="md">
+		<div className="min-h-screen bg-black-lighten5">
+			<AdminHeader
+				breadcrumbs={[
+					{ label: "ホーム", href: "/admin" },
+					...(hackathon
+						? [
+								{
+									label: hackathon.name,
+									href: `/admin/hackathons/${hackathonId}`,
+								},
+							]
+						: []),
+					{ label: "採点項目", href: `/admin/hackathons/${hackathonId}/criteria` },
+					{ label: "新規作成" },
+				]}
+			/>
+			<Container maxWidth="md" className="py-12">
 				<Card className="w-full">
 					<div className="text-center mb-8">
 						<h1 className="text-4xl font-bold text-black-primary mb-2">
