@@ -4,7 +4,7 @@ import { Modal } from "@/components/ui";
 import { useModalStore } from "@/stores";
 import { EditHackathonContent } from "./contents/EditHackathonContent";
 import { DeleteHackathonContent } from "./contents/DeleteHackathonContent";
-import { CreateHackathonContent } from "./contents/CreateHackathonContent";
+import { CreateHackathonForm } from "./contents/CreateHackathonForm";
 
 export const ModalManager = () => {
 	const { isOpen, type, config, closeModal } = useModalStore();
@@ -12,7 +12,7 @@ export const ModalManager = () => {
 	const getModalContent = () => {
 		switch (type) {
 			case "createHackathon":
-				return <CreateHackathonContent />;
+				return <CreateHackathonForm />;
 			case "editHackathon":
 				return <EditHackathonContent />;
 			case "deleteHackathon":
