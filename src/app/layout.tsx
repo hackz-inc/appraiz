@@ -23,7 +23,7 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="ja" data-scroll-behavior="smooth">
-			<body className={`${notoSansJP.variable} font-noto-sans`}>
+			<body className={notoSansJP.variable}>
 				<SWRProvider>
 					{children}
 					<ModalProvider />
