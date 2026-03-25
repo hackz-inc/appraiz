@@ -3,7 +3,7 @@
 import { Button, Card } from "@/components/ui";
 import Link from "next/link";
 import { useHackathons } from "@/hooks/useHackathons";
-import { CreateHackathonButton } from "./CreateHackathonButton";
+import { CreateHackathonButton } from "../CreateHackathonButton";
 import styles from "./HackathonCardList.module.css";
 
 export function HackathonCardList() {
@@ -47,52 +47,41 @@ export function HackathonCardList() {
 	return (
 		<ul className={styles.list}>
 			{hackathons.map((hackathon) => (
-				<Link
-					key={hackathon.id}
-					href={`/admin/hackathons/${hackathon.id}`}
-					className={styles.cardLink}
-				>
-					<Card>
-						<div className={styles.cardContent}>
-							<div className={styles.iconWrapper}>
-								<span className={styles.icon}>🏆</span>
-							</div>
-							<h3 className={styles.hackathonTitle}>{hackathon.name}</h3>
-							<div className={styles.hackathonMeta}>
-								<span>📅</span>
-								<span>
-									{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
-								</span>
-							</div>
+				<Card key={hackathon.id}>
+					<div className={styles.cardContent}>
+						<div className={styles.iconWrapper}>
+							<span className={styles.icon}>🏆</span>
 						</div>
-						<div className={styles.buttonGroup}>
-							<Button
-								variant="primary"
-								size="sm"
-								fullWidth
-								onClick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									window.location.href = `/admin/hackathons/${hackathon.id}/settings`;
-								}}
-							>
-								⚙️ 設定
-							</Button>
-							<Button
-								variant="secondary"
-								size="sm"
-								fullWidth
-								onClick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									window.location.href = `/admin/hackathons/${hackathon.id}/results`;
-								}}
-							>
-								📊 結果
-							</Button>
+						<h3 className={styles.hackathonTitle}>{hackathon.name}</h3>
+						<div className={styles.hackathonMeta}>
+							<span>📅</span>
+							<span>
+								{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
+							</span>
 						</div>
-					</Card>
-				</Link>
+					</div>
+					<div className={styles.buttonGroup}>
+						<Link
+							key={hackathon.id}
+							href={`/admin/hackathons/${hackathon.id}`}
+							className={styles.cardLink}
+						>
+							⚙️ 設定
+						</Link>
+						<Button
+							variant="secondary"
+							size="sm"
+							fullWidth
+							onClick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								window.location.href = `/admin/hackathons/${hackathon.id}/results`;
+							}}
+						>
+							📊 結果
+						</Button>
+					</div>
+				</Card>
 			))}
 		</ul>
 	);

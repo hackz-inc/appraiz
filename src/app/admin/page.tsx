@@ -1,5 +1,5 @@
 import { CreateHackathonButton } from "./_components/CreateHackathonButton";
-import { HackathonCardList } from "./_components/HackathonCardList";
+import { HackathonCardList } from "./_components/hackathonCardList/HackathonCardList";
 import styles from "./page.module.css";
 
 export default function AdminPage() {
@@ -7,7 +7,6 @@ export default function AdminPage() {
 		<main className={styles.main}>
 			<div className={styles.header}>
 				<p className={styles.title}>ハッカソン一覧</p>
-
 				<CreateHackathonButton />
 			</div>
 
