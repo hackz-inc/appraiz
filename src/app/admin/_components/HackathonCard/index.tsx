@@ -4,11 +4,11 @@ import type { Hackathon } from "@/lib/hackathons";
 import { HackathonActionButtons } from "./HackathonActionButtons";
 import styles from "./index.module.css";
 
-interface HackathonCardProps {
+interface Props {
 	hackathon: Hackathon;
 }
 
-export function HackathonCard({ hackathon }: HackathonCardProps) {
+export function HackathonCard({ hackathon }: Props) {
 	return (
 		<Card>
 			<div className={styles.cardContent}>

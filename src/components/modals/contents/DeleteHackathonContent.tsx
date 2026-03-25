@@ -48,20 +48,11 @@ export const DeleteHackathonContent = () => {
 				)}
 
 				<div className="text-center py-4">
-					<p className="text-lg text-black-primary mb-2">,SkJdW~YK</p>
+					<p className="text-lg text-black-primary mb-2">削除</p>
 					<p className="text-sm text-black-lighten1">Sn�\o֊�YShLgM~[�</p>
 				</div>
 
 				<div className="flex gap-4">
-					<Button
-						type="button"
-						variant="secondary"
-						size="lg"
-						onClick={handleClose}
-						fullWidth
-					>
-						����
-					</Button>
 					<Button
 						type="button"
 						variant="danger"
@@ -70,7 +61,7 @@ export const DeleteHackathonContent = () => {
 						isLoading={loading}
 						fullWidth
 					>
-						Jd
+						削除
 					</Button>
 				</div>
 			</div>
