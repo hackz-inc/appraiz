@@ -1,9 +1,12 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Container, Button, Card } from "@/components/ui";
 import { AdminHeader } from "@/components/admin/AdminHeader";
+import { Sidebar } from "@/components/admin/Sidebar";
 import { useHackathon } from "@/hooks/useHackathons";
 import { useTeams } from "@/hooks/useTeams";
 import { useScoringItems } from "@/hooks/useScoringItems";
@@ -18,6 +21,42 @@ export default function HackathonDetailPage() {
 	const { teams: teamList, isLoading: teamsLoading } = useTeams(hackathonId);
 	const { scoringItems: itemsList, isLoading: itemsLoading } =
 		useScoringItems(hackathonId);
+
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [currentHash, setCurrentHash] = useState("");
+	const [windowWidth, setWindowWidth] = useState(
+		typeof window !== "undefined" ? window.innerWidth : 1280
+	);
+
+	// ウィンドウサイズの監視
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowWidth(window.innerWidth);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	// デスクトップではサイドバーを自動表示
+	useEffect(() => {
+		if (windowWidth >= 1280) {
+			setIsSidebarOpen(true);
+		} else {
+			setIsSidebarOpen(false);
+		}
+	}, [windowWidth]);
+
+	// ハッシュの監視
+	useEffect(() => {
+		const updateHash = () => {
+			setCurrentHash(window.location.hash);
+		};
+
+		updateHash();
+		window.addEventListener("hashchange", updateHash);
+		return () => window.removeEventListener("hashchange", updateHash);
+	}, []);
 
 	// 初回ロード時のみローディング画面を表示
 	const loading = hackathonLoading || teamsLoading || itemsLoading;
@@ -61,6 +100,26 @@ export default function HackathonDetailPage() {
 		);
 	}
 
+	// サイドバーアイテムの生成
+	const sidebarItems = [
+		...(teamList || []).map((team) => ({
+			id: team.id,
+			label: team.name,
+			icon: "👥",
+			type: "team" as const,
+		})),
+		...(itemsList || []).map((item) => ({
+			id: item.id,
+			label: item.name,
+			icon: "📋",
+			type: "criteria" as const,
+		})),
+	];
+
+	const handleMenuToggle = () => {
+		setIsSidebarOpen(!isSidebarOpen);
+	};
+
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-black-lighten5 via-white to-yellow-lighten1">
 			<AdminHeader
@@ -68,43 +127,43 @@ export default function HackathonDetailPage() {
 					{ label: "ホーム", href: "/admin" },
 					{ label: hackathon.name },
 				]}
+				showMenuButton
+				isMenuOpen={isSidebarOpen}
+				onMenuToggle={handleMenuToggle}
+			/>
+
+			{/* オーバーレイ（モバイルのみ） */}
+			<AnimatePresence>
+				{isSidebarOpen && windowWidth < 1280 && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.3 }}
+						onClick={handleMenuToggle}
+						style={{
+							position: "fixed",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							backgroundColor: "rgba(0, 0, 0, 0.5)",
+							zIndex: 999,
+						}}
+					/>
+				)}
+			</AnimatePresence>
+
+			<Sidebar
+				items={sidebarItems}
+				isOpen={isSidebarOpen}
+				currentHash={currentHash}
 			/>
 
 			{/* Main Content */}
-			<Container className="py-10">
-				<Card
-					variant="gradient"
-					className="mb-8 border-4 border-yellow-primary"
-				>
-					<div className="flex items-start gap-4">
-						<div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-yellow-primary shadow-lg flex-shrink-0">
-							<span className="text-3xl">🏆</span>
-						</div>
-						<div className="flex-1">
-							<h1 className="text-3xl font-black text-black-primary mb-3">
-								{hackathon.name}
-							</h1>
-							<div className="flex items-center gap-2 text-sm text-black-lighten1 mb-4">
-								<span>📅</span>
-								<span className="font-medium">
-									採点日:{" "}
-									{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
-								</span>
-							</div>
-							<div className="flex gap-3">
-								<Link href={`/score/${hackathonId}`}>
-									<Button variant="primary">✍️ スコアリングフォーム</Button>
-								</Link>
-								<Link href={`/results/${hackathonId}`}>
-									<Button variant="secondary">📊 結果を見る</Button>
-								</Link>
-							</div>
-						</div>
-					</div>
-				</Card>
-
+			<Container className="py-10" style={{ marginLeft: windowWidth >= 1280 && isSidebarOpen ? "280px" : "0" }}>
 				{/* Teams Section */}
-				<div className="mb-10">
+				<div id="teams-section" className="mb-10">
 					<div className="flex items-center justify-between mb-6">
 						<div>
 							<h2 className="text-2xl font-black text-black-primary mb-1 flex items-center gap-2">
@@ -136,7 +195,7 @@ export default function HackathonDetailPage() {
 					) : (
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							{teamList.map((team) => (
-								<Card key={team.id}>
+								<Card key={team.id} id={`team-${team.id}`}>
 									<div className="flex items-start gap-3">
 										<div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-blue/20 flex-shrink-0">
 											<span className="text-xl">👥</span>
@@ -167,8 +226,44 @@ export default function HackathonDetailPage() {
 					)}
 				</div>
 
+				{/* Guest Section */}
+				<div className="mb-10">
+					<div className="flex items-center justify-between mb-6">
+						<div>
+							<h2 className="text-2xl font-black text-black-primary mb-1 flex items-center gap-2">
+								<span>👥</span>
+								<span>ゲスト</span>
+							</h2>
+							<p className="text-sm text-black-lighten1">
+								共同開催者を管理します
+							</p>
+						</div>
+						<Link href={`/admin/hackathons/${hackathonId}/guests`}>
+							<Button variant="primary">⚙️ ゲスト管理</Button>
+						</Link>
+					</div>
+					<Card
+						variant="elevated"
+						className="bg-gradient-to-br from-white to-purple/10"
+					>
+						<div className="text-center py-8">
+							<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple/20 mb-4">
+								<span className="text-3xl">👥</span>
+							</div>
+							<p className="text-black-lighten1 font-medium mb-2">
+								ゲスト管理ページで招待者を設定できます
+							</p>
+							<Link href={`/admin/hackathons/${hackathonId}/guests`}>
+								<Button variant="secondary" size="sm">
+									⚙️ ゲスト管理ページへ
+								</Button>
+							</Link>
+						</div>
+					</Card>
+				</div>
+
 				{/* Criteria Section */}
-				<div>
+				<div id="criteria-section">
 					<div className="flex items-center justify-between mb-6">
 						<div>
 							<h2 className="text-2xl font-black text-black-primary mb-1 flex items-center gap-2">
@@ -200,7 +295,7 @@ export default function HackathonDetailPage() {
 					) : (
 						<div className="space-y-3">
 							{itemsList.map((item) => (
-								<Card key={item.id}>
+								<Card key={item.id} id={`criteria-${item.id}`}>
 									<div className="flex items-start gap-3">
 										<div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-green/20 flex-shrink-0">
 											<span className="text-xl">📋</span>

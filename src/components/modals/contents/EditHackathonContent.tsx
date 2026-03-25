@@ -29,7 +29,7 @@ export const EditHackathonContent = () => {
 					scoringDate: data.scoring_date.split("T")[0],
 				});
 			} catch (err) {
-				setError(err instanceof Error ? err.message : "���n��k1WW~W_");
+				setError(err instanceof Error ? err.message : "データの読み込みに失敗しました");
 			} finally {
 				setInitialLoading(false);
 			}
@@ -61,14 +61,14 @@ export const EditHackathonContent = () => {
 			});
 
 			if (!result.success) {
-				setError(result.error || "�ë��n��k1WW~W_");
+				setError(result.error || "ハッカソンの更新に失敗しました");
 				setLoading(false);
 				return;
 			}
 
 			handleClose();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "�ë��n��k1WW~W_");
+			setError(err instanceof Error ? err.message : "ハッカソンの更新に失敗しました");
 			setLoading(false);
 		}
 	};
@@ -76,7 +76,7 @@ export const EditHackathonContent = () => {
 	if (initialLoading) {
 		return (
 			<Card className="w-full">
-				<div className="text-center py-8">��-...</div>
+				<div className="text-center py-8">読み込み中...</div>
 			</Card>
 		);
 	}
@@ -102,7 +102,7 @@ export const EditHackathonContent = () => {
 
 				<TextInput
 					type="date"
-					label="���"
+					label="採点日"
 					value={formData.scoringDate}
 					onChange={(e) => handleChange("scoringDate", e.target.value)}
 					required
@@ -117,7 +117,7 @@ export const EditHackathonContent = () => {
 						onClick={handleClose}
 						fullWidth
 					>
-						����
+						キャンセル
 					</Button>
 					<Button
 						type="submit"
@@ -126,7 +126,7 @@ export const EditHackathonContent = () => {
 						isLoading={loading}
 						fullWidth
 					>
-						��
+						更新
 					</Button>
 				</div>
 			</form>

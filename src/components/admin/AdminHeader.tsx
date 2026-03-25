@@ -12,14 +12,37 @@ interface BreadcrumbItem {
 
 interface AdminHeaderProps {
 	breadcrumbs?: BreadcrumbItem[];
+	showMenuButton?: boolean;
+	isMenuOpen?: boolean;
+	onMenuToggle?: () => void;
 }
 
-export const AdminHeader = ({ breadcrumbs }: AdminHeaderProps) => {
+export const AdminHeader = ({
+	breadcrumbs,
+	showMenuButton,
+	isMenuOpen,
+	onMenuToggle,
+}: AdminHeaderProps) => {
 	return (
 		<header className={styles.header}>
 			<Container>
 				<div className={styles.content}>
 					<div className={styles.left}>
+						{showMenuButton && onMenuToggle && (
+							<button
+								className={styles.menuButton}
+								onClick={onMenuToggle}
+								aria-label="メニューを開く"
+							>
+								<div
+									className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerOpen : ""}`}
+								>
+									<span></span>
+									<span></span>
+									<span></span>
+								</div>
+							</button>
+						)}
 						<Link href="/admin" className={styles.logoLink}>
 							<div className={styles.logo}>
 								<h1 className={styles.title}>Appraiz</h1>
