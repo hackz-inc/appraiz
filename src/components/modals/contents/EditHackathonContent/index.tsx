@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, TextInput, Card } from "@/components/ui";
+import { Button, TextInput } from "@/components/ui";
 import { useModalStore } from "@/stores";
 import { updateHackathon } from "@/components/features/hackathon/actions";
 import { hackathons } from "@/lib/hackathons";
+import styles from "./index.module.css";
 
 export const EditHackathonContent = () => {
 	const { config, closeModal } = useModalStore();
@@ -29,7 +30,9 @@ export const EditHackathonContent = () => {
 					scoringDate: data.scoring_date.split("T")[0],
 				});
 			} catch (err) {
-				setError(err instanceof Error ? err.message : "データの読み込みに失敗しました");
+				setError(
+					err instanceof Error ? err.message : "データの読み込みに失敗しました",
+				);
 			} finally {
 				setInitialLoading(false);
 			}
@@ -68,68 +71,48 @@ export const EditHackathonContent = () => {
 
 			handleClose();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "ハッカソンの更新に失敗しました");
+			setError(
+				err instanceof Error ? err.message : "ハッカソンの更新に失敗しました",
+			);
 			setLoading(false);
 		}
 	};
 
 	if (initialLoading) {
-		return (
-			<Card className="w-full">
-				<div className="text-center py-8">読み込み中...</div>
-			</Card>
-		);
+		return <div className={styles.loading}>読み込み中...</div>;
 	}
 
 	return (
-		<Card className="w-full">
-			<form onSubmit={handleSubmit} className="space-y-6">
-				{error && (
-					<div className="p-4 bg-red bg-opacity-10 border border-red rounded text-red text-sm">
-						{error}
-					</div>
-				)}
+		<form onSubmit={handleSubmit} className={styles.form}>
+			{error && <div className={styles.error}>{error}</div>}
 
-				<TextInput
-					type="text"
-					label="ハッカソン名"
-					placeholder="例: Spring Hackathon 2024"
-					value={formData.name}
-					onChange={(e) => handleChange("name", e.target.value)}
-					required
-					fullWidth
-				/>
+			<TextInput
+				type="text"
+				label="ハッカソン名"
+				placeholder="例: Spring Hackathon 2024"
+				value={formData.name}
+				onChange={(e) => handleChange("name", e.target.value)}
+				required
+				fullWidth
+			/>
 
-				<TextInput
-					type="date"
-					label="採点日"
-					value={formData.scoringDate}
-					onChange={(e) => handleChange("scoringDate", e.target.value)}
-					required
-					fullWidth
-				/>
-
-				<div className="flex gap-4">
-					<Button
-						type="button"
-						variant="secondary"
-						size="lg"
-						onClick={handleClose}
-						fullWidth
-					>
-						キャンセル
-					</Button>
-					<Button
-						type="submit"
-						variant="primary"
-						size="lg"
-						isLoading={loading}
-						fullWidth
-					>
-						更新
-					</Button>
-				</div>
-			</form>
-		</Card>
+			<TextInput
+				type="date"
+				label="採点日"
+				value={formData.scoringDate}
+				onChange={(e) => handleChange("scoringDate", e.target.value)}
+				required
+				fullWidth
+			/>
+			<Button
+				type="submit"
+				variant="primary"
+				size="lg"
+				isLoading={loading}
+				fullWidth
+			>
+				更新
+			</Button>
+		</form>
 	);
 };
