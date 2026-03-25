@@ -84,16 +84,24 @@ export const hackathons = {
 	},
 
 	async verifyPassword(hackathonId: string, password: string) {
-		const supabase = createClient();
-		const { data, error } = await (supabase.from("hackathon") as any)
-			.select("access_password")
-			.eq("id", hackathonId)
-			.single();
+		try {
+			const response = await fetch(`/api/hackathons/${hackathonId}/verify`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ password }),
+			});
 
-		if (error) {
-			throw new Error(error.message);
+			if (!response.ok) {
+				throw new Error("Verification failed");
+			}
+
+			const data = await response.json();
+			return data.isValid;
+		} catch (error) {
+			console.error("Password verification error:", error);
+			return false;
 		}
-
-		return data.access_password === password;
 	},
 };

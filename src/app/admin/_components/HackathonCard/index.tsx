@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { Card } from "@/components/ui";
+import { Card, CopyButton } from "@/components/ui";
 import type { Hackathon } from "@/lib/hackathons";
 import { HackathonActionButtons } from "./HackathonActionButtons";
 import styles from "./index.module.css";
@@ -9,6 +11,8 @@ interface Props {
 }
 
 export function HackathonCard({ hackathon }: Props) {
+	const scoringUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/score/${hackathon.id}`;
+
 	return (
 		<Card>
 			<div className={styles.cardContent}>
@@ -18,6 +22,23 @@ export function HackathonCard({ hackathon }: Props) {
 				</div>
 				<div className={styles.hackathonMeta}>
 					{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
+				</div>
+
+				<div className={styles.accessInfo}>
+					<div className={styles.infoRow}>
+						<div className={styles.infoLabel}>採点URL:</div>
+						<div className={styles.infoValue}>
+							<code className={styles.code}>{scoringUrl}</code>
+							<CopyButton text={scoringUrl} />
+						</div>
+					</div>
+					<div className={styles.infoRow}>
+						<div className={styles.infoLabel}>アクセスパスワード:</div>
+						<div className={styles.infoValue}>
+							<code className={styles.code}>{hackathon.access_password}</code>
+							<CopyButton text={hackathon.access_password} />
+						</div>
+					</div>
 				</div>
 			</div>
 

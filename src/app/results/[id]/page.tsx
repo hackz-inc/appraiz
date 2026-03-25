@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Container, Card } from "@/components/ui";
+import { AccessPasswordGuard } from "@/components/guards";
 import { hackathons, type Hackathon } from "@/lib/hackathons";
 import { scoring, type TeamScoreResult } from "@/lib/scoring";
 
-export default function ResultsPage() {
+function ResultsPageContent() {
 	const params = useParams();
 	const hackathonId = params.id as string;
 
@@ -134,5 +135,16 @@ export default function ResultsPage() {
 				)}
 			</Container>
 		</div>
+	);
+}
+
+export default function ResultsPage() {
+	const params = useParams();
+	const hackathonId = params.id as string;
+
+	return (
+		<AccessPasswordGuard hackathonId={hackathonId}>
+			<ResultsPageContent />
+		</AccessPasswordGuard>
 	);
 }

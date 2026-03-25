@@ -6,3 +6,4 @@ export * from "./LoadingScreen";
 export * from "./Card";
 export * from "./Modal";
 export * from "./Breadcrumb";
+export * from "./CopyButton";

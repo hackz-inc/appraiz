@@ -21,6 +21,51 @@
   gap: 8px;
   font-size: 14px;
   color: var(--black-lighten1);
+  margin-bottom: 16px;
+}
+
+.accessInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.infoLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--black-lighten1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.infoValue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.code {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  padding: 6px 12px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: var(--black-primary);
+  word-break: break-all;
+  flex: 1;
+  min-width: 0;
 }
 
 .buttonGroup {

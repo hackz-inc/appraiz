@@ -3,19 +3,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Container, Button, Card, TextArea } from "@/components/ui";
+import { AccessPasswordGuard } from "@/components/guards";
 import { hackathons, type Hackathon } from "@/lib/hackathons";
 import { teams, type Team } from "@/lib/teams";
 import { scoringItems, scoring, type ScoringItem } from "@/lib/scoring";
 
-interface TeamScoreInput {
-	scores: Array<{
-		scoring_item_id: string;
-		score: number;
-	}>;
-	comment: string;
-}
-
-export default function ScoringPage() {
+function ScoringPageContent() {
 	const params = useParams();
 	const router = useRouter();
 	const hackathonId = params.id as string;
@@ -33,7 +26,8 @@ export default function ScoringPage() {
 
 	useEffect(() => {
 		loadData();
-	}, [hackathonId]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const loadData = async () => {
 		try {
@@ -269,5 +263,16 @@ export default function ScoringPage() {
 				</Button>
 			</Container>
 		</div>
+	);
+}
+
+export default function ScoringPage() {
+	const params = useParams();
+	const hackathonId = params.id as string;
+
+	return (
+		<AccessPasswordGuard hackathonId={hackathonId}>
+			<ScoringPageContent />
+		</AccessPasswordGuard>
 	);
 }
