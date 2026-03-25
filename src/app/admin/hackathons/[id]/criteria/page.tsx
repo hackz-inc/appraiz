@@ -19,12 +19,13 @@ export default function CriteriaPage() {
 
 	const { hackathon, isLoading: hackathonLoading } = useHackathon(hackathonId);
 	const { teams: teamList } = useTeams(hackathonId);
-	const { scoringItems: itemsList, isLoading: itemsLoading } = useScoringItems(hackathonId);
+	const { scoringItems: itemsList, isLoading: itemsLoading } =
+		useScoringItems(hackathonId);
 	const { guests: guestsList } = useGuests(hackathonId);
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [windowWidth, setWindowWidth] = useState(
-		typeof window !== "undefined" ? window.innerWidth : 1280
+		typeof window !== "undefined" ? window.innerWidth : 1280,
 	);
 
 	useEffect(() => {
@@ -65,7 +66,7 @@ export default function CriteriaPage() {
 	if (!hackathon) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black-lighten5 via-white to-yellow-lighten1">
-				<Card variant="elevated" className="max-w-md">
+				<Card className="max-w-md">
 					<div className="text-center py-12">
 						<div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red/20 mb-4">
 							<span className="text-4xl">❌</span>
@@ -151,16 +152,19 @@ export default function CriteriaPage() {
 				hackathonId={hackathonId}
 			/>
 
-			<Container className="py-10" style={{ marginLeft: windowWidth >= 1280 && isSidebarOpen ? "280px" : "0" }}>
+			<Container
+				className="py-10"
+				style={{
+					marginLeft: windowWidth >= 1280 && isSidebarOpen ? "280px" : "0",
+				}}
+			>
 				<div className="mb-6 flex items-center justify-between">
 					<div>
 						<h1 className="text-3xl font-black text-black-primary mb-2 flex items-center gap-3">
 							<span>📋</span>
 							<span>採点項目一覧</span>
 						</h1>
-						<p className="text-black-lighten1">
-							評価基準を管理します
-						</p>
+						<p className="text-black-lighten1">評価基準を管理します</p>
 					</div>
 					<Link href={`/admin/hackathons/${hackathonId}/criteria/new`}>
 						<Button variant="primary">➕ 採点項目追加</Button>
@@ -168,7 +172,7 @@ export default function CriteriaPage() {
 				</div>
 
 				{!itemsList || itemsList.length === 0 ? (
-					<Card variant="elevated" className="bg-gradient-to-br from-white to-green/10">
+					<Card className="bg-gradient-to-br from-white to-green/10">
 						<div className="text-center py-12">
 							<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green/20 mb-4">
 								<span className="text-3xl">📋</span>

@@ -41,7 +41,7 @@ export function TeamsSection({ hackathonId }: TeamsSectionProps) {
 				</Link>
 			</div>
 			{!teamList || teamList.length === 0 ? (
-				<Card variant="elevated" className="bg-gradient-to-br from-white to-blue/10">
+				<Card className="bg-gradient-to-br from-white to-blue/10">
 					<div className="text-center py-12">
 						<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue/20 mb-4">
 							<span className="text-3xl">👥</span>
@@ -72,7 +72,10 @@ export function TeamsSection({ hackathonId }: TeamsSectionProps) {
 												✏️ 編集
 											</Button>
 										</Link>
-										<DeleteTeamButton teamId={team.id} hackathonId={hackathonId} />
+										<DeleteTeamButton
+											teamId={team.id}
+											hackathonId={hackathonId}
+										/>
 									</div>
 								</div>
 							</div>

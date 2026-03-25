@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 
 export default async function AdminLayout({
 	children,
@@ -25,10 +24,5 @@ export default async function AdminLayout({
 	}
 
 	// 認証OKなら子コンポーネントをレンダリング
-	return (
-		<>
-			<AdminHeader breadcrumbs={[{ label: "ホーム" }]} />
-			{children}
-		</>
-	);
+	return <>{children}</>;
 }

@@ -28,7 +28,7 @@ export default function GuestManagementPage() {
 	const [successMessage, setSuccessMessage] = useState("");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [windowWidth, setWindowWidth] = useState(
-		typeof window !== "undefined" ? window.innerWidth : 1280
+		typeof window !== "undefined" ? window.innerWidth : 1280,
 	);
 
 	useEffect(() => {
@@ -37,14 +37,10 @@ export default function GuestManagementPage() {
 				setLoading(true);
 				const data = await guests.getAllWithInviteStatus(hackathonId);
 				setGuestList(data);
-				setSelectedGuestIds(
-					data.filter((g) => g.isInvited).map((g) => g.id),
-				);
+				setSelectedGuestIds(data.filter((g) => g.isInvited).map((g) => g.id));
 			} catch (err) {
 				setError(
-					err instanceof Error
-						? err.message
-						: "ゲスト一覧の取得に失敗しました",
+					err instanceof Error ? err.message : "ゲスト一覧の取得に失敗しました",
 				);
 			} finally {
 				setLoading(false);
@@ -88,9 +84,7 @@ export default function GuestManagementPage() {
 			setSuccessMessage("ゲスト招待リストを保存しました");
 			setTimeout(() => setSuccessMessage(""), 3000);
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "保存に失敗しました",
-			);
+			setError(err instanceof Error ? err.message : "保存に失敗しました");
 		} finally {
 			setSaving(false);
 		}
@@ -115,7 +109,7 @@ export default function GuestManagementPage() {
 	if (!hackathon) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black-lighten5 via-white to-yellow-lighten1">
-				<Card variant="elevated" className="max-w-md">
+				<Card className="max-w-md">
 					<div className="text-center py-12">
 						<div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red/20 mb-4">
 							<span className="text-4xl">❌</span>
@@ -204,10 +198,7 @@ export default function GuestManagementPage() {
 			/>
 
 			<Container className="py-10">
-				<Card
-					variant="gradient"
-					className="mb-8 border-4 border-yellow-primary"
-				>
+				<Card className="mb-8 border-4 border-yellow-primary">
 					<div className="flex items-start gap-4">
 						<div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-yellow-primary shadow-lg flex-shrink-0">
 							<span className="text-3xl">👥</span>
@@ -236,10 +227,7 @@ export default function GuestManagementPage() {
 				)}
 
 				{guestList.length === 0 ? (
-					<Card
-						variant="elevated"
-						className="bg-gradient-to-br from-white to-blue/10"
-					>
+					<Card className="bg-gradient-to-br from-white to-blue/10">
 						<div className="text-center py-12">
 							<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue/20 mb-4">
 								<span className="text-3xl">👥</span>
@@ -251,7 +239,7 @@ export default function GuestManagementPage() {
 					</Card>
 				) : (
 					<>
-						<Card variant="elevated" className="mb-6">
+						<Card className="mb-6">
 							<div className="space-y-3">
 								{guestList.map((guest) => (
 									<label
