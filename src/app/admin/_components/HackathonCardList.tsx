@@ -4,7 +4,7 @@ import { Button, Card } from "@/components/ui";
 import Link from "next/link";
 import { useHackathons } from "@/hooks/useHackathons";
 import { CreateHackathonButton } from "./CreateHackathonButton";
-import styles from './HackathonCardList.module.css';
+import styles from "./HackathonCardList.module.css";
 
 export function HackathonCardList() {
 	const { hackathons, isLoading } = useHackathons();
@@ -27,16 +27,14 @@ export function HackathonCardList() {
 
 	if (!hackathons || hackathons.length === 0) {
 		return (
-			<Card variant="elevated" className={styles.emptyCard}>
+			<Card className={styles.emptyCard}>
 				<div className={styles.emptyContent}>
 					<div className={styles.emptyIconWrapper}>
 						<div className={styles.emptyIcon}>
 							<span className={styles.emptyEmoji}>📋</span>
 						</div>
 					</div>
-					<h3 className={styles.emptyTitle}>
-						ハッカソンがまだありません
-					</h3>
+					<h3 className={styles.emptyTitle}>ハッカソンがまだありません</h3>
 					<p className={styles.emptyDescription}>
 						新しいハッカソンを作成して、チームの評価を始めましょう
 					</p>
@@ -49,15 +47,17 @@ export function HackathonCardList() {
 	return (
 		<ul className={styles.list}>
 			{hackathons.map((hackathon) => (
-				<Link key={hackathon.id} href={`/admin/hackathons/${hackathon.id}`} className={styles.cardLink}>
-					<Card variant="elevated" hoverable className={styles.hackathonCard}>
+				<Link
+					key={hackathon.id}
+					href={`/admin/hackathons/${hackathon.id}`}
+					className={styles.cardLink}
+				>
+					<Card>
 						<div className={styles.cardContent}>
 							<div className={styles.iconWrapper}>
 								<span className={styles.icon}>🏆</span>
 							</div>
-							<h3 className={styles.hackathonTitle}>
-								{hackathon.name}
-							</h3>
+							<h3 className={styles.hackathonTitle}>{hackathon.name}</h3>
 							<div className={styles.hackathonMeta}>
 								<span>📅</span>
 								<span>

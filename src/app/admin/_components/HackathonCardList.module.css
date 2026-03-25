@@ -112,10 +112,6 @@
   transition: border-color 0.2s;
 }
 
-.hackathonCard:hover {
-  border-color: var(--yellow-primary);
-}
-
 .cardContent {
   margin-bottom: 16px;
 }

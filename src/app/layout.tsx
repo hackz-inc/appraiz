@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
+import "./styles/variables.css";
 import "./styles/reset.css";
 import { ModalProvider } from "@/components/providers/ModalProvider";
 import { SWRProvider } from "@/components/providers/SWRProvider";
