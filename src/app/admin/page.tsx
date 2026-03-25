@@ -1,5 +1,5 @@
 import { CreateHackathonButton } from "./_components/CreateHackathonButton";
-import { HackathonCardList } from "./_components/hackathonCardList/HackathonCardList";
+import { HackathonCardList } from "./_components/HackathonCardList";
 import styles from "./page.module.css";
 
 export default function AdminPage() {
