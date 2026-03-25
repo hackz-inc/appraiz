@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui'
-import { deleteTeam } from './actions'
+import { teams } from '@/lib/teams'
+import { useTeams } from '@/hooks/useTeams'
 
 export function DeleteTeamButton({
   teamId,
@@ -10,12 +11,17 @@ export function DeleteTeamButton({
   teamId: string
   hackathonId: string
 }) {
+  const { mutate } = useTeams(hackathonId)
+
   const handleDelete = async () => {
     if (!confirm('このチームを削除しますか？')) return
 
-    const result = await deleteTeam(teamId, hackathonId)
-    if (!result.success) {
-      alert(result.error)
+    try {
+      await teams.delete(teamId)
+      mutate() // SWRキャッシュを更新
+    } catch (error) {
+      console.error('Failed to delete team:', error)
+      alert('チームの削除に失敗しました')
     }
   }
 

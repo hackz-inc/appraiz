@@ -1,24 +1,40 @@
+'use client'
+
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Container, Button, Card } from '@/components/ui'
-import { getHackathonById } from '@/lib/server/hackathons'
-import { getTeamsByHackathon } from '@/lib/server/teams'
-import { getScoringItemsByHackathon } from '@/lib/server/scoring'
+import { useHackathon } from '@/hooks/useHackathons'
+import { useTeams } from '@/hooks/useTeams'
+import { useScoringItems } from '@/hooks/useScoringItems'
 import { BackButton } from './BackButton'
 import { DeleteTeamButton } from './DeleteTeamButton'
 import { DeleteScoringItemButton } from './DeleteScoringItemButton'
 
-export default async function HackathonDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { id: hackathonId } = await params
+export default function HackathonDetailPage() {
+  const params = useParams()
+  const hackathonId = params.id as string
 
-  const [hackathon, teamList, itemsList] = await Promise.all([
-    getHackathonById(hackathonId),
-    getTeamsByHackathon(hackathonId),
-    getScoringItemsByHackathon(hackathonId),
-  ])
+  const { hackathon, isLoading: hackathonLoading } = useHackathon(hackathonId)
+  const { teams: teamList, isLoading: teamsLoading } = useTeams(hackathonId)
+  const { scoringItems: itemsList, isLoading: itemsLoading } = useScoringItems(hackathonId)
+
+  const loading = hackathonLoading || teamsLoading || itemsLoading
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-block animate-spin h-12 w-12 border-4 border-yellow-primary border-t-transparent rounded-full" />
+      </div>
+    )
+  }
+
+  if (!hackathon) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>ハッカソンが見つかりません</p>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-black-lighten5">
@@ -52,7 +68,7 @@ export default async function HackathonDetailPage({
               <Button variant="primary">+ チーム追加</Button>
             </Link>
           </div>
-          {teamList.length === 0 ? (
+          {!teamList || teamList.length === 0 ? (
             <Card>
               <p className="text-center text-black-lighten1">
                 チームが登録されていません
@@ -87,7 +103,7 @@ export default async function HackathonDetailPage({
               <Button variant="primary">+ 採点項目追加</Button>
             </Link>
           </div>
-          {itemsList.length === 0 ? (
+          {!itemsList || itemsList.length === 0 ? (
             <Card>
               <p className="text-center text-black-lighten1">
                 採点項目が登録されていません

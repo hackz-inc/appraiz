@@ -1,29 +1,24 @@
-import { redirect } from 'next/navigation'
+'use client'
+
 import Link from 'next/link'
 import { Container, Button, Card } from '@/components/ui'
 import { CreateHackathonModal } from '@/components/features/hackathon'
-import { createClient } from '@/lib/supabase/server'
-import { getHackathons } from '@/lib/server/hackathons'
+import { useAuth } from '@/hooks/useAuth'
+import { useHackathons } from '@/hooks/useHackathons'
 import { SignOutButton } from './SignOutButton'
 import { CreateHackathonButton } from './CreateHackathonButton'
 
-export default async function AdminPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export default function AdminPage() {
+  const { user } = useAuth()
+  const { hackathons: hackathonsList, isLoading } = useHackathons()
 
-  if (!user) {
-    redirect('/admin/auth/login')
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-block animate-spin h-12 w-12 border-4 border-yellow-primary border-t-transparent rounded-full" />
+      </div>
+    )
   }
-
-  // Check if user is admin
-  const userRole = user.user_metadata?.role
-  if (userRole !== 'admin') {
-    redirect('/guest')
-  }
-
-  const hackathonsList = await getHackathons()
 
   return (
     <div className="min-h-screen bg-black-lighten5">
@@ -36,7 +31,7 @@ export default async function AdminPage() {
                 Appraiz 管理画面
               </h1>
               <p className="text-sm text-black-lighten1 mt-1">
-                {user.email}
+                {user?.email}
               </p>
             </div>
             <SignOutButton />
@@ -53,7 +48,7 @@ export default async function AdminPage() {
           <CreateHackathonButton />
         </div>
 
-        {hackathonsList.length === 0 ? (
+        {!hackathonsList || hackathonsList.length === 0 ? (
           <Card>
             <div className="text-center py-12">
               <p className="text-black-lighten1 mb-4">
