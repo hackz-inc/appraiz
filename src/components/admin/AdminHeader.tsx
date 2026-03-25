@@ -12,14 +12,12 @@ interface BreadcrumbItem {
 
 interface AdminHeaderProps {
 	breadcrumbs?: BreadcrumbItem[];
-	showMenuButton?: boolean;
 	isMenuOpen?: boolean;
 	onMenuToggle?: () => void;
 }
 
 export const AdminHeader = ({
 	breadcrumbs,
-	showMenuButton,
 	isMenuOpen,
 	onMenuToggle,
 }: AdminHeaderProps) => {
@@ -28,7 +26,7 @@ export const AdminHeader = ({
 			<Container>
 				<div className={styles.content}>
 					<div className={styles.left}>
-						{showMenuButton && onMenuToggle && (
+						{onMenuToggle && (
 							<button
 								className={styles.menuButton}
 								onClick={onMenuToggle}

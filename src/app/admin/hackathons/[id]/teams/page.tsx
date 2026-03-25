@@ -92,18 +92,6 @@ export default function TeamsPage() {
 			icon: "👥",
 			type: "team" as const,
 		})),
-		...(itemsList || []).map((item) => ({
-			id: item.id,
-			label: item.name,
-			icon: "📋",
-			type: "criteria" as const,
-		})),
-		...(guestsList || []).map((guest) => ({
-			id: guest.id,
-			label: guest.name,
-			icon: "🎤",
-			type: "guest" as const,
-		})),
 	];
 
 	const handleMenuToggle = () => {
@@ -118,7 +106,6 @@ export default function TeamsPage() {
 					{ label: hackathon.name, href: `/admin/hackathons/${hackathonId}` },
 					{ label: "チーム" },
 				]}
-				showMenuButton
 				isMenuOpen={isSidebarOpen}
 				onMenuToggle={handleMenuToggle}
 			/>

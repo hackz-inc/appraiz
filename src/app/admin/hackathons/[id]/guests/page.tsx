@@ -130,18 +130,6 @@ export default function GuestManagementPage() {
 	}
 
 	const sidebarItems = [
-		...(teamList || []).map((team) => ({
-			id: team.id,
-			label: team.name,
-			icon: "👥",
-			type: "team" as const,
-		})),
-		...(itemsList || []).map((item) => ({
-			id: item.id,
-			label: item.name,
-			icon: "📋",
-			type: "criteria" as const,
-		})),
 		...(guestList || [])
 			.filter((g) => g.isInvited)
 			.map((guest) => ({
@@ -164,7 +152,6 @@ export default function GuestManagementPage() {
 					{ label: hackathon.name, href: `/admin/hackathons/${hackathonId}` },
 					{ label: "ゲスト管理" },
 				]}
-				showMenuButton
 				isMenuOpen={isSidebarOpen}
 				onMenuToggle={handleMenuToggle}
 			/>
