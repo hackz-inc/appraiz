@@ -11,7 +11,7 @@ export function CreateHackathonButton() {
       variant="primary"
       onClick={() => openModal('isCreateHackathonModalOpen')}
     >
-      + 新規作成
+      ➕ 新規作成
     </Button>
   )
 }

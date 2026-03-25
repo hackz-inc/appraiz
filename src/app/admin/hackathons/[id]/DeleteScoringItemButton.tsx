@@ -26,8 +26,8 @@ export function DeleteScoringItemButton({
   }
 
   return (
-    <Button variant="secondary" size="sm" onClick={handleDelete}>
-      削除
+    <Button variant="danger" size="sm" onClick={handleDelete}>
+      🗑️ 削除
     </Button>
   )
 }
