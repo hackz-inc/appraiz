@@ -8,6 +8,7 @@ export function useHackathons() {
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+      revalidateIfStale: false, // キャッシュがある場合は再検証しない
       dedupingInterval: 60000, // 60秒間は重複リクエストしない
     }
   )
@@ -27,6 +28,7 @@ export function useHackathon(id: string) {
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+      revalidateIfStale: false, // キャッシュがある場合は再検証しない
       dedupingInterval: 60000,
     }
   )

@@ -8,6 +8,7 @@ export function useScoringItems(hackathonId: string) {
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+      revalidateIfStale: false, // キャッシュがある場合は再検証しない
       dedupingInterval: 60000,
     }
   )

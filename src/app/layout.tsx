@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import "@/styles/reset.css";
 import "@/styles/global.css";
+import { ModalProvider } from "@/components/providers/ModalProvider";
 
 const notoSansJP = Noto_Sans_JP({
 	subsets: ["latin"],
@@ -23,6 +24,7 @@ export default function RootLayout({
 		<html lang="ja" data-scroll-behavior="smooth">
 			<body className={`${notoSansJP.variable} font-noto-sans`}>
 				{children}
+				<ModalProvider />
 			</body>
 		</html>
 	);

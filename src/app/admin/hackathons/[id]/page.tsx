@@ -3,25 +3,23 @@
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Container, Button, Card } from '@/components/ui'
-import { useAuth } from '@/hooks/useAuth'
+import { AdminHeader } from '@/components/admin/AdminHeader'
 import { useHackathon } from '@/hooks/useHackathons'
 import { useTeams } from '@/hooks/useTeams'
 import { useScoringItems } from '@/hooks/useScoringItems'
-import { BackButton } from './BackButton'
 import { DeleteTeamButton } from './DeleteTeamButton'
 import { DeleteScoringItemButton } from './DeleteScoringItemButton'
-import { SignOutButton } from '../../SignOutButton'
 
 export default function HackathonDetailPage() {
   const params = useParams()
   const hackathonId = params.id as string
-  const { user } = useAuth()
 
   const { hackathon, isLoading: hackathonLoading } = useHackathon(hackathonId)
   const { teams: teamList, isLoading: teamsLoading } = useTeams(hackathonId)
   const { scoringItems: itemsList, isLoading: itemsLoading } = useScoringItems(hackathonId)
 
-  const loading = hackathonLoading || teamsLoading || itemsLoading
+  // 初回ロード時のみローディング画面を表示（キャッシュがない場合）
+  const loading = (hackathonLoading && !hackathon) || (teamsLoading && !teamList) || (itemsLoading && !itemsList)
 
   if (loading) {
     return (
@@ -64,28 +62,15 @@ export default function HackathonDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black-lighten5 via-white to-yellow-lighten1">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-yellow-primary via-yellow-lighten2 to-yellow-lighten1 border-b-4 border-yellow-primary shadow-lg">
-        <Container>
-          <div className="py-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-black text-black-primary drop-shadow-sm">
-                Appraiz 管理画面
-              </h1>
-              <p className="text-sm text-black-lighten1 mt-1 font-medium">
-                {user?.email}
-              </p>
-            </div>
-            <SignOutButton />
-          </div>
-        </Container>
-      </header>
+      <AdminHeader
+        breadcrumbs={[
+          { label: "ホーム", href: "/admin" },
+          { label: hackathon.name }
+        ]}
+      />
 
       {/* Main Content */}
       <Container className="py-10">
-        <div className="mb-6">
-          <BackButton />
-        </div>
 
         <Card variant="gradient" className="mb-8 border-4 border-yellow-primary">
           <div className="flex items-start gap-4">

@@ -9,7 +9,7 @@ export function CreateHackathonButton() {
   return (
     <Button
       variant="primary"
-      onClick={() => openModal('isCreateHackathonModalOpen')}
+      onClick={() => openModal('createHackathon')}
     >
       ➕ 新規作成
     </Button>

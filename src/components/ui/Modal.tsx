@@ -1,6 +1,7 @@
 'use client'
 
-import { ComponentPropsWithRef, useEffect } from 'react'
+import type { ComponentPropsWithRef } from 'react'
+import { useEffect } from 'react'
 
 interface ModalProps extends ComponentPropsWithRef<'div'> {
   isOpen: boolean
@@ -40,25 +41,28 @@ export const Modal = ({
   }
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-50"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Modal Content */}
       <div
-        className={`relative bg-white rounded-lg shadow-xl ${sizeStyles[size]} w-full max-h-[90vh] overflow-y-auto ${className}`}
+        className={`relative bg-white rounded-2xl shadow-2xl ${sizeStyles[size]} w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 ${className}`}
         {...props}
       >
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-black-lighten3">
-            <h2 className="text-2xl font-bold text-black-primary">{title}</h2>
+          <div className="flex items-center justify-between px-6 py-5 border-b-2 border-yellow-primary bg-gradient-to-r from-yellow-lighten1 to-white">
+            <h2 className="text-2xl font-black text-black-primary flex items-center gap-2">
+              <span className="text-3xl">✨</span>
+              {title}
+            </h2>
             <button
               onClick={onClose}
-              className="text-black-lighten2 hover:text-black-primary transition-colors"
+              className="inline-flex items-center justify-center w-10 h-10 rounded-lg text-black-lighten2 hover:text-white hover:bg-red transition-all duration-200"
             >
               <svg
                 className="w-6 h-6"
@@ -76,7 +80,7 @@ export const Modal = ({
         )}
 
         {/* Body */}
-        <div className="px-6 py-4">{children}</div>
+        <div className="px-6 py-6">{children}</div>
       </div>
     </div>
   )
