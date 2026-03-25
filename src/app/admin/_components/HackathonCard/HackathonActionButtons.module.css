@@ -1,0 +1,27 @@
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background-color: transparent;
+  color: var(--black-lighten1);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionButton:hover {
+  background-color: var(--black-lighten4);
+  color: var(--black-primary);
+}
+
+.actionButton:active {
+  transform: scale(0.95);
+}

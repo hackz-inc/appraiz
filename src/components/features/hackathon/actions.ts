@@ -44,3 +44,56 @@ export async function createHackathon(input: CreateHackathonInput) {
     }
   }
 }
+
+export async function updateHackathon(id: string, input: CreateHackathonInput) {
+  try {
+    const supabase = createAdminClient()
+
+    const updateData: Database['public']['Tables']['hackathon']['Update'] = {
+      name: input.name,
+      scoring_date: input.scoring_date,
+    }
+
+    const { data, error } = await (supabase
+      .from('hackathon') as any)
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    revalidatePath('/admin')
+    return { success: true, data }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'ハッカソンの更新に失敗しました',
+    }
+  }
+}
+
+export async function deleteHackathon(id: string) {
+  try {
+    const supabase = createAdminClient()
+
+    const { error } = await (supabase
+      .from('hackathon') as any)
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    revalidatePath('/admin')
+    return { success: true }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'ハッカソンの削除に失敗しました',
+    }
+  }
+}

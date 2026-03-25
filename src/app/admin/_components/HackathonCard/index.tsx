@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card } from "@/components/ui";
 import type { Hackathon } from "@/lib/hackathons";
+import { HackathonActionButtons } from "./HackathonActionButtons";
 import styles from "./index.module.css";
 
 interface HackathonCardProps {
@@ -11,7 +12,10 @@ export function HackathonCard({ hackathon }: HackathonCardProps) {
 	return (
 		<Card>
 			<div className={styles.cardContent}>
-				<h3 className={styles.hackathonTitle}>{hackathon.name}</h3>
+				<div className={styles.titleRow}>
+					<h3 className={styles.hackathonTitle}>{hackathon.name}</h3>
+					<HackathonActionButtons hackathonId={hackathon.id} />
+				</div>
 				<div className={styles.hackathonMeta}>
 					{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
 				</div>
