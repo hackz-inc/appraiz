@@ -1,0 +1,42 @@
+.wrapper {
+  /* wrapper is managed by fullWidth prop */
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--black-primary);
+  margin-bottom: 8px;
+}
+
+.textarea {
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--black-lighten3);
+  background-color: var(--black-lighten4);
+  transition: all 0.2s;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--yellow-primary);
+  border-color: transparent;
+}
+
+.textareaError {
+  border-color: var(--red);
+}
+
+.error {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--red);
+}

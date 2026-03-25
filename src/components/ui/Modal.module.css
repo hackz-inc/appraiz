@@ -1,0 +1,105 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-index-top);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  position: relative;
+  background-color: var(--white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: zoomIn 0.2s;
+}
+
+.sm {
+  max-width: 448px;
+}
+
+.md {
+  max-width: 512px;
+}
+
+.lg {
+  max-width: 672px;
+}
+
+.xl {
+  max-width: 896px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 2px solid var(--yellow-primary);
+  background: linear-gradient(to right, var(--yellow-lighten1), var(--white));
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--black-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  color: var(--black-lighten2);
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.closeButton:hover {
+  color: var(--white);
+  background-color: var(--red);
+}
+
+.body {
+  padding: 24px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

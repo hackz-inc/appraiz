@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef, forwardRef } from 'react'
+import styles from './TextInput.module.css'
 
 interface TextInputProps extends ComponentPropsWithRef<'input'> {
   label?: string
@@ -8,25 +9,21 @@ interface TextInputProps extends ComponentPropsWithRef<'input'> {
 
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   ({ label, error, fullWidth = true, className = '', ...props }, ref) => {
-    const baseStyles = 'px-4 py-3 text-base rounded border border-black-lighten3 bg-black-lighten4 focus:outline-none focus:ring-2 focus:ring-yellow-primary focus:border-transparent transition-all'
-    const widthStyles = fullWidth ? 'w-full' : ''
-    const errorStyles = error ? 'border-red' : ''
+    const wrapperClass = fullWidth ? styles.fullWidth : ''
+    const inputClass = [
+      styles.input,
+      fullWidth && styles.fullWidth,
+      error && styles.inputError,
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ')
 
     return (
-      <div className={fullWidth ? 'w-full' : ''}>
-        {label && (
-          <label className="block text-sm font-semibold text-black-primary mb-2">
-            {label}
-          </label>
-        )}
-        <input
-          ref={ref}
-          className={`${baseStyles} ${widthStyles} ${errorStyles} ${className}`}
-          {...props}
-        />
-        {error && (
-          <p className="mt-1 text-sm text-red">{error}</p>
-        )}
+      <div className={wrapperClass}>
+        {label && <label className={styles.label}>{label}</label>}
+        <input ref={ref} className={inputClass} {...props} />
+        {error && <p className={styles.error}>{error}</p>}
       </div>
     )
   }

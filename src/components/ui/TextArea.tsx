@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef, forwardRef } from 'react'
+import styles from './TextArea.module.css'
 
 interface TextAreaProps extends ComponentPropsWithRef<'textarea'> {
   label?: string
@@ -8,25 +9,21 @@ interface TextAreaProps extends ComponentPropsWithRef<'textarea'> {
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ label, error, fullWidth = true, className = '', ...props }, ref) => {
-    const baseStyles = 'px-4 py-3 text-base rounded border border-black-lighten3 bg-black-lighten4 focus:outline-none focus:ring-2 focus:ring-yellow-primary focus:border-transparent transition-all resize-vertical min-h-[100px]'
-    const widthStyles = fullWidth ? 'w-full' : ''
-    const errorStyles = error ? 'border-red' : ''
+    const wrapperClass = fullWidth ? styles.fullWidth : ''
+    const textareaClass = [
+      styles.textarea,
+      fullWidth && styles.fullWidth,
+      error && styles.textareaError,
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ')
 
     return (
-      <div className={fullWidth ? 'w-full' : ''}>
-        {label && (
-          <label className="block text-sm font-semibold text-black-primary mb-2">
-            {label}
-          </label>
-        )}
-        <textarea
-          ref={ref}
-          className={`${baseStyles} ${widthStyles} ${errorStyles} ${className}`}
-          {...props}
-        />
-        {error && (
-          <p className="mt-1 text-sm text-red">{error}</p>
-        )}
+      <div className={wrapperClass}>
+        {label && <label className={styles.label}>{label}</label>}
+        <textarea ref={ref} className={textareaClass} {...props} />
+        {error && <p className={styles.error}>{error}</p>}
       </div>
     )
   }

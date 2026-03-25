@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef, forwardRef } from 'react'
+import styles from './Container.module.css'
 
 interface ContainerProps extends ComponentPropsWithRef<'div'> {
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
@@ -6,20 +7,12 @@ interface ContainerProps extends ComponentPropsWithRef<'div'> {
 
 export const Container = forwardRef<HTMLDivElement, ContainerProps>(
   ({ maxWidth = 'md', children, className = '', ...props }, ref) => {
-    const maxWidthStyles = {
-      sm: 'max-w-2xl',
-      md: 'max-w-[805px]',
-      lg: 'max-w-5xl',
-      xl: 'max-w-7xl',
-      full: 'max-w-full',
-    }
+    const classNames = [styles.container, styles[maxWidth], className]
+      .filter(Boolean)
+      .join(' ')
 
     return (
-      <div
-        ref={ref}
-        className={`w-full ${maxWidthStyles[maxWidth]} mx-auto px-8 ${className}`}
-        {...props}
-      >
+      <div ref={ref} className={classNames} {...props}>
         {children}
       </div>
     )

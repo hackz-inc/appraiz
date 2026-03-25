@@ -4,21 +4,22 @@ import { Button, Card } from "@/components/ui";
 import Link from "next/link";
 import { useHackathons } from "@/hooks/useHackathons";
 import { CreateHackathonButton } from "./CreateHackathonButton";
+import styles from './HackathonCardList.module.css';
 
 export function HackathonCardList() {
 	const { hackathons, isLoading } = useHackathons();
 
 	if (isLoading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black-lighten5 via-white to-yellow-lighten1">
-				<div className="text-center">
-					<div className="relative inline-block mb-4">
-						<div className="absolute inset-0 animate-ping h-16 w-16 rounded-full bg-yellow-primary opacity-20" />
-						<div className="relative inline-flex items-center justify-center h-16 w-16 rounded-full bg-yellow-primary shadow-lg">
-							<span className="text-3xl animate-bounce">⏳</span>
+			<div className={styles.loading}>
+				<div className={styles.loadingContent}>
+					<div className={styles.loadingIconWrapper}>
+						<div className={styles.loadingPing} />
+						<div className={styles.loadingIcon}>
+							<span className={styles.loadingEmoji}>⏳</span>
 						</div>
 					</div>
-					<p className="text-black-lighten1 font-medium">読み込み中...</p>
+					<p className={styles.loadingText}>読み込み中...</p>
 				</div>
 			</div>
 		);
@@ -26,20 +27,17 @@ export function HackathonCardList() {
 
 	if (!hackathons || hackathons.length === 0) {
 		return (
-			<Card
-				variant="elevated"
-				className="bg-gradient-to-br from-white to-yellow-lighten1"
-			>
-				<div className="text-center py-16">
-					<div className="mb-6">
-						<div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-yellow-primary/20 mb-4">
-							<span className="text-4xl">📋</span>
+			<Card variant="elevated" className={styles.emptyCard}>
+				<div className={styles.emptyContent}>
+					<div className={styles.emptyIconWrapper}>
+						<div className={styles.emptyIcon}>
+							<span className={styles.emptyEmoji}>📋</span>
 						</div>
 					</div>
-					<h3 className="text-2xl font-bold text-black-primary mb-3">
+					<h3 className={styles.emptyTitle}>
 						ハッカソンがまだありません
 					</h3>
-					<p className="text-black-lighten1 mb-6 max-w-md mx-auto">
+					<p className={styles.emptyDescription}>
 						新しいハッカソンを作成して、チームの評価を始めましょう
 					</p>
 					<CreateHackathonButton />
@@ -49,29 +47,25 @@ export function HackathonCardList() {
 	}
 
 	return (
-		<ul className="flex flex-col gap-6">
+		<ul className={styles.list}>
 			{hackathons.map((hackathon) => (
-				<Link key={hackathon.id} href={`/admin/hackathons/${hackathon.id}`}>
-					<Card
-						variant="elevated"
-						hoverable
-						className="h-full border-2 border-transparent hover:border-yellow-primary"
-					>
-						<div className="mb-4">
-							<div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-yellow-primary/20 mb-3">
-								<span className="text-2xl">🏆</span>
+				<Link key={hackathon.id} href={`/admin/hackathons/${hackathon.id}`} className={styles.cardLink}>
+					<Card variant="elevated" hoverable className={styles.hackathonCard}>
+						<div className={styles.cardContent}>
+							<div className={styles.iconWrapper}>
+								<span className={styles.icon}>🏆</span>
 							</div>
-							<h3 className="text-xl font-bold text-black-primary mb-2">
+							<h3 className={styles.hackathonTitle}>
 								{hackathon.name}
 							</h3>
-							<div className="flex items-center gap-2 text-sm text-black-lighten1">
+							<div className={styles.hackathonMeta}>
 								<span>📅</span>
 								<span>
 									{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
 								</span>
 							</div>
 						</div>
-						<div className="flex gap-2 mt-4">
+						<div className={styles.buttonGroup}>
 							<Button
 								variant="primary"
 								size="sm"

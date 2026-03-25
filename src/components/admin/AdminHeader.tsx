@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Container, Breadcrumb } from "@/components/ui";
 import { SignOutButton } from "@/app/admin/_components/SignOutButton";
+import styles from './AdminHeader.module.css';
 
 interface BreadcrumbItem {
 	label: string;
@@ -15,16 +16,16 @@ interface AdminHeaderProps {
 
 export const AdminHeader = ({ breadcrumbs }: AdminHeaderProps) => {
 	return (
-		<header className="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-yellow-primary/95 via-yellow-lighten2/95 to-yellow-lighten1/95 border-b-4 border-yellow-primary shadow-xl">
+		<header className={styles.header}>
 			<Container>
-				<div className="py-4 flex items-center justify-between">
-					<div className="flex items-center gap-4">
-						<Link href="/admin" className="flex items-center gap-3 group">
-							<div>
-								<h1 className="text-xl font-black text-black-primary drop-shadow-sm">
+				<div className={styles.content}>
+					<div className={styles.left}>
+						<Link href="/admin" className={styles.logoLink}>
+							<div className={styles.logo}>
+								<h1 className={styles.title}>
 									Appraiz
 								</h1>
-								<p className="text-xs text-black-lighten1 font-medium">
+								<p className={styles.subtitle}>
 									管理画面
 								</p>
 							</div>
@@ -34,7 +35,7 @@ export const AdminHeader = ({ breadcrumbs }: AdminHeaderProps) => {
 				</div>
 
 				{breadcrumbs && breadcrumbs.length > 0 && (
-					<div className="pb-4">
+					<div className={styles.breadcrumbWrapper}>
 						<Breadcrumb items={breadcrumbs} />
 					</div>
 				)}
