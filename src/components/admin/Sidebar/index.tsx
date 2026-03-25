@@ -10,18 +10,19 @@ type SidebarItem = {
 	id: string;
 	label: string;
 	icon: string;
-	type: "team" | "criteria" | "guest" | "hackathon";
+	type: "team" | "criteria" | "guest" | "hackathon" | "tab";
 };
 
 type SidebarProps = {
 	items: SidebarItem[];
 	isOpen: boolean;
 	currentHash?: string;
+	currentTab?: string;
 	onClose?: () => void;
 	hackathonId: string;
 };
 
-export function Sidebar({ items, isOpen, currentHash, onClose, hackathonId }: SidebarProps) {
+export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hackathonId }: SidebarProps) {
 	const router = useRouter();
 	const [windowWidth, setWindowWidth] = useState(
 		typeof window !== "undefined" ? window.innerWidth : 1280
@@ -53,7 +54,8 @@ export function Sidebar({ items, isOpen, currentHash, onClose, hackathonId }: Si
 		}
 	}, [windowWidth]);
 
-	// チーム、採点項目、ゲスト、ハッカソンでグループ化
+	// チーム、採点項目、ゲスト、ハッカソン、タブでグループ化
+	const tabs = items.filter((item) => item.type === "tab");
 	const teams = items.filter((item) => item.type === "team");
 	const criteria = items.filter((item) => item.type === "criteria");
 	const guests = items.filter((item) => item.type === "guest");
@@ -64,7 +66,9 @@ export function Sidebar({ items, isOpen, currentHash, onClose, hackathonId }: Si
 		e.preventDefault();
 
 		let path = "";
-		if (item.type === "team") {
+		if (item.type === "tab") {
+			path = `/admin/hackathons/${hackathonId}?tab=${item.id}`;
+		} else if (item.type === "team") {
 			path = `/admin/hackathons/${hackathonId}/teams/${item.id}`;
 		} else if (item.type === "criteria") {
 			path = `/admin/hackathons/${hackathonId}/criteria/${item.id}`;
@@ -93,6 +97,26 @@ export function Sidebar({ items, isOpen, currentHash, onClose, hackathonId }: Si
 					transition={{ duration: 0.3, ease: "easeInOut" }}
 				>
 					<div className={styles.sidebarContent}>
+						{/* タブ一覧 */}
+						{tabs.length > 0 && (
+							<div className={styles.section}>
+								<ul className={styles.itemList}>
+									{tabs.map((tab) => (
+										<li key={tab.id}>
+											<Link
+												href={`/admin/hackathons/${hackathonId}?tab=${tab.id}`}
+												className={`${styles.item} ${currentTab === tab.id ? styles.itemActive : ""}`}
+												onClick={(e) => handleNavigate(e, tab)}
+											>
+												<span className={styles.itemIcon}>{tab.icon}</span>
+												<span className={styles.itemLabel}>{tab.label}</span>
+											</Link>
+										</li>
+									))}
+								</ul>
+							</div>
+						)}
+
 						{/* ハッカソン一覧 */}
 						{hackathons.length > 0 && (
 							<div className={styles.section}>

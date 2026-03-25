@@ -99,6 +99,7 @@ export function HackathonDetailClient({
 			<Sidebar
 				items={sidebarItems}
 				isOpen={isSidebarOpen}
+				currentTab={tab}
 				onClose={() => setIsSidebarOpen(false)}
 				hackathonId={hackathon.id}
 			/>
@@ -235,8 +236,10 @@ export function HackathonDetailClient({
 						</div>
 					)}
 				</div>
+				)}
 
-				{/* Guest Section */}
+				{/* Guests Tab */}
+				{tab === "guests" && (
 				<div id="guests-section" className="mb-10">
 					<div className="flex items-center justify-between mb-6">
 						<div>
@@ -303,8 +306,10 @@ export function HackathonDetailClient({
 						</div>
 					)}
 				</div>
+				)}
 
-				{/* Criteria Section */}
+				{/* Criteria Tab */}
+				{tab === "criteria" && (
 				<div id="criteria-section">
 					<div className="flex items-center justify-between mb-6">
 						<div>
@@ -373,6 +378,7 @@ export function HackathonDetailClient({
 						</div>
 					)}
 				</div>
+				)}
 			</Container>
 		</div>
 	);
