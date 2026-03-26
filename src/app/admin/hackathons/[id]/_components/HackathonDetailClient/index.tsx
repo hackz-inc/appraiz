@@ -35,7 +35,7 @@ export function HackathonDetailClient({
 				]}
 			/>
 
-			<Container className={styles.contentContainer}>
+			<div className={styles.contentContainer}>
 				{/* チームセクション */}
 				<div id="teams-section" className={styles.section}>
 					<div className={styles.sectionHeader}>
@@ -204,7 +204,7 @@ export function HackathonDetailClient({
 						</div>
 					)}
 				</div>
-			</Container>
+			</div>
 		</div>
 	);
 }

@@ -4,14 +4,10 @@
 }
 
 .contentContainer {
-  padding-top: 2.5rem;
-  padding-bottom: 2.5rem;
-}
-
-@media (min-width: 1280px) {
-  .contentContainer {
-    margin-left: 280px;
-  }
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
 }
 
 .overlay {
@@ -30,6 +26,7 @@
 /* Section Styles */
 .section {
   margin-bottom: 2.5rem;
+  flex: 1;
 }
 
 .sectionHeader {

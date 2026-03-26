@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { Button, TextInput } from "@/components/ui";
 import { scoringItems } from "@/lib/scoring";
 import styles from "./index.module.css";
+import { PlusIcon } from "@/components/ui/icons";
 
 export function NewCriteriaForm() {
 	const router = useRouter();
@@ -68,26 +69,9 @@ export function NewCriteriaForm() {
 				min={1}
 			/>
 
-			<div className={styles.buttonGroup}>
-				<Button
-					type="button"
-					variant="secondary"
-					size="lg"
-					onClick={() => router.back()}
-					fullWidth
-				>
-					キャンセル
-				</Button>
-				<Button
-					type="submit"
-					variant="primary"
-					size="lg"
-					isLoading={loading}
-					fullWidth
-				>
-					作成
-				</Button>
-			</div>
+			<button type="submit">
+				<PlusIcon />
+			</button>
 		</form>
 	);
 }
