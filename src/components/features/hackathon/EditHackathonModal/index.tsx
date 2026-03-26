@@ -75,55 +75,49 @@ export const EditHackathonModal = () => {
 			title="ハッカソン編集"
 			size="lg"
 		>
-			<Card className={styles.card}>
-				<form onSubmit={handleSubmit} className={styles.form}>
-					{error && (
-						<div className={styles.errorMessage}>
-							{error}
-						</div>
-					)}
+			<form onSubmit={handleSubmit} className={styles.form}>
+				{error && <div className={styles.errorMessage}>{error}</div>}
 
-					<TextInput
-						type="text"
-						label="ハッカソン名"
-						placeholder="例: Spring Hackathon 2024"
-						value={formData.name}
-						onChange={(e) => handleChange("name", e.target.value)}
-						required
+				<TextInput
+					type="text"
+					label="ハッカソン名"
+					placeholder="例: Spring Hackathon 2024"
+					value={formData.name}
+					onChange={(e) => handleChange("name", e.target.value)}
+					required
+					fullWidth
+				/>
+
+				<TextInput
+					type="date"
+					label="採点日"
+					value={formData.scoringDate}
+					onChange={(e) => handleChange("scoringDate", e.target.value)}
+					required
+					fullWidth
+				/>
+
+				<div className={styles.buttonGroup}>
+					<Button
+						type="button"
+						variant="secondary"
+						size="lg"
+						onClick={handleClose}
 						fullWidth
-					/>
-
-					<TextInput
-						type="date"
-						label="採点日"
-						value={formData.scoringDate}
-						onChange={(e) => handleChange("scoringDate", e.target.value)}
-						required
+					>
+						キャンセル
+					</Button>
+					<Button
+						type="submit"
+						variant="primary"
+						size="lg"
+						isLoading={loading}
 						fullWidth
-					/>
-
-					<div className={styles.buttonGroup}>
-						<Button
-							type="button"
-							variant="secondary"
-							size="lg"
-							onClick={handleClose}
-							fullWidth
-						>
-							キャンセル
-						</Button>
-						<Button
-							type="submit"
-							variant="primary"
-							size="lg"
-							isLoading={loading}
-							fullWidth
-						>
-							更新
-						</Button>
-					</div>
-				</form>
-			</Card>
+					>
+						更新
+					</Button>
+				</div>
+			</form>
 		</Modal>
 	);
 };
