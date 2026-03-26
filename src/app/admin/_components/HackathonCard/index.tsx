@@ -23,7 +23,7 @@ export function HackathonCard({ hackathon }: Props) {
 			<div className={styles.cardContent}>
 				<div className={styles.titleRow}>
 					<h3 className={styles.hackathonTitle}>{hackathon.name}</h3>
-					<HackathonActionButtons hackathonId={hackathon.id} />
+					<HackathonActionButtons hackathon={hackathon} />
 				</div>
 				<div className={styles.hackathonMeta}>
 					{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}

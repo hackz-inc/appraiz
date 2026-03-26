@@ -2,23 +2,24 @@
 
 import { EditIcon, DeleteIcon } from "@/components/ui/icons";
 import { useModalStore } from "@/stores";
+import type { Hackathon } from "@/lib/hackathons";
 import styles from "./HackathonActionButtons.module.css";
 
 interface HackathonActionButtonsProps {
-	hackathonId: string;
+	hackathon: Hackathon;
 }
 
 export function HackathonActionButtons({
-	hackathonId,
+	hackathon,
 }: HackathonActionButtonsProps) {
 	const { openModal } = useModalStore();
 
 	const handleEdit = () => {
-		openModal("editHackathon", { data: { hackathonId } });
+		openModal("editHackathon", { data: { hackathon } });
 	};
 
 	const handleDelete = () => {
-		openModal("deleteHackathon", { data: { hackathonId } });
+		openModal("deleteHackathon", { data: { hackathon } });
 	};
 
 	return (
