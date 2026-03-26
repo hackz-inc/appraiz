@@ -9,6 +9,7 @@ export default async function HackathonDetailPage({
 	params,
 }: {
 	params: Promise<{ id: string }>;
+	searchParams: Promise<{ tab?: string }>;
 }) {
 	const resolvedParams = await params;
 	const hackathonId = resolvedParams.id;
