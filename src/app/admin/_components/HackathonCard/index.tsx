@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CopyButton } from "@/components/ui";
 import type { Hackathon } from "@/lib/hackathons";
@@ -11,7 +12,11 @@ interface Props {
 }
 
 export function HackathonCard({ hackathon }: Props) {
-	const scoringUrl = `http://localhost:3000/score/${hackathon.id}`;
+	const [scoringUrl, setScoringUrl] = useState(`/score/${hackathon.id}`);
+
+	useEffect(() => {
+		setScoringUrl(`${window.location.origin}/score/${hackathon.id}`);
+	}, [hackathon.id]);
 
 	return (
 		<Card>

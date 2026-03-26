@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import styles from "./index.module.css";
 
 type SideNavItem = {
 	label: string;
@@ -20,30 +21,22 @@ export function SideNav({ hackathonId, items }: SideNavProps) {
 	const currentTab = searchParams.get("tab") || "teams";
 
 	return (
-		<nav className="w-64 bg-white border-r border-black-lighten4 h-[calc(100vh-80px)] sticky top-20 overflow-y-auto">
-			<div className="p-6">
-				<h3 className="text-sm font-bold text-black-lighten2 uppercase tracking-wider mb-4">
+		<nav className={styles.nav}>
+			<div className={styles.container}>
+				<h3 className={styles.heading}>
 					設定メニュー
 				</h3>
-				<ul className="space-y-2">
+				<ul className={styles.list}>
 					{items.map((item) => {
 						const isActive = currentTab === item.query;
 						return (
 							<li key={item.query}>
 								<Link
 									href={`/admin/hackathons/${hackathonId}?tab=${item.query}`}
-									className={`
-										flex items-center gap-3 px-4 py-3 rounded-lg
-										transition-all duration-200
-										${
-											isActive
-												? "bg-yellow-primary text-black-primary font-bold shadow-md"
-												: "text-black-lighten1 hover:bg-black-lighten5 hover:text-black-primary"
-										}
-									`}
+									className={`${styles.link} ${isActive ? styles.linkActive : styles.linkInactive}`}
 								>
-									<span className="text-xl">{item.icon}</span>
-									<span className="text-sm">{item.label}</span>
+									<span className={styles.icon}>{item.icon}</span>
+									<span className={styles.label}>{item.label}</span>
 								</Link>
 							</li>
 						);

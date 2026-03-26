@@ -8,11 +8,11 @@ interface HackathonPasswordData {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { password } = await request.json()
-    const hackathonId = params.id
+    const { id: hackathonId } = await params
 
     if (!password) {
       return NextResponse.json(
