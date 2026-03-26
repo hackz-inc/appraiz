@@ -24,35 +24,6 @@ type SidebarProps = {
 
 export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hackathonId }: SidebarProps) {
 	const router = useRouter();
-	const [windowWidth, setWindowWidth] = useState(
-		typeof window !== "undefined" ? window.innerWidth : 1280
-	);
-	const [animate, setAnimate] = useState({ opacity: 0, x: 0 });
-	const [exit, setExit] = useState({ opacity: 0, x: 0 });
-
-	// ウィンドウサイズの監視
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
-
-	// レスポンシブアニメーション設定
-	useEffect(() => {
-		const breakpoint = 1280; // lg breakpoint
-		if (windowWidth < breakpoint) {
-			// モバイル: スライドアニメーション
-			setAnimate({ opacity: 1, x: 200 });
-			setExit({ opacity: 0, x: -200 });
-		} else {
-			// デスクトップ: フェードのみ
-			setAnimate({ opacity: 1, x: 0 });
-			setExit({ opacity: 0, x: 0 });
-		}
-	}, [windowWidth]);
 
 	// チーム、採点項目、ゲスト、ハッカソン、タブでグループ化
 	const tabs = items.filter((item) => item.type === "tab");
@@ -78,8 +49,8 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 			path = `/admin/hackathons/${item.id}`;
 		}
 
-		// モバイルの場合はサイドバーを閉じる
-		if (windowWidth < 1280 && onClose) {
+		// サイドバーを閉じる（モバイル）
+		if (onClose) {
 			onClose();
 		}
 
@@ -91,9 +62,9 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 			{isOpen && (
 				<motion.aside
 					className={styles.sidebar}
-					animate={animate}
-					exit={exit}
-					initial={{ opacity: 0, x: windowWidth < 1280 ? -200 : 0 }}
+					animate={{ opacity: 1, x: 0 }}
+					exit={{ opacity: 0, x: -200 }}
+					initial={{ opacity: 0, x: -200 }}
 					transition={{ duration: 0.3, ease: "easeInOut" }}
 				>
 					<div className={styles.sidebarContent}>
@@ -124,7 +95,7 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 									href="/admin"
 									className={styles.sectionTitleLink}
 									onClick={() => {
-										if (windowWidth < 1280 && onClose) {
+										if (onClose) {
 											onClose();
 										}
 									}}
@@ -145,7 +116,7 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 									href={`/admin/hackathons/${hackathonId}/teams`}
 									className={styles.sectionTitleLink}
 									onClick={() => {
-										if (windowWidth < 1280 && onClose) {
+										if (onClose) {
 											onClose();
 										}
 									}}
@@ -166,7 +137,7 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 									href={`/admin/hackathons/${hackathonId}/criteria`}
 									className={styles.sectionTitleLink}
 									onClick={() => {
-										if (windowWidth < 1280 && onClose) {
+										if (onClose) {
 											onClose();
 										}
 									}}
@@ -187,7 +158,7 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 									href={`/admin/hackathons/${hackathonId}/guests`}
 									className={styles.sectionTitleLink}
 									onClick={() => {
-										if (windowWidth < 1280 && onClose) {
+										if (onClose) {
 											onClose();
 										}
 									}}

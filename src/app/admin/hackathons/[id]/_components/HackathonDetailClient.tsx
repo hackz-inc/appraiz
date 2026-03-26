@@ -31,26 +31,6 @@ export function HackathonDetailClient({
 	const tab = searchParams.get("tab") || "overview";
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const [windowWidth, setWindowWidth] = useState(
-		typeof window !== "undefined" ? window.innerWidth : 1280,
-	);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
-
-	useEffect(() => {
-		if (windowWidth >= 1280) {
-			setIsSidebarOpen(true);
-		} else {
-			setIsSidebarOpen(false);
-		}
-	}, [windowWidth]);
 
 	const sidebarItems = [
 		{ id: "overview", label: "概要", icon: "📊", type: "tab" as const },
@@ -76,12 +56,13 @@ export function HackathonDetailClient({
 			/>
 
 			<AnimatePresence>
-				{isSidebarOpen && windowWidth < 1280 && (
+				{isSidebarOpen && (
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.3 }}
+						className="fixed inset-0 bg-black/50 z-[999] xl:hidden"
 						onClick={handleMenuToggle}
 						style={{
 							position: "fixed",
@@ -105,10 +86,7 @@ export function HackathonDetailClient({
 			/>
 
 			<Container
-				className="py-10"
-				style={{
-					marginLeft: windowWidth >= 1280 && isSidebarOpen ? "280px" : "0",
-				}}
+				className="py-10 xl:ml-[280px]"
 			>
 				{/* Overview Tab */}
 				{tab === "overview" && (

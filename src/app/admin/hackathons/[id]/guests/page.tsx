@@ -27,9 +27,6 @@ export default function GuestManagementPage() {
 	const [error, setError] = useState("");
 	const [successMessage, setSuccessMessage] = useState("");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const [windowWidth, setWindowWidth] = useState(
-		typeof window !== "undefined" ? window.innerWidth : 1280,
-	);
 
 	useEffect(() => {
 		const loadGuests = async () => {
@@ -49,23 +46,6 @@ export default function GuestManagementPage() {
 
 		loadGuests();
 	}, [hackathonId]);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowWidth(window.innerWidth);
-		};
-
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
-
-	useEffect(() => {
-		if (windowWidth >= 1280) {
-			setIsSidebarOpen(true);
-		} else {
-			setIsSidebarOpen(false);
-		}
-	}, [windowWidth]);
 
 	const handleCheckboxChange = (guestId: string) => {
 		setSelectedGuestIds((prev) =>
@@ -157,22 +137,14 @@ export default function GuestManagementPage() {
 			/>
 
 			<AnimatePresence>
-				{isSidebarOpen && windowWidth < 1280 && (
+				{isSidebarOpen && (
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.3 }}
 						onClick={handleMenuToggle}
-						style={{
-							position: "fixed",
-							top: 0,
-							left: 0,
-							right: 0,
-							bottom: 0,
-							backgroundColor: "rgba(0, 0, 0, 0.5)",
-							zIndex: 999,
-						}}
+						className="fixed inset-0 bg-black/50 z-[999] xl:hidden"
 					/>
 				)}
 			</AnimatePresence>

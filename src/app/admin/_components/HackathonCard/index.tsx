@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function HackathonCard({ hackathon }: Props) {
-	const scoringUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/score/${hackathon.id}`;
+	const scoringUrl = `http://localhost:3000/score/${hackathon.id}`;
 
 	return (
 		<Card>
