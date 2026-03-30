@@ -1,19 +1,15 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from './client'
+import { createClient } from "@supabase/supabase-js";
+// import type { Database } from "./types"; // 型定義のパスに合わせて調整してください
 
-// Admin client using service role key for bypassing RLS
-export const createAdminClient = (): SupabaseClient<Database> => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-  if (!serviceRoleKey) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not defined')
-  }
-
-  return createClient<Database>(supabaseUrl, serviceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
-}
+export const createAdminClient = () => {
+	return createClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.SUPABASE_SERVICE_ROLE_KEY!, // 注意：ANON_KEY ではなく SERVICE_ROLE_KEY
+		{
+			auth: {
+				autoRefreshToken: false,
+				persistSession: false,
+			},
+		},
+	);
+};
