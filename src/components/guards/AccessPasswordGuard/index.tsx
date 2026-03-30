@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Card, Button, TextInput, Container } from "@/components/ui";
 import { hackathons } from "@/lib/hackathons";
-import styles from "./index.module.css";
 
 interface AccessPasswordGuardProps {
 	hackathonId: string;
@@ -75,8 +74,8 @@ export function AccessPasswordGuard({
 	// Loading state while checking stored password
 	if (isVerified === null) {
 		return (
-			<div className={styles.loadingContainer}>
-				<div className={styles.spinner} />
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--blue)] to-[var(--yellow-lighten1)]">
+				<div className="inline-block w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin" />
 			</div>
 		);
 	}
@@ -84,24 +83,24 @@ export function AccessPasswordGuard({
 	// Show password prompt if not verified
 	if (!isVerified) {
 		return (
-			<div className={styles.pageContainer}>
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--blue)] to-[var(--yellow-lighten1)] p-4">
 				<Container maxWidth="sm">
-					<Card className={styles.card}>
-						<div className={styles.header}>
-							<div className={styles.iconContainer}>
-								<span className={styles.icon}>🔒</span>
+					<Card className="w-full">
+						<div className="text-center mb-8">
+							<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--yellow-primary)] mb-4">
+								<span className="text-3xl">🔒</span>
 							</div>
-							<h1 className={styles.title}>
+							<h1 className="text-3xl font-bold text-[var(--black-primary)] mb-2">
 								アクセスパスワード
 							</h1>
-							<p className={styles.subtitle}>
+							<p className="text-lg text-[var(--black-lighten1)]">
 								このハッカソンにアクセスするにはパスワードが必要です
 							</p>
 						</div>
 
-						<form onSubmit={handleSubmit} className={styles.form}>
+						<form onSubmit={handleSubmit} className="flex flex-col gap-6">
 							{error && (
-								<div className={styles.errorMessage}>
+								<div className="p-4 bg-[var(--red)] bg-opacity-10 border border-[var(--red)] rounded-md text-[var(--red)] text-sm">
 									{error}
 								</div>
 							)}

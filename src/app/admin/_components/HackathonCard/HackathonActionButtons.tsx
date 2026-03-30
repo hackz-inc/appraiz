@@ -3,7 +3,6 @@
 import { EditIcon, DeleteIcon } from "@/components/ui/icons";
 import { useModalStore } from "@/stores";
 import type { Hackathon } from "@/lib/hackathons";
-import styles from "./HackathonActionButtons.module.css";
 
 interface HackathonActionButtonsProps {
 	hackathon: Hackathon;
@@ -23,11 +22,11 @@ export function HackathonActionButtons({
 	};
 
 	return (
-		<div className={styles.actions}>
+		<div className="flex gap-2">
 			<button
 				type="button"
 				onClick={handleEdit}
-				className={styles.actionButton}
+				className="inline-flex items-center justify-center w-9 h-9 rounded-lg border-none bg-transparent text-[var(--black-lighten1)] cursor-pointer transition-all hover:bg-[var(--black-lighten4)] hover:text-[var(--black-primary)] active:scale-95"
 				aria-label="編集"
 			>
 				<EditIcon size={20} />
@@ -35,7 +34,7 @@ export function HackathonActionButtons({
 			<button
 				type="button"
 				onClick={handleDelete}
-				className={styles.actionButton}
+				className="inline-flex items-center justify-center w-9 h-9 rounded-lg border-none bg-transparent text-[var(--black-lighten1)] cursor-pointer transition-all hover:bg-[var(--black-lighten4)] hover:text-[var(--black-primary)] active:scale-95"
 				aria-label="削除"
 			>
 				<DeleteIcon size={20} />

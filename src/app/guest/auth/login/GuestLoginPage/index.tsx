@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, TextInput, Container, Card } from "@/components/ui";
 import { auth } from "@/lib/auth";
-import styles from './index.module.css';
 
 export default function GuestLoginPage() {
 	const router = useRouter();
@@ -43,19 +42,19 @@ export default function GuestLoginPage() {
 	};
 
 	return (
-		<div className={styles.pageContainer}>
+		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-blue)] to-[var(--color-yellow-lighten1)] p-16">
 			<Container maxWidth="sm">
 				<Card>
-					<div className={styles.header}>
-						<h1 className={styles.title}>
+					<div className="text-center mb-32">
+						<h1 className="text-6xl font-bold text-[var(--color-black-primary)] mb-8">
 							Appraiz
 						</h1>
-						<p className={styles.subtitle}>ゲストログイン</p>
+						<p className="text-[1.8rem] text-[var(--color-black-lighten1)]">ゲストログイン</p>
 					</div>
 
-					<form onSubmit={handleSubmit} className={styles.form}>
+					<form onSubmit={handleSubmit} className="flex flex-col gap-24">
 						{error && (
-							<div className={styles.errorMessage}>
+							<div className="p-16 bg-[var(--color-red)] opacity-10 border border-[var(--color-red)] rounded text-[var(--color-red)] text-[1.4rem]">
 								{error}
 							</div>
 						)}
@@ -91,19 +90,19 @@ export default function GuestLoginPage() {
 						</Button>
 					</form>
 
-					<div className={styles.footer}>
-						<p className={styles.signupPrompt}>
+					<div className="mt-24 text-center flex flex-col gap-8">
+						<p className="text-[1.4rem] text-[var(--color-black-lighten1)]">
 							アカウントをお持ちでない方は
 							<Link
 								href="/guest/auth/signup"
-								className={styles.signupLink}
+								className="ml-4 text-[var(--color-blue)] no-underline hover:underline"
 							>
 								新規登録
 							</Link>
 						</p>
 						<a
 							href="/"
-							className={styles.homeLink}
+							className="block text-[1.4rem] text-[var(--color-black-lighten1)] no-underline transition-colors hover:text-[var(--color-black-primary)]"
 						>
 							ホームに戻る
 						</a>

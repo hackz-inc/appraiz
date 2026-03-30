@@ -6,7 +6,6 @@ import { Container, Card } from "@/components/ui";
 import { AccessPasswordGuard } from "@/components/guards";
 import { hackathons, type Hackathon } from "@/lib/hackathons";
 import { scoring, type TeamScoreResult } from "@/lib/scoring";
-import styles from "./index.module.css";
 
 function ResultsPageContent() {
 	const params = useParams();
@@ -37,93 +36,93 @@ function ResultsPageContent() {
 
 	if (loading) {
 		return (
-			<div className={styles.loadingContainer}>
-				<div className={styles.spinner} />
+			<div className="min-h-screen flex items-center justify-center">
+				<div className="inline-block w-12 h-12 border-4 border-[var(--yellow-primary)] border-t-transparent rounded-full animate-spin" />
 			</div>
 		);
 	}
 
 	if (!hackathon) {
 		return (
-			<div className={styles.errorContainer}>
+			<div className="min-h-screen flex items-center justify-center">
 				<Card>
-					<p className={styles.errorText}>ハッカソンが見つかりません</p>
+					<p className="text-center">ハッカソンが見つかりません</p>
 				</Card>
 			</div>
 		);
 	}
 
 	return (
-		<div className={styles.pageContainer}>
+		<div className="min-h-screen bg-[var(--black-lighten5)] pt-8 pb-8">
 			<Container>
-				<Card className={styles.headerCard}>
-					<h1 className={styles.title}>
+				<Card className="mb-8 text-center">
+					<h1 className="text-4xl font-bold text-[var(--black-primary)] mb-2">
 						{hackathon.name}
 					</h1>
-					<p className={styles.subtitle}>最終結果</p>
+					<p className="text-xl text-[var(--black-lighten1)]">最終結果</p>
 				</Card>
 
 				{results.length === 0 ? (
 					<Card>
-						<p className={styles.emptyCard}>
+						<p className="text-center text-[var(--black-lighten1)]">
 							まだスコアが入力されていません
 						</p>
 					</Card>
 				) : (
-					<div className={styles.resultsList}>
+					<div className="flex flex-col gap-6">
 						{results.map((result, index) => (
 							<Card
 								key={result.team_id}
-								className={`${styles.resultCard} ${
+								className={
 									index === 0
-										? styles.resultCardFirst
+										? 'border-4 border-[var(--yellow-primary)]'
 										: index === 1
-											? styles.resultCardSecond
+											? 'border-2 border-[var(--black-lighten2)]'
 											: index === 2
-												? styles.resultCardThird
-												: ""
-								}`}
+												? 'border-2 border-[var(--black-lighten3)]'
+												: ''
+								}
 							>
-								<div className={styles.resultHeader}>
-									<div className={styles.resultLeft}>
+								<div className="flex items-center justify-between mb-4">
+									<div className="flex items-center gap-4">
 										<div
-											className={`${styles.rank} ${
+											className={`text-4xl font-bold ${
 												index === 0
-													? styles.rankFirst
-													: styles.rankOther
+													? 'text-[var(--yellow-primary)]'
+													: 'text-[var(--black-lighten2)]'
 											}`}
 										>
 											#{index + 1}
 										</div>
-										<div className={styles.teamInfo}>
-											<h2 className={styles.teamName}>
+										<div>
+											<h2 className="text-2xl font-bold text-[var(--black-primary)]">
 												{result.team_name}
 											</h2>
-											<p className={styles.teamLabel}>合計スコア</p>
+											<p className="text-sm text-[var(--black-lighten1)]">合計スコア</p>
 										</div>
 									</div>
-									<div className={styles.resultRight}>
-										<div className={styles.totalScore}>
+									<div className="text-right">
+										<div className="text-4xl font-bold text-[var(--yellow-primary)]">
 											{result.total_score.toFixed(2)}
 										</div>
-										<p className={styles.scoreLabel}>点</p>
+										<p className="text-sm text-[var(--black-lighten1)]">点</p>
 									</div>
 								</div>
 
-								<div className={styles.itemScores}>
+								<div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3">
 									{result.item_scores.map((item) => (
 										<div
 											key={item.item_id}
-											className={styles.itemCard}
+											className="bg-[var(--black-lighten5)] rounded-md p-4"
 										>
-											<div className={styles.itemName}>
+											<div className="text-sm font-bold text-[var(--black-primary)] mb-1">
 												{item.item_name}
 											</div>
-											<div className={styles.itemScoreRow}>
-												<div className={styles.itemScore}>
+											<div className="flex items-end gap-2">
+												<div className="text-2xl font-bold text-[var(--yellow-primary)]">
 													{item.average_score.toFixed(1)}
 												</div>
-												<div className={styles.itemMaxScore}>
+												<div className="text-sm text-[var(--black-lighten1)] mb-1">
 													/ {item.max_score} 点
 												</div>
 											</div>

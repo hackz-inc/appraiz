@@ -1,12 +1,11 @@
 import { forwardRef } from "react";
 import type { ComponentPropsWithRef } from "react";
-import styles from "./index.module.css";
 
 type CardProps = ComponentPropsWithRef<"div">;
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
 	({ children, className = "", ...props }, ref) => (
-		<div ref={ref} className={`${styles.card} ${className}`} {...props}>
+		<div ref={ref} className={`rounded-xl p-6 bg-white shadow-[0_4px_8px_var(--black-lighten1)] ${className}`} {...props}>
 			{children}
 		</div>
 	),

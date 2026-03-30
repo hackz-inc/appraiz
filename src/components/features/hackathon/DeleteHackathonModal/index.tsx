@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button, Card, Modal } from "@/components/ui";
 import { useModalStore } from "@/stores";
 import { deleteHackathon } from "../actions";
-import styles from "./index.module.css";
 
 export const DeleteHackathonModal = () => {
 	const { isOpen, type, config, closeModal } = useModalStore();
@@ -52,18 +51,18 @@ export const DeleteHackathonModal = () => {
 			title="ハッカソン削除"
 			size="md"
 		>
-			<div className={styles.content}>
-				<div className={styles.message}>
-					<p className={styles.warningText}>本当に削除しますか？</p>
-					<p className={styles.hackathonName}>{hackathon?.name}</p>
-					<p className={styles.description}>
+			<div className="flex flex-col gap-6">
+				<div className="text-center">
+					<p className="text-lg font-bold text-red-600 mb-2">本当に削除しますか？</p>
+					<p className="text-xl font-bold text-[var(--black-primary)] mb-4">{hackathon?.name}</p>
+					<p className="text-sm text-[var(--black-lighten1)] leading-relaxed">
 						この操作は取り消せません。このハッカソンに関連する全てのチーム、採点項目、スコアも削除されます。
 					</p>
 				</div>
 
-				{error && <div className={styles.errorMessage}>{error}</div>}
+				{error && <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">{error}</div>}
 
-				<div className={styles.buttonGroup}>
+				<div className="flex gap-4">
 					<Button
 						type="button"
 						variant="secondary"

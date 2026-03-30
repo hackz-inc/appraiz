@@ -7,7 +7,6 @@ import { AccessPasswordGuard } from "@/components/guards";
 import { hackathons, type Hackathon } from "@/lib/hackathons";
 import { teams, type Team } from "@/lib/teams";
 import { scoringItems, scoring, type ScoringItem } from "@/lib/scoring";
-import styles from "./index.module.css";
 
 function ScoringPageContent() {
 	const params = useParams();
@@ -112,17 +111,17 @@ function ScoringPageContent() {
 
 	if (loading) {
 		return (
-			<div className={styles.loadingContainer}>
-				<div className={styles.spinner} />
+			<div className="min-h-screen flex items-center justify-center">
+				<div className="inline-block w-12 h-12 border-4 border-[var(--yellow-primary)] border-t-transparent rounded-full animate-spin" />
 			</div>
 		);
 	}
 
 	if (!hackathon) {
 		return (
-			<div className={styles.errorContainer}>
+			<div className="min-h-screen flex items-center justify-center">
 				<Card>
-					<p className={styles.errorCard}>ハッカソンが見つかりません</p>
+					<p className="text-center">ハッカソンが見つかりません</p>
 				</Card>
 			</div>
 		);
@@ -130,9 +129,9 @@ function ScoringPageContent() {
 
 	if (teamList.length === 0) {
 		return (
-			<div className={styles.errorContainer}>
+			<div className="min-h-screen flex items-center justify-center">
 				<Card>
-					<p className={styles.errorCard}>チームが登録されていません</p>
+					<p className="text-center">チームが登録されていません</p>
 				</Card>
 			</div>
 		);
@@ -140,9 +139,9 @@ function ScoringPageContent() {
 
 	if (itemsList.length === 0) {
 		return (
-			<div className={styles.errorContainer}>
+			<div className="min-h-screen flex items-center justify-center">
 				<Card>
-					<p className={styles.errorCard}>採点項目が登録されていません</p>
+					<p className="text-center">採点項目が登録されていません</p>
 				</Card>
 			</div>
 		);
@@ -152,24 +151,24 @@ function ScoringPageContent() {
 	const isError = message.includes("失敗") || message.includes("入力");
 
 	return (
-		<div className={styles.pageContainer}>
+		<div className="min-h-screen bg-[var(--black-lighten5)] pt-8 pb-8">
 			<Container maxWidth="md">
-				<Card className={styles.headerCard}>
-					<h1 className={styles.title}>
+				<Card className="mb-8">
+					<h1 className="text-3xl font-bold text-[var(--black-primary)] mb-2">
 						{hackathon.name} - スコアリング
 					</h1>
-					<p className={styles.progressText}>
+					<p className="text-sm text-[var(--black-lighten1)] mb-4">
 						チーム {currentTeamIndex + 1} / {teamList.length}
 					</p>
 
 					{!judgeName && (
-						<div className={styles.judgeNameSection}>
-							<label className={styles.label}>
+						<div className="mb-4">
+							<label className="block text-sm font-medium text-[var(--black-primary)] mb-2">
 								審査員名
 							</label>
 							<input
 								type="text"
-								className={styles.input}
+								className="w-full px-4 py-2 border border-[var(--black-lighten3)] rounded-md focus:outline-none focus:shadow-[0_0_0_2px_var(--yellow-primary)]"
 								placeholder="あなたの名前を入力してください"
 								value={judgeName}
 								onChange={(e) => setJudgeName(e.target.value)}
@@ -180,36 +179,40 @@ function ScoringPageContent() {
 
 				{message && (
 					<div
-						className={isError ? styles.messageError : styles.messageSuccess}
+						className={`mb-4 p-4 rounded-md text-sm ${
+							isError
+								? 'bg-[var(--red)] bg-opacity-10 border border-[var(--red)] text-[var(--red)]'
+								: 'bg-[var(--yellow-lighten2)] bg-opacity-20 border border-[var(--yellow-primary)] text-[var(--black-primary)]'
+						}`}
 					>
 						{message}
 					</div>
 				)}
 
-				<Card className={styles.teamCard}>
-					<h2 className={styles.teamTitle}>
+				<Card className="mb-6">
+					<h2 className="text-2xl font-bold text-[var(--black-primary)] mb-6">
 						{currentTeam.name}
 					</h2>
 
-					<div className={styles.itemsList}>
+					<div className="flex flex-col gap-6">
 						{itemsList.map((item) => {
 							const currentScore = scoreInputs[item.id];
 
 							return (
 								<div
 									key={item.id}
-									className={styles.item}
+									className="border-t border-[var(--black-lighten3)] pt-4 first:border-t-0 first:pt-0"
 								>
-									<div className={styles.itemHeader}>
-										<h3 className={styles.itemName}>
+									<div className="flex items-center justify-between mb-3">
+										<h3 className="font-bold text-[var(--black-primary)] text-lg">
 											{item.name}
 										</h3>
-										<div className={styles.itemMaxScore}>
+										<div className="text-sm text-[var(--black-lighten1)]">
 											最大: {item.max_score}点
 										</div>
 									</div>
 
-									<div className={styles.scoreButtons}>
+									<div className="flex flex-wrap gap-2">
 										{Array.from(
 											{ length: item.max_score + 1 },
 											(_, i) => i,
@@ -218,10 +221,10 @@ function ScoringPageContent() {
 												type="button"
 												key={score}
 												onClick={() => handleScoreChange(item.id, score)}
-												className={`${styles.scoreButton} ${
+												className={`px-6 py-3 rounded-lg font-bold transition-all border-none cursor-pointer ${
 													currentScore === score
-														? styles.scoreButtonActive
-														: styles.scoreButtonInactive
+														? 'bg-[var(--yellow-primary)] text-white shadow-[var(--shadow-lg)] scale-105'
+														: 'bg-white border-2 border-[var(--black-lighten3)] text-[var(--black-primary)] hover:bg-[var(--black-lighten5)] hover:border-[var(--yellow-primary)]'
 												}`}
 											>
 												{score}
@@ -233,8 +236,8 @@ function ScoringPageContent() {
 						})}
 					</div>
 
-					<div className={styles.commentSection}>
-						<label className={styles.label}>
+					<div className="mt-6 pt-6 border-t border-[var(--black-lighten3)]">
+						<label className="block text-sm font-medium text-[var(--black-primary)] mb-2">
 							コメント（任意）
 						</label>
 						<TextArea

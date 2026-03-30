@@ -9,7 +9,6 @@ import type { Hackathon } from "@/lib/hackathons";
 import type { Team } from "@/lib/teams";
 import type { ScoringItem } from "@/lib/scoring";
 import type { Guest } from "@/lib/server/guests";
-import styles from "./index.module.css";
 import { NewTeamForm } from "../NewTeamForm";
 import { NewCriteriaForm } from "../NewCriteriaForm";
 
@@ -27,7 +26,7 @@ export function HackathonDetailClient({
 	guests,
 }: Props) {
 	return (
-		<div className={styles.pageContainer}>
+		<div className="min-h-screen bg-[var(--black-lighten5)]">
 			<AdminHeader
 				breadcrumbs={[
 					{ label: "ホーム", href: "/admin" },
@@ -35,13 +34,13 @@ export function HackathonDetailClient({
 				]}
 			/>
 
-			<div className={styles.contentContainer}>
+			<div className="max-w-7xl mx-auto px-8 py-8">
 				{/* チームセクション */}
-				<div id="teams-section" className={styles.section}>
-					<div className={styles.sectionHeader}>
+				<div id="teams-section" className="mb-12">
+					<div className="mb-6">
 						<div>
-							<h2 className={styles.sectionTitle}>
-								<span className={styles.sectionTitleEmoji}>👥</span>
+							<h2 className="text-3xl font-bold text-[var(--black-primary)] flex items-center gap-3">
+								<span className="text-4xl">👥</span>
 								<span>チーム</span>
 							</h2>
 						</div>
@@ -51,41 +50,46 @@ export function HackathonDetailClient({
 						<NewTeamForm />
 						{!teams || teams.length === 0 ? (
 							// 空の場合
-							<div className={`${styles.emptyCard} ${styles.emptyCardTeams}`}>
-								<div className={styles.emptyContent}>
-									<p className={styles.emptyText}>
+							<div className="text-center py-12">
+								<div className="flex flex-col items-center gap-4">
+									<p className="text-[var(--black-lighten1)]">
 										チームがまだ登録されていません
 									</p>
 								</div>
 							</div>
 						) : (
 							// チームがある場合
-							<div className={styles.teamsGrid}>
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 								{teams.map((team) => (
-									// <Card key={team.id} id={`team-${team.id}`}>
-									<div key={team.id} className={styles.teamCard}>
-										<div className={styles.teamIcon}>
-											<span className={styles.teamEmoji}>👥</span>
-										</div>
-										<div className={styles.teamContent}>
-											<h3 className={styles.teamName}>{team.name}</h3>
-											<div className={styles.teamActions}>
-												<Link
-													href={`/admin/hackathons/${hackathon.id}/teams/${team.id}`}
-													className={styles.teamEditLink}
-												>
-													<Button variant="secondary" size="sm" fullWidth>
-														✏️ 編集
-													</Button>
-												</Link>
-												<DeleteTeamButton
-													teamId={team.id}
-													hackathonId={hackathon.id}
-												/>
+									<div
+										key={team.id}
+										className="bg-white border border-[var(--black-lighten3)] rounded-lg p-4 hover:shadow-md transition-shadow"
+									>
+										<div className="flex items-start gap-3">
+											<div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-[var(--yellow-lighten1)] rounded-full">
+												<span className="text-2xl">👥</span>
+											</div>
+											<div className="flex-1 min-w-0">
+												<h3 className="text-lg font-bold text-[var(--black-primary)] mb-3 truncate">
+													{team.name}
+												</h3>
+												<div className="flex gap-2">
+													<Link
+														href={`/admin/hackathons/${hackathon.id}/teams/${team.id}`}
+														className="flex-1"
+													>
+														<Button variant="secondary" size="sm" fullWidth>
+															✏️ 編集
+														</Button>
+													</Link>
+													<DeleteTeamButton
+														teamId={team.id}
+														hackathonId={hackathon.id}
+													/>
+												</div>
 											</div>
 										</div>
 									</div>
-									// </Card>
 								))}
 							</div>
 						)}
@@ -93,11 +97,11 @@ export function HackathonDetailClient({
 				</div>
 
 				{/* 採点項目セクション */}
-				<div id="criteria-section" className={styles.section}>
-					<div className={styles.sectionHeader}>
+				<div id="criteria-section" className="mb-12">
+					<div className="mb-6">
 						<div>
-							<h2 className={styles.sectionTitle}>
-								<span className={styles.sectionTitleEmoji}>📋</span>
+							<h2 className="text-3xl font-bold text-[var(--black-primary)] flex items-center gap-3">
+								<span className="text-4xl">📋</span>
 								<span>採点項目</span>
 							</h2>
 						</div>
@@ -107,49 +111,52 @@ export function HackathonDetailClient({
 						<NewCriteriaForm />
 						{!scoringItems || scoringItems.length === 0 ? (
 							// 空の場合
-							<div
-								className={`${styles.emptyCard} ${styles.emptyCardCriteria}`}
-							>
-								<div className={styles.emptyContent}>
-									<div
-										className={`${styles.emptyIcon} ${styles.emptyIconCriteria}`}
-									>
-										<span className={styles.emptyEmoji}>📋</span>
+							<div className="text-center py-12">
+								<div className="flex flex-col items-center gap-4">
+									<div className="w-16 h-16 flex items-center justify-center bg-[var(--yellow-lighten1)] rounded-full">
+										<span className="text-3xl">📋</span>
 									</div>
-									<p className={styles.emptyText}>
+									<p className="text-[var(--black-lighten1)]">
 										採点項目がまだ登録されていません
 									</p>
 								</div>
 							</div>
 						) : (
 							// 採点項目がある場合
-							<div className={styles.criteriaList}>
+							<div className="flex flex-col gap-4">
 								{scoringItems.map((item) => (
-									<div key={item.id} className={styles.criteriaCard}>
-										<div className={styles.criteriaIcon}>
-											<span className={styles.criteriaEmoji}>📋</span>
-										</div>
-										<div className={styles.criteriaContent}>
-											<div className={styles.criteriaInfo}>
-												<h3 className={styles.criteriaName}>{item.name}</h3>
-												<div className={styles.scoreBadge}>
-													<span className={styles.scoreBadgeText}>
-														{item.max_score} 点
-													</span>
-												</div>
+									<div
+										key={item.id}
+										className="bg-white border border-[var(--black-lighten3)] rounded-lg p-4 hover:shadow-md transition-shadow"
+									>
+										<div className="flex items-center gap-4">
+											<div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-[var(--yellow-lighten1)] rounded-full">
+												<span className="text-2xl">📋</span>
 											</div>
-											<div className={styles.criteriaActions}>
-												<Link
-													href={`/admin/hackathons/${hackathon.id}/criteria/${item.id}`}
-												>
-													<Button variant="secondary" size="sm">
-														✏️ 編集
-													</Button>
-												</Link>
-												<DeleteScoringItemButton
-													itemId={item.id}
-													hackathonId={hackathon.id}
-												/>
+											<div className="flex-1 min-w-0 flex items-center justify-between gap-4">
+												<div className="flex items-center gap-3 min-w-0 flex-1">
+													<h3 className="text-lg font-bold text-[var(--black-primary)] truncate">
+														{item.name}
+													</h3>
+													<div className="flex-shrink-0 px-3 py-1 bg-[var(--yellow-lighten1)] rounded-full">
+														<span className="text-sm font-semibold text-[var(--black-primary)]">
+															{item.max_score} 点
+														</span>
+													</div>
+												</div>
+												<div className="flex gap-2 flex-shrink-0">
+													<Link
+														href={`/admin/hackathons/${hackathon.id}/criteria/${item.id}`}
+													>
+														<Button variant="secondary" size="sm">
+															✏️ 編集
+														</Button>
+													</Link>
+													<DeleteScoringItemButton
+														itemId={item.id}
+														hackathonId={hackathon.id}
+													/>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -160,37 +167,39 @@ export function HackathonDetailClient({
 				</div>
 
 				{/* 共同開催者セクション */}
-				<div id="guests-section" className={styles.section}>
-					<div className={styles.sectionHeader}>
+				<div id="guests-section" className="mb-12">
+					<div className="mb-6">
 						<div>
-							<h2 className={styles.sectionTitle}>
-								<span className={styles.sectionTitleEmoji}>🫱‍🫲</span>
+							<h2 className="text-3xl font-bold text-[var(--black-primary)] flex items-center gap-3">
+								<span className="text-4xl">🫱‍🫲</span>
 								<span>共同開催者</span>
 							</h2>
 						</div>
 					</div>
 
 					{!guests || guests.length === 0 ? (
-						<Card className={`${styles.emptyCard} ${styles.emptyCardGuests}`}>
-							<div className={styles.emptyContent}>共同開催者</div>
+						<Card className="text-center py-12">
+							<div className="text-[var(--black-lighten1)]">共同開催者</div>
 						</Card>
 					) : (
-						<div className={styles.guestsGrid}>
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 							{guests.map((guest) => (
 								<Card key={guest.id} id={`guest-${guest.id}`}>
-									<div className={styles.guestCard}>
-										<div className={styles.guestIcon}>
-											<span className={styles.guestEmoji}>🎤</span>
+									<div className="flex items-start gap-3">
+										<div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-[var(--yellow-lighten1)] rounded-full">
+											<span className="text-2xl">🎤</span>
 										</div>
-										<div className={styles.guestContent}>
-											<h3 className={styles.guestName}>{guest.name}</h3>
-											<p className={styles.guestCompany}>
+										<div className="flex-1 min-w-0">
+											<h3 className="text-lg font-bold text-[var(--black-primary)] mb-1 truncate">
+												{guest.name}
+											</h3>
+											<p className="text-sm text-[var(--black-lighten1)] mb-3 truncate">
 												{guest.company_name}
 											</p>
-											<div className={styles.guestActions}>
+											<div>
 												<Link
 													href={`/admin/hackathons/${hackathon.id}/guests`}
-													className={styles.guestManageLink}
+													className="block"
 												>
 													<Button variant="secondary" size="sm" fullWidth>
 														⚙️ 管理

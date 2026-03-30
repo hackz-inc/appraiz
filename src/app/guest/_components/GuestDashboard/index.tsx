@@ -7,7 +7,6 @@ import { Container, Button, Card } from "@/components/ui";
 import { auth } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
 import { createClient } from "@/lib/supabase/client";
-import styles from "./index.module.css";
 
 interface Hackathon {
 	id: string;
@@ -50,16 +49,16 @@ function GuestDashboardContent() {
 	};
 
 	return (
-		<div className={styles.pageContainer}>
+		<div className="min-h-screen bg-[var(--black-lighten5)]">
 			{/* Header */}
-			<header className={styles.header}>
+			<header className="bg-white border-b border-[var(--black-lighten3)] shadow-[var(--shadow-sm)]">
 				<Container>
-					<div className={styles.headerContent}>
-						<div className={styles.headerInfo}>
-							<h1 className={styles.headerTitle}>
+					<div className="pt-4 pb-4 flex items-center justify-between">
+						<div>
+							<h1 className="text-2xl font-bold text-[var(--black-primary)]">
 								Appraiz ゲスト
 							</h1>
-							<p className={styles.headerUser}>
+							<p className="text-sm text-[var(--black-lighten1)] mt-1">
 								{user?.metadata?.name} ({user?.email})
 							</p>
 						</div>
@@ -71,35 +70,35 @@ function GuestDashboardContent() {
 			</header>
 
 			{/* Main Content */}
-			<Container className={styles.main}>
-				<h2 className={styles.sectionTitle}>
+			<Container className="pt-8 pb-8">
+				<h2 className="text-2xl font-bold text-[var(--black-primary)] mb-6">
 					ハッカソン一覧
 				</h2>
 
 				{loading ? (
-					<div className={styles.loadingContainer}>
-						<div className={styles.spinner} />
+					<div className="text-center pt-12 pb-12">
+						<div className="inline-block w-12 h-12 border-4 border-[var(--blue)] border-t-transparent rounded-full animate-spin" />
 					</div>
 				) : hackathons.length === 0 ? (
 					<Card>
-						<div className={styles.emptyCard}>
-							<p className={styles.emptyText}>
+						<div className="text-center pt-12 pb-12">
+							<p className="text-[var(--black-lighten1)]">
 								閲覧可能なハッカソンがありません
 							</p>
 						</div>
 					</Card>
 				) : (
-					<div className={styles.hackathonGrid}>
+					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 						{hackathons.map((hackathon) => (
 							<Card
 								key={hackathon.id}
-								className={styles.hackathonCard}
+								className="transition-shadow cursor-pointer hover:shadow-[var(--shadow-xl)]"
 								onClick={() => router.push(`/guest/results/${hackathon.id}`)}
 							>
-								<h3 className={styles.hackathonTitle}>
+								<h3 className="text-xl font-bold text-[var(--black-primary)] mb-2">
 									{hackathon.name}
 								</h3>
-								<p className={styles.hackathonDate}>
+								<p className="text-sm text-[var(--black-lighten1)] mb-4">
 									採点日:{" "}
 									{new Date(hackathon.scoring_date).toLocaleDateString("ja-JP")}
 								</p>

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, TextInput, Container, Card } from "@/components/ui";
 import { auth } from "@/lib/auth";
-import styles from "./index.module.css";
 
 export default function GuestSignUpPage() {
 	const router = useRouter();
@@ -66,19 +65,19 @@ export default function GuestSignUpPage() {
 	};
 
 	return (
-		<div className={styles.pageContainer}>
+		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--blue)] to-[var(--yellow-lighten1)] p-4 pt-12 pb-12">
 			<Container maxWidth="sm">
-				<Card className={styles.card}>
-					<div className={styles.header}>
-						<h1 className={styles.title}>
+				<Card className="w-full">
+					<div className="text-center mb-8">
+						<h1 className="text-4xl font-bold text-[var(--black-primary)] mb-2">
 							Appraiz
 						</h1>
-						<p className={styles.subtitle}>ゲスト新規登録</p>
+						<p className="text-lg text-[var(--black-lighten1)]">ゲスト新規登録</p>
 					</div>
 
-					<form onSubmit={handleSubmit} className={styles.form}>
+					<form onSubmit={handleSubmit} className="flex flex-col gap-6">
 						{error && (
-							<div className={styles.errorMessage}>
+							<div className="p-4 bg-[var(--red)] bg-opacity-10 border border-[var(--red)] rounded-md text-[var(--red)] text-sm">
 								{error}
 							</div>
 						)}
@@ -119,7 +118,7 @@ export default function GuestSignUpPage() {
 							placeholder="••••••••"
 							value={formData.password}
 							onChange={(e) => handleChange("password", e.target.value)}
-			required
+							required
 							fullWidth
 						/>
 
@@ -144,19 +143,19 @@ export default function GuestSignUpPage() {
 						</Button>
 					</form>
 
-					<div className={styles.footer}>
-						<p className={styles.footerText}>
+					<div className="mt-6 text-center flex flex-col gap-2">
+						<p className="text-sm text-[var(--black-lighten1)]">
 							既にアカウントをお持ちの方は
 							<Link
 								href="/guest/auth/login"
-								className={styles.loginLink}
+								className="ml-1 text-[var(--blue)] no-underline hover:underline"
 							>
 								ログイン
 							</Link>
 						</p>
 						<a
 							href="/"
-							className={styles.homeLink}
+							className="block text-sm text-[var(--black-lighten1)] no-underline transition-colors hover:text-[var(--black-primary)]"
 						>
 							ホームに戻る
 						</a>

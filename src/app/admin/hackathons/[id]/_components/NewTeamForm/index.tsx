@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Button, TextInput } from "@/components/ui";
 import { teams } from "@/lib/teams";
-import styles from "./index.module.css";
 import { PlusIcon } from "@/components/ui/icons";
 
 export function NewTeamForm() {
@@ -45,8 +44,8 @@ export function NewTeamForm() {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className={styles.form}>
-			{error && <div className={styles.errorAlert}>{error}</div>}
+		<form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-6 p-4 border-b border-[var(--black-lighten3)]">
+			{error && <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">{error}</div>}
 
 			<TextInput
 				type="text"
@@ -68,8 +67,9 @@ export function NewTeamForm() {
 				fullWidth
 			/>
 
-			<button type="submit">
+			<button type="submit" className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-[var(--yellow-primary)] text-[var(--black-primary)] font-bold rounded-lg hover:bg-[var(--yellow-lighten2)] transition-colors disabled:opacity-50">
 				<PlusIcon />
+				<span>チームを追加</span>
 			</button>
 		</form>
 	);

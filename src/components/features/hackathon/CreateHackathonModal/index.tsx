@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button, TextInput, Card, Modal } from "@/components/ui";
 import { useModalStore } from "@/stores";
 import { createHackathon } from "../actions";
-import styles from "./index.module.css";
 
 export const CreateHackathonModal = () => {
 	const { isOpen, type, closeModal } = useModalStore();
@@ -61,10 +60,10 @@ export const CreateHackathonModal = () => {
 			title="ハッカソン作成"
 			size="lg"
 		>
-			<Card className={styles.card}>
-				<form onSubmit={handleSubmit} className={styles.form}>
+			<Card>
+				<form onSubmit={handleSubmit} className="flex flex-col gap-6">
 					{error && (
-						<div className={styles.errorMessage}>
+						<div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
 							{error}
 						</div>
 					)}
@@ -88,7 +87,7 @@ export const CreateHackathonModal = () => {
 						fullWidth
 					/>
 
-					<div className={styles.buttonGroup}>
+					<div className="flex gap-4">
 						<Button
 							type="button"
 							variant="secondary"

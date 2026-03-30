@@ -2,7 +2,6 @@
 
 import type { ComponentPropsWithRef } from "react";
 import { useEffect } from "react";
-import styles from "./index.module.css";
 
 interface ModalProps extends ComponentPropsWithRef<"div"> {
 	isOpen: boolean;
@@ -34,19 +33,30 @@ export const Modal = ({
 
 	if (!isOpen) return null;
 
-	const modalClass = [styles.modal, styles[size], className]
+	const sizeClasses = {
+		sm: 'max-w-[448px]',
+		md: 'max-w-[512px]',
+		lg: 'max-w-[672px]',
+		xl: 'max-w-[896px]',
+	}
+
+	const modalClass = [
+		'relative bg-white rounded-2xl shadow-[var(--shadow-xl)] w-full max-h-[90vh] overflow-y-auto animate-[zoomIn_0.2s]',
+		sizeClasses[size],
+		className,
+	]
 		.filter(Boolean)
 		.join(" ");
 
 	return (
-		<div className={styles.overlay}>
-			<div className={styles.backdrop} onClick={onClose} />
+		<div className="fixed inset-0 z-[var(--z-index-top)] flex items-center justify-center p-4 animate-[fadeIn_0.2s]">
+			<div className="absolute inset-0 bg-black/60" onClick={onClose} />
 
 			<div className={modalClass} {...props}>
 				{title && (
-					<div className={styles.header}>
-						<h2 className={styles.title}>{title}</h2>
-						<button onClick={onClose} className={styles.closeButton}>
+					<div className="flex items-center justify-between px-6 py-5 border-b-2 border-[var(--yellow-primary)] bg-gradient-to-r from-[var(--yellow-lighten1)] to-white">
+						<h2 className="text-2xl font-black text-[var(--black-primary)] flex items-center gap-2">{title}</h2>
+						<button onClick={onClose} className="inline-flex items-center justify-center w-10 h-10 rounded-lg text-[var(--black-lighten2)] transition-all cursor-pointer border-none bg-transparent hover:text-white hover:bg-[var(--red)]">
 							<svg
 								style={{ width: "24px", height: "24px" }}
 								fill="none"
@@ -62,7 +72,7 @@ export const Modal = ({
 					</div>
 				)}
 
-				<div className={styles.body}>{children}</div>
+				<div className="p-6">{children}</div>
 			</div>
 		</div>
 	);

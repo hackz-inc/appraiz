@@ -1,6 +1,5 @@
 import { getHackathons } from "@/lib/server/hackathons";
 import { HackathonCard } from "../HackathonCard";
-import styles from "./index.module.css";
 
 export async function HackathonCardList() {
 	const data = await getHackathons();
@@ -10,7 +9,7 @@ export async function HackathonCardList() {
 	}
 
 	return (
-		<ul className={styles.list}>
+		<ul className="flex flex-col gap-6 list-none m-0 p-0">
 			{data.map((hackathon) => (
 				<li key={hackathon.id}>
 					<HackathonCard hackathon={hackathon} />

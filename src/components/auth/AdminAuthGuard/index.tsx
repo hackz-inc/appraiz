@@ -3,7 +3,6 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import styles from './index.module.css'
 
 export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading, isAdmin } = useAuth()
@@ -19,8 +18,8 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner} />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-block w-12 h-12 border-4 border-[var(--yellow-primary)] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
