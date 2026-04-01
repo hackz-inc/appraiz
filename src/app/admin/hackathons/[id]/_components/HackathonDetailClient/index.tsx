@@ -12,7 +12,7 @@ import type { Guest } from "@/lib/server/guests";
 import { NewTeamForm } from "../NewTeamForm";
 import { NewCriteriaForm } from "../NewCriteriaForm";
 
-interface Props {
+type Props = {
 	hackathon: Hackathon;
 	teams: Team[];
 	scoringItems: ScoringItem[];

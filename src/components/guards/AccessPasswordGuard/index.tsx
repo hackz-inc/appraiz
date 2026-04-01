@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, Button, TextInput, Container } from "@/components/ui";
 import { hackathons } from "@/lib/hackathons";
 
-interface AccessPasswordGuardProps {
+type AccessPasswordGuardProps = {
 	hackathonId: string;
 	children: React.ReactNode;
 }

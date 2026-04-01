@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "../Button";
 
-interface CopyButtonProps {
+type CopyButtonProps = {
 	text: string;
 	label?: string;
 	className?: string;

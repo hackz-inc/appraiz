@@ -13,14 +13,14 @@ export type ModalType =
   | 'deleteScoringItem'
   | null
 
-interface ModalConfig {
+type ModalConfig = {
   title?: string
   size?: 'sm' | 'md' | 'lg' | 'xl'
   content?: ReactNode
   data?: any
 }
 
-interface ModalStore {
+type ModalStore = {
   isOpen: boolean
   type: ModalType
   config: ModalConfig

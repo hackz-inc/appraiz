@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export interface ScoringFormData {
+export type ScoringFormData = {
   teamId: string
   scores: Record<string, number> // scoring_item_id -> score
   comment: string
 }
 
-interface ScoringFormStore {
+type ScoringFormStore = {
   forms: Record<string, ScoringFormData> // teamId -> form data
   formSortKey: 'presentation' | 'score'
 

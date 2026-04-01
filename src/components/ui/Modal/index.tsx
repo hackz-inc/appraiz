@@ -3,7 +3,7 @@
 import type { ComponentPropsWithRef } from "react";
 import { useEffect } from "react";
 
-interface ModalProps extends ComponentPropsWithRef<"div"> {
+type ModalProps = ComponentPropsWithRef<"div"> & {
 	isOpen: boolean;
 	onClose: () => void;
 	title?: string;

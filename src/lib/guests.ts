@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 
-export interface Guest {
+export type Guest = {
 	id: string;
 	name: string;
 	company_name: string;
@@ -9,7 +9,7 @@ export interface Guest {
 	updated_at: string;
 }
 
-export interface GuestWithInviteStatus extends Guest {
+export type GuestWithInviteStatus = Guest & {
 	isInvited: boolean;
 }
 

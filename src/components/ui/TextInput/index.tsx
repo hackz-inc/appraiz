@@ -1,6 +1,6 @@
 import { type ComponentPropsWithRef, forwardRef } from "react";
 
-interface TextInputProps extends ComponentPropsWithRef<"input"> {
+type TextInputProps = ComponentPropsWithRef<"input"> & {
 	label?: string;
 	error?: string;
 	fullWidth?: boolean;

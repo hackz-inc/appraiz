@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 
-export interface Hackathon {
+export type Hackathon = {
 	id: string;
 	name: string;
 	scoring_date: string;
@@ -9,7 +9,7 @@ export interface Hackathon {
 	updated_at: string;
 }
 
-export interface CreateHackathonInput {
+export type CreateHackathonInput = {
 	name: string;
 	scoring_date: string;
 	access_password: string;

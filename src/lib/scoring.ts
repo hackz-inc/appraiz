@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 
-export interface ScoringItem {
+export type ScoringItem = {
   id: string
   name: string
   max_score: number
@@ -9,13 +9,13 @@ export interface ScoringItem {
   updated_at: string
 }
 
-export interface CreateScoringItemInput {
+export type CreateScoringItemInput = {
   name: string
   max_score: number
   hackathon_id: string
 }
 
-export interface ScoringResult {
+export type ScoringResult = {
   id: string
   judge_name: string
   comment: string
@@ -24,7 +24,7 @@ export interface ScoringResult {
   updated_at: string
 }
 
-export interface ScoringItemResult {
+export type ScoringItemResult = {
   id: string
   score: number
   scoring_item_id: string
@@ -33,7 +33,7 @@ export interface ScoringItemResult {
   updated_at: string
 }
 
-export interface SubmitScoreInput {
+export type SubmitScoreInput = {
   judge_name: string
   comment: string
   team_id: string
@@ -43,7 +43,7 @@ export interface SubmitScoreInput {
   }>
 }
 
-export interface TeamScoreResult {
+export type TeamScoreResult = {
   team_id: string
   team_name: string
   total_score: number

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-interface HackathonStore {
+type HackathonStore = {
   currentHackathonId: string | null
   setCurrentHackathonId: (id: string | null) => void
 }

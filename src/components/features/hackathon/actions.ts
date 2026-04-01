@@ -12,7 +12,7 @@ const generateAccessPassword = (): string => {
 	);
 };
 
-export interface CreateHackathonInput {
+export type CreateHackathonInput = {
 	name: string;
 	scoring_date: string;
 }

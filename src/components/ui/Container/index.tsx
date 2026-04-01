@@ -1,6 +1,6 @@
 import { ComponentPropsWithRef, forwardRef } from 'react'
 
-interface ContainerProps extends ComponentPropsWithRef<'div'> {
+type ContainerProps = ComponentPropsWithRef<'div'> & {
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
 }
 

@@ -4,7 +4,7 @@ import { EditIcon, DeleteIcon } from "@/components/ui/icons";
 import { useModalStore } from "@/stores";
 import type { Hackathon } from "@/lib/hackathons";
 
-interface Props {
+type Props = {
 	hackathon: Hackathon;
 }
 

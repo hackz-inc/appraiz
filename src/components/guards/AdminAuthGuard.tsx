@@ -2,7 +2,7 @@
 
 import { AuthGuard } from './AuthGuard'
 
-interface AdminAuthGuardProps {
+type AdminAuthGuardProps = {
   children: React.ReactNode
 }
 

@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'guest'
 
-export interface AuthUser {
+export type AuthUser = {
   id: string
   email: string
   role: UserRole
@@ -10,7 +10,7 @@ export interface AuthUser {
   }
 }
 
-export interface SignUpData {
+export type SignUpData = {
   email: string
   password: string
   name?: string
@@ -18,7 +18,7 @@ export interface SignUpData {
   role: UserRole
 }
 
-export interface SignInData {
+export type SignInData = {
   email: string
   password: string
   role: UserRole

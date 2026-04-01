@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { LoadingScreen } from '@/components/ui'
 import type { UserRole } from '@/lib/auth/types'
 
-interface AuthGuardProps {
+type AuthGuardProps = {
   children: React.ReactNode
   requiredRole?: UserRole
   redirectTo?: string

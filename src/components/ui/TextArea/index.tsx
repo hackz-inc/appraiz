@@ -1,6 +1,6 @@
 import { ComponentPropsWithRef, forwardRef } from 'react'
 
-interface TextAreaProps extends ComponentPropsWithRef<'textarea'> {
+type TextAreaProps = ComponentPropsWithRef<'textarea'> & {
   label?: string
   error?: string
   fullWidth?: boolean

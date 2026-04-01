@@ -8,7 +8,7 @@ import { auth } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
 import { createClient } from "@/lib/supabase/client";
 
-interface Hackathon {
+type Hackathon = {
 	id: string;
 	name: string;
 	scoring_date: string;

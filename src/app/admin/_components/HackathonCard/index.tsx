@@ -3,7 +3,7 @@ import { Card, CopyButton } from "@/components/ui";
 import type { Hackathon } from "@/lib/hackathons";
 import { HackathonActionButtons } from "./HackathonActionButtons";
 
-interface Props {
+type Props = {
 	hackathon: Hackathon;
 }
 

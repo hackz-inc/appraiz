@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 
-export interface Team {
+export type Team = {
   id: string
   name: string
   hackathon_id: string
@@ -8,7 +8,7 @@ export interface Team {
   updated_at: string
 }
 
-export interface CreateTeamInput {
+export type CreateTeamInput = {
   name: string
   hackathon_id: string
 }

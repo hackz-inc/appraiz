@@ -2,12 +2,12 @@
 
 import { Breadcrumb } from "@/components/ui";
 
-interface BreadcrumbItem {
+type BreadcrumbItem = {
 	label: string;
 	href?: string;
 }
 
-interface Props {
+type Props = {
 	breadcrumbs?: BreadcrumbItem[];
 	isMenuOpen?: boolean;
 	onMenuToggle?: () => void;

@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef } from 'react'
 
-interface ButtonProps extends ComponentPropsWithRef<'button'> {
+type ButtonProps = ComponentPropsWithRef<'button'> & {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
