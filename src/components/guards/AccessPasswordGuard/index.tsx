@@ -11,7 +11,7 @@ type Props = {
 
 const STORAGE_KEY_PREFIX = "hackathon_access_";
 
-export function AccessPasswordGuard({ hackathonId, children }: Props) {
+export const AccessPasswordGuard = ({ hackathonId, children }: Props) => {
 	const [isVerified, setIsVerified] = useState<boolean | null>(null);
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");

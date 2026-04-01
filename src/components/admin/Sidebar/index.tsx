@@ -21,14 +21,14 @@ type Props = {
 	hackathonId: string;
 };
 
-export function Sidebar({
+export const Sidebar = ({
 	items,
 	isOpen,
 	currentHash,
 	currentTab,
 	onClose,
 	hackathonId,
-}: Props) {
+}: Props) => {
 	const router = useRouter();
 
 	// チーム、採点項目、ゲスト、ハッカソン、タブでグループ化

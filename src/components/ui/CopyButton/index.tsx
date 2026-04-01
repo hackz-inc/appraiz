@@ -9,7 +9,7 @@ type Props = {
 	className?: string;
 };
 
-export function CopyButton({ text, label, className }: Props) {
+export const CopyButton = ({ text, label, className }: Props) => {
 	const [copied, setCopied] = useState(false);
 
 	const handleCopy = async () => {

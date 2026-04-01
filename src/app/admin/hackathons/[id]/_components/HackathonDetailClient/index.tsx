@@ -19,12 +19,12 @@ type Props = {
 	guests: Guest[];
 }
 
-export function HackathonDetailClient({
+export const HackathonDetailClient = ({
 	hackathon,
 	teams,
 	scoringItems,
 	guests,
-}: Props) {
+}: Props) => {
 	return (
 		<div className="min-h-screen bg-[var(--black-lighten5)]">
 			<AdminHeader

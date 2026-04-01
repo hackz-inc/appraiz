@@ -4,13 +4,13 @@ import { Button } from '@/components/ui'
 import { teams } from '@/lib/teams'
 import { useTeams } from '@/hooks/useTeams'
 
-export function DeleteTeamButton({
+export const DeleteTeamButton = ({
   teamId,
   hackathonId,
 }: {
   teamId: string
   hackathonId: string
-}) {
+}) => {
   const { mutate } = useTeams(hackathonId)
 
   const handleDelete = async () => {

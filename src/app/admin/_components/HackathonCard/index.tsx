@@ -7,7 +7,7 @@ type Props = {
 	hackathon: Hackathon;
 }
 
-export function HackathonCard({ hackathon }: Props) {
+export const HackathonCard = ({ hackathon }: Props) => {
 	return (
 		<Card>
 			<div className="mb-4">

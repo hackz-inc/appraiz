@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
-export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
+export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, isAdmin } = useAuth()
   const router = useRouter()
 

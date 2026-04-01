@@ -6,7 +6,7 @@ import {
 	DeleteHackathonModal,
 } from "@/components/features/hackathon";
 
-export function ModalManager() {
+export const ModalManager = () => {
 	return (
 		<>
 			{/* Hackathon Modals */}

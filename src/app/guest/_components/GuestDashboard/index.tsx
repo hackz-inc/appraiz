@@ -14,7 +14,7 @@ type Hackathon = {
 	scoring_date: string;
 }
 
-function GuestDashboardContent() {
+const GuestDashboardContent = () => {
 	const router = useRouter();
 	const { user } = useAuth();
 	const [hackathons, setHackathons] = useState<Hackathon[]>([]);
@@ -114,10 +114,12 @@ function GuestDashboardContent() {
 	);
 }
 
-export default function GuestDashboard() {
+const GuestDashboard = () => {
 	return (
 		<GuestAuthGuard>
 			<GuestDashboardContent />
 		</GuestAuthGuard>
 	);
 }
+
+export default GuestDashboard;

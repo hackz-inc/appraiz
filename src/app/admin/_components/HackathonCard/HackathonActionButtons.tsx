@@ -8,7 +8,7 @@ type Props = {
 	hackathon: Hackathon;
 }
 
-export function HackathonActionButtons({ hackathon }: Props) {
+export const HackathonActionButtons = ({ hackathon }: Props) => {
 	const { openModal } = useModalStore();
 
 	const handleEdit = () => {

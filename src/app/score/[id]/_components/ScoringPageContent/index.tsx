@@ -8,7 +8,7 @@ import { hackathons, type Hackathon } from "@/lib/hackathons";
 import { teams, type Team } from "@/lib/teams";
 import { scoringItems, scoring, type ScoringItem } from "@/lib/scoring";
 
-function ScoringPageContent() {
+const ScoringPageContent = () => {
 	const params = useParams();
 	const router = useRouter();
 	const hackathonId = params.id as string;
@@ -267,7 +267,7 @@ function ScoringPageContent() {
 	);
 }
 
-export default function ScoringPage() {
+const ScoringPage = () => {
 	const params = useParams();
 	const hackathonId = params.id as string;
 
@@ -277,3 +277,5 @@ export default function ScoringPage() {
 		</AccessPasswordGuard>
 	);
 }
+
+export default ScoringPage;

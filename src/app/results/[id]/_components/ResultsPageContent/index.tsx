@@ -7,7 +7,7 @@ import { AccessPasswordGuard } from "@/components/guards";
 import { hackathons, type Hackathon } from "@/lib/hackathons";
 import { scoring, type TeamScoreResult } from "@/lib/scoring";
 
-function ResultsPageContent() {
+const ResultsPageContent = () => {
 	const params = useParams();
 	const hackathonId = params.id as string;
 
@@ -138,7 +138,7 @@ function ResultsPageContent() {
 	);
 }
 
-export default function ResultsPage() {
+const ResultsPage = () => {
 	const params = useParams();
 	const hackathonId = params.id as string;
 
@@ -148,3 +148,5 @@ export default function ResultsPage() {
 		</AccessPasswordGuard>
 	);
 }
+
+export default ResultsPage;

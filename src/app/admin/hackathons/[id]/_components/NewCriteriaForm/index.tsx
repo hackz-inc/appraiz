@@ -6,7 +6,7 @@ import { Button, TextInput } from "@/components/ui";
 import { scoringItems } from "@/lib/scoring";
 import { PlusIcon } from "@/components/ui/icons";
 
-export function NewCriteriaForm() {
+export const NewCriteriaForm = () => {
 	const router = useRouter();
 	const params = useParams();
 	const hackathonId = params.id as string;

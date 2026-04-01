@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui";
 import { useModalStore } from "@/stores";
 
-export function CreateHackathonButton() {
+export const CreateHackathonButton = () => {
 	const { openModal } = useModalStore();
 
 	return (

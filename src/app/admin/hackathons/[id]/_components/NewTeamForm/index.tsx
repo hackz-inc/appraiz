@@ -6,7 +6,7 @@ import { Button, TextInput } from "@/components/ui";
 import { teams } from "@/lib/teams";
 import { PlusIcon } from "@/components/ui/icons";
 
-export function NewTeamForm() {
+export const NewTeamForm = () => {
 	const router = useRouter();
 	const params = useParams();
 	const hackathonId = params.id as string;

@@ -4,13 +4,13 @@ import { Button } from '@/components/ui'
 import { scoringItems } from '@/lib/scoring'
 import { useScoringItems } from '@/hooks/useScoringItems'
 
-export function DeleteScoringItemButton({
+export const DeleteScoringItemButton = ({
   itemId,
   hackathonId,
 }: {
   itemId: string
   hackathonId: string
-}) {
+}) => {
   const { mutate } = useScoringItems(hackathonId)
 
   const handleDelete = async () => {
