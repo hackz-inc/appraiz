@@ -1,12 +1,12 @@
 import { type ComponentPropsWithRef, forwardRef } from "react";
 
-type TextInputProps = ComponentPropsWithRef<"input"> & {
+type Props = ComponentPropsWithRef<"input"> & {
 	label?: string;
 	error?: string;
 	fullWidth?: boolean;
-}
+};
 
-export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
+export const TextInput = forwardRef<HTMLInputElement, Props>(
 	({ label, error, fullWidth = true, className = "", ...props }, ref) => {
 		const wrapperClass = fullWidth ? "w-full" : "";
 		const inputClass = [
@@ -20,7 +20,11 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 
 		return (
 			<div className={wrapperClass}>
-				{label && <label className="block text-sm font-semibold text-[var(--black-primary)] mb-2">{label}</label>}
+				{label && (
+					<label className="block text-sm font-semibold text-[var(--black-primary)] mb-2">
+						{label}
+					</label>
+				)}
 				<input ref={ref} className={inputClass} {...props} />
 				{error && <p className="mt-1 text-sm text-[var(--red)]">{error}</p>}
 			</div>

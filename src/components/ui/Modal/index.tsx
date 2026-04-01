@@ -3,12 +3,12 @@
 import type { ComponentPropsWithRef } from "react";
 import { useEffect } from "react";
 
-type ModalProps = ComponentPropsWithRef<"div"> & {
+type Props = ComponentPropsWithRef<"div"> & {
 	isOpen: boolean;
 	onClose: () => void;
 	title?: string;
 	size?: "sm" | "md" | "lg" | "xl";
-}
+};
 
 export const Modal = ({
 	isOpen,
@@ -18,7 +18,7 @@ export const Modal = ({
 	children,
 	className = "",
 	...props
-}: ModalProps) => {
+}: Props) => {
 	useEffect(() => {
 		if (isOpen) {
 			document.body.style.overflow = "hidden";
@@ -34,14 +34,14 @@ export const Modal = ({
 	if (!isOpen) return null;
 
 	const sizeClasses = {
-		sm: 'max-w-[448px]',
-		md: 'max-w-[512px]',
-		lg: 'max-w-[672px]',
-		xl: 'max-w-[896px]',
-	}
+		sm: "max-w-[448px]",
+		md: "max-w-[512px]",
+		lg: "max-w-[672px]",
+		xl: "max-w-[896px]",
+	};
 
 	const modalClass = [
-		'relative bg-white rounded-2xl shadow-[var(--shadow-xl)] w-full max-h-[90vh] overflow-y-auto animate-[zoomIn_0.2s]',
+		"relative bg-white rounded-2xl shadow-[var(--shadow-xl)] w-full max-h-[90vh] overflow-y-auto animate-[zoomIn_0.2s]",
 		sizeClasses[size],
 		className,
 	]
@@ -55,8 +55,13 @@ export const Modal = ({
 			<div className={modalClass} {...props}>
 				{title && (
 					<div className="flex items-center justify-between px-6 py-5 border-b-2 border-[var(--yellow-primary)] bg-gradient-to-r from-[var(--yellow-lighten1)] to-white">
-						<h2 className="text-2xl font-black text-[var(--black-primary)] flex items-center gap-2">{title}</h2>
-						<button onClick={onClose} className="inline-flex items-center justify-center w-10 h-10 rounded-lg text-[var(--black-lighten2)] transition-all cursor-pointer border-none bg-transparent hover:text-white hover:bg-[var(--red)]">
+						<h2 className="text-2xl font-black text-[var(--black-primary)] flex items-center gap-2">
+							{title}
+						</h2>
+						<button
+							onClick={onClose}
+							className="inline-flex items-center justify-center w-10 h-10 rounded-lg text-[var(--black-lighten2)] transition-all cursor-pointer border-none bg-transparent hover:text-white hover:bg-[var(--red)]"
+						>
 							<svg
 								style={{ width: "24px", height: "24px" }}
 								fill="none"
