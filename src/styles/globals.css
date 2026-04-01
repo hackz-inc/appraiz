@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  /* 変数の定義（カスタムプロパティ）のみを書く */
+  --color-yellow: #fabe00;
+  --color-yellow-light1: #fffabe;
+  --color-yellow-light2: #fdebb3;
+
+  --color-blue: #29a3bf;
+  --color-red: #eb5353;
+  --color-green: #4db56a;
+
+  --color-black: #212121;
+  --color-black-light1: #757575;
+  --color-black-light2: #bdbdbd;
+  --color-black-light3: #e0e0e0;
+  --color-black-light4: #efefef;
+  --color-black-light5: #fafafa;
+
+  --color-white: #ffffff;
+
+  --font-montserrat: "Montserrat";
+  --font-noto-sans-jp: "Noto Sans JP";
+  --font-noto-serif-jp: "Noto Serif JP";
+
+  /* Z-index */
+  --z-index-top: 9999;
+  --z-index-high: 100;
+  --z-index-medium: 10;
+  --z-index-low: 5;
+  --z-index-bottom: -1;
+}
+
+/* 実際にスタイルを適用する（命令）のは、@themeの外に書く */
+@layer base {
+  html {
+    font-size: 10px;
+  }
+  body {
+    /* @themeで定義した変数を呼び出す */
+    color: var(--color-black);
+    font-family: var(--font-noto-sans-jp), sans-serif;
+    font-weight: 500;
+    background-color: var(--color-white);
+  }
+}
