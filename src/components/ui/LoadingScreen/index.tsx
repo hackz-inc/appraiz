@@ -1,7 +1,5 @@
-export const LoadingScreen = () => {
-  return (
-    <div className="w-screen h-screen flex items-center justify-center bg-[var(--yellow-primary)]">
-      <div className="w-24 h-24 border-4 border-white border-t-[var(--black-primary)] rounded-full animate-spin" />
-    </div>
-  )
-}
+export const LoadingScreen = () => (
+	<div className="w-full h-full p-8 flex items-center justify-center bg-linear-to-br from-yellow via-black-light3 to-blue">
+		<div className="w-24 h-24 border-4 border-white border-t-black rounded-full animate-spin" />
+	</div>
+);
