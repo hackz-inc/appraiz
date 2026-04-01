@@ -1,10 +1,9 @@
-import { createAdminClient } from "@/lib/supabase/admin"; // さっき作ったやつ
+import { createAdminClient } from "@/lib/supabase/admin";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
 export const fetchHackathons = unstable_cache(
 	async () => {
-		// cookies() を使わないので、unstable_cache の中で呼んでも怒られません
 		const supabase = createAdminClient();
 
 		const { data, error } = await supabase
@@ -21,11 +20,6 @@ export const fetchHackathons = unstable_cache(
 		revalidate: 3600, // 1時間キャッシュ
 	},
 );
-
-// コンポーネントからはこちらを呼ぶ
-export const getHackathons = cache(async () => {
-	return await fetchHackathons();
-});
 
 export const getHackathonById = cache(async (id: string) => {
 	const supabase = createAdminClient();
