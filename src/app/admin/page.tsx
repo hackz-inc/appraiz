@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { AdminHeader } from "./_components/AdminHeader";
 import { CreateHackathonButton } from "./_components/CreateHackathonButton";
 import { HackathonCardList } from "./_components/HackathonCardList";
+import { LoadingScreen } from "@/components/ui";
 
 export default async function AdminPage() {
 	return (
@@ -14,6 +15,7 @@ export default async function AdminPage() {
 					</p>
 					<CreateHackathonButton />
 				</div>
+				<LoadingScreen />
 
 				<Suspense fallback={<div>Loading...</div>}>
 					<HackathonCardList />

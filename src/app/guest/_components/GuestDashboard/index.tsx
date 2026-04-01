@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GuestAuthGuard } from "@/components/guards";
+// import { GuestAuthGuard } from "@/components/guards";
 import { Container, Button, Card } from "@/components/ui";
 import { auth } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,7 +12,7 @@ type Hackathon = {
 	id: string;
 	name: string;
 	scoring_date: string;
-}
+};
 
 const GuestDashboardContent = () => {
 	const router = useRouter();
@@ -112,14 +112,10 @@ const GuestDashboardContent = () => {
 			</Container>
 		</div>
 	);
-}
+};
 
 const GuestDashboard = () => {
-	return (
-		<GuestAuthGuard>
-			<GuestDashboardContent />
-		</GuestAuthGuard>
-	);
-}
+	return <GuestDashboardContent />;
+};
 
 export default GuestDashboard;

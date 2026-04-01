@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Container, Button, Card } from "@/components/ui";
-import { AdminHeader } from "@/components/admin/AdminHeader";
+import { Button, Card } from "@/components/ui";
 import { DeleteTeamButton } from "../DeleteTeamButton";
 import { DeleteScoringItemButton } from "../DeleteScoringItemButton";
 import type { Hackathon } from "@/lib/hackathons";
@@ -11,13 +10,14 @@ import type { ScoringItem } from "@/lib/scoring";
 import type { Guest } from "@/lib/server/guests";
 import { NewTeamForm } from "../NewTeamForm";
 import { NewCriteriaForm } from "../NewCriteriaForm";
+import { AdminHeader } from "@/app/admin/_components/AdminHeader";
 
 type Props = {
 	hackathon: Hackathon;
 	teams: Team[];
 	scoringItems: ScoringItem[];
 	guests: Guest[];
-}
+};
 
 export const HackathonDetailClient = ({
 	hackathon,
@@ -216,4 +216,4 @@ export const HackathonDetailClient = ({
 			</div>
 		</div>
 	);
-}
+};
