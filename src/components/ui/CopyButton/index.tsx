@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { Button } from "../Button";
 
-type CopyButtonProps = {
+type Props = {
 	text: string;
 	label?: string;
 	className?: string;
-}
+};
 
-export function CopyButton({ text, label, className }: CopyButtonProps) {
+export function CopyButton({ text, label, className }: Props) {
 	const [copied, setCopied] = useState(false);
 
 	const handleCopy = async () => {

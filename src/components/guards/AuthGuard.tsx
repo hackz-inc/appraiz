@@ -1,49 +1,49 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
-import { LoadingScreen } from '@/components/ui'
-import type { UserRole } from '@/lib/auth/types'
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { LoadingScreen } from "@/components/ui";
+import type { UserRole } from "@/lib/auth/types";
 
-type AuthGuardProps = {
-  children: React.ReactNode
-  requiredRole?: UserRole
-  redirectTo?: string
-}
+type Props = {
+	children: React.ReactNode;
+	requiredRole?: UserRole;
+	redirectTo?: string;
+};
 
 export const AuthGuard = ({
-  children,
-  requiredRole,
-  redirectTo = '/admin/auth/login',
-}: AuthGuardProps) => {
-  const { user, loading } = useAuth()
-  const router = useRouter()
+	children,
+	requiredRole,
+	redirectTo = "/admin/auth/login",
+}: Props) => {
+	const { user, loading } = useAuth();
+	const router = useRouter();
 
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push(redirectTo)
-      } else if (requiredRole && user.role !== requiredRole) {
-        // Redirect to appropriate page based on role
-        if (user.role === 'admin') {
-          router.push('/admin')
-        } else if (user.role === 'guest') {
-          router.push('/guest')
-        } else {
-          router.push('/')
-        }
-      }
-    }
-  }, [user, loading, requiredRole, redirectTo, router])
+	useEffect(() => {
+		if (!loading) {
+			if (!user) {
+				router.push(redirectTo);
+			} else if (requiredRole && user.role !== requiredRole) {
+				// Redirect to appropriate page based on role
+				if (user.role === "admin") {
+					router.push("/admin");
+				} else if (user.role === "guest") {
+					router.push("/guest");
+				} else {
+					router.push("/");
+				}
+			}
+		}
+	}, [user, loading, requiredRole, redirectTo, router]);
 
-  if (loading) {
-    return <LoadingScreen />
-  }
+	if (loading) {
+		return <LoadingScreen />;
+	}
 
-  if (!user || (requiredRole && user.role !== requiredRole)) {
-    return <LoadingScreen />
-  }
+	if (!user || (requiredRole && user.role !== requiredRole)) {
+		return <LoadingScreen />;
+	}
 
-  return <>{children}</>
-}
+	return <>{children}</>;
+};

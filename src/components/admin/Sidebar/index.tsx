@@ -12,7 +12,7 @@ type SidebarItem = {
 	type: "team" | "criteria" | "guest" | "hackathon" | "tab";
 };
 
-type SidebarProps = {
+type Props = {
 	items: SidebarItem[];
 	isOpen: boolean;
 	currentHash?: string;
@@ -21,7 +21,14 @@ type SidebarProps = {
 	hackathonId: string;
 };
 
-export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hackathonId }: SidebarProps) {
+export function Sidebar({
+	items,
+	isOpen,
+	currentHash,
+	currentTab,
+	onClose,
+	hackathonId,
+}: Props) {
 	const router = useRouter();
 
 	// チーム、採点項目、ゲスト、ハッカソン、タブでグループ化
@@ -32,7 +39,10 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 	const hackathons = items.filter((item) => item.type === "hackathon");
 
 	// ページ遷移処理
-	const handleNavigate = (e: React.MouseEvent<HTMLAnchorElement>, item: SidebarItem) => {
+	const handleNavigate = (
+		e: React.MouseEvent<HTMLAnchorElement>,
+		item: SidebarItem,
+	) => {
 		e.preventDefault();
 
 		let path = "";
@@ -75,11 +85,17 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 										<li key={tab.id}>
 											<Link
 												href={`/admin/hackathons/${hackathonId}?tab=${tab.id}`}
-												className={`flex items-center gap-3 px-3 py-3 rounded-lg no-underline text-[var(--black-lighten1)] text-sm font-medium transition-all cursor-pointer hover:bg-[var(--black-lighten5)] hover:text-[var(--black-primary)] ${currentTab === tab.id ? 'bg-[var(--yellow-primary)] text-[var(--black-primary)] font-bold shadow-[var(--shadow-md)]' : ''}`}
+												className={`flex items-center gap-3 px-3 py-3 rounded-lg no-underline text-[var(--black-lighten1)] text-sm font-medium transition-all cursor-pointer hover:bg-[var(--black-lighten5)] hover:text-[var(--black-primary)] ${
+													currentTab === tab.id
+														? "bg-[var(--yellow-primary)] text-[var(--black-primary)] font-bold shadow-[var(--shadow-md)]"
+														: ""
+												}`}
 												onClick={(e) => handleNavigate(e, tab)}
 											>
 												<span className="text-xl shrink-0">{tab.icon}</span>
-												<span className="flex-1 whitespace-nowrap overflow-hidden text-ellipsis">{tab.label}</span>
+												<span className="flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
+													{tab.label}
+												</span>
 											</Link>
 										</li>
 									))}
@@ -104,7 +120,9 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 										ハッカソン
 									</h3>
 								</Link>
-								<p className="py-2 px-3 text-sm text-[var(--black-lighten1)] font-semibold bg-[var(--black-lighten5)] rounded-md text-center">{hackathons.length}件</p>
+								<p className="py-2 px-3 text-sm text-[var(--black-lighten1)] font-semibold bg-[var(--black-lighten5)] rounded-md text-center">
+									{hackathons.length}件
+								</p>
 							</div>
 						)}
 
@@ -125,7 +143,9 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 										チーム
 									</h3>
 								</Link>
-								<p className="py-2 px-3 text-sm text-[var(--black-lighten1)] font-semibold bg-[var(--black-lighten5)] rounded-md text-center">{teams.length}件</p>
+								<p className="py-2 px-3 text-sm text-[var(--black-lighten1)] font-semibold bg-[var(--black-lighten5)] rounded-md text-center">
+									{teams.length}件
+								</p>
 							</div>
 						)}
 
@@ -146,7 +166,9 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 										採点項目
 									</h3>
 								</Link>
-								<p className="py-2 px-3 text-sm text-[var(--black-lighten1)] font-semibold bg-[var(--black-lighten5)] rounded-md text-center">{criteria.length}件</p>
+								<p className="py-2 px-3 text-sm text-[var(--black-lighten1)] font-semibold bg-[var(--black-lighten5)] rounded-md text-center">
+									{criteria.length}件
+								</p>
 							</div>
 						)}
 
@@ -167,7 +189,9 @@ export function Sidebar({ items, isOpen, currentHash, currentTab, onClose, hacka
 										ゲスト
 									</h3>
 								</Link>
-								<p className="py-2 px-3 text-sm text-[var(--black-lighten1)] font-semibold bg-[var(--black-lighten5)] rounded-md text-center">{guests.length}件</p>
+								<p className="py-2 px-3 text-sm text-[var(--black-lighten1)] font-semibold bg-[var(--black-lighten5)] rounded-md text-center">
+									{guests.length}件
+								</p>
 							</div>
 						)}
 					</div>

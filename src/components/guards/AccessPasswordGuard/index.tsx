@@ -4,17 +4,14 @@ import { useState, useEffect } from "react";
 import { Card, Button, TextInput, Container } from "@/components/ui";
 import { hackathons } from "@/lib/hackathons";
 
-type AccessPasswordGuardProps = {
+type Props = {
 	hackathonId: string;
 	children: React.ReactNode;
-}
+};
 
 const STORAGE_KEY_PREFIX = "hackathon_access_";
 
-export function AccessPasswordGuard({
-	hackathonId,
-	children,
-}: AccessPasswordGuardProps) {
+export function AccessPasswordGuard({ hackathonId, children }: Props) {
 	const [isVerified, setIsVerified] = useState<boolean | null>(null);
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");

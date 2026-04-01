@@ -1,26 +1,26 @@
-'use client'
+"use client";
 
-import { SWRConfig } from 'swr'
-import type { ReactNode } from 'react'
+import { SWRConfig } from "swr";
+import type { ReactNode } from "react";
 
-type SWRProviderProps = {
-  children: ReactNode
-}
+type Props = {
+	children: ReactNode;
+};
 
-export const SWRProvider = ({ children }: SWRProviderProps) => {
-  return (
-    <SWRConfig
-      value={{
-        revalidateOnFocus: false,
-        revalidateOnReconnect: false,
-        revalidateIfStale: false,
-        dedupingInterval: 60000,
-        shouldRetryOnError: false,
-        // キャッシュをメモリに保持
-        provider: () => new Map(),
-      }}
-    >
-      {children}
-    </SWRConfig>
-  )
-}
+export const SWRProvider = ({ children }: Props) => {
+	return (
+		<SWRConfig
+			value={{
+				revalidateOnFocus: false,
+				revalidateOnReconnect: false,
+				revalidateIfStale: false,
+				dedupingInterval: 60000,
+				shouldRetryOnError: false,
+				// キャッシュをメモリに保持
+				provider: () => new Map(),
+			}}
+		>
+			{children}
+		</SWRConfig>
+	);
+};

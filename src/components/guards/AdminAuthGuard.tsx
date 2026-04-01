@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
-import { AuthGuard } from './AuthGuard'
+import { AuthGuard } from "./AuthGuard";
 
-type AdminAuthGuardProps = {
-  children: React.ReactNode
-}
+type Props = {
+	children: React.ReactNode;
+};
 
-export const AdminAuthGuard = ({ children }: AdminAuthGuardProps) => {
-  return (
-    <AuthGuard requiredRole="admin" redirectTo="/admin/auth/login">
-      {children}
-    </AuthGuard>
-  )
-}
+export const AdminAuthGuard = ({ children }: Props) => {
+	return (
+		<AuthGuard requiredRole="admin" redirectTo="/admin/auth/login">
+			{children}
+		</AuthGuard>
+	);
+};
