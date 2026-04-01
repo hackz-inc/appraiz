@@ -2,25 +2,8 @@ import { Suspense } from "react";
 import { AdminHeader } from "./_components/AdminHeader";
 import { CreateHackathonButton } from "./_components/CreateHackathonButton";
 import { HackathonCardList } from "./_components/HackathonCardList";
-// import { createClient } from "@/lib/supabase/server";
-// import { redirect } from "next/navigation";
-
-// ページ全体を60秒間キャッシュ
-// export const revalidate = 60;
 
 export default async function AdminPage() {
-	// 認証チェック（ここでcookies()を使う）
-	// const supabase = await createClient();
-	// const {
-	// 	data: { user },
-	// } = await supabase.auth.getUser();
-
-	// console.log("AdminPage user:", user);
-
-	// if (!user) {
-	// 	redirect("/login");
-	// }
-
 	return (
 		<>
 			<AdminHeader breadcrumbs={[{ label: "ホーム" }]} />

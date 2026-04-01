@@ -2,7 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin"; // さっき作った�
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
-const fetchHackathons = unstable_cache(
+export const fetchHackathons = unstable_cache(
 	async () => {
 		// cookies() を使わないので、unstable_cache の中で呼んでも怒られません
 		const supabase = createAdminClient();

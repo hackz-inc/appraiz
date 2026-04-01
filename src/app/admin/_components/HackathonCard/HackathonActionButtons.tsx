@@ -4,13 +4,11 @@ import { EditIcon, DeleteIcon } from "@/components/ui/icons";
 import { useModalStore } from "@/stores";
 import type { Hackathon } from "@/lib/hackathons";
 
-interface HackathonActionButtonsProps {
+interface Props {
 	hackathon: Hackathon;
 }
 
-export function HackathonActionButtons({
-	hackathon,
-}: HackathonActionButtonsProps) {
+export function HackathonActionButtons({ hackathon }: Props) {
 	const { openModal } = useModalStore();
 
 	const handleEdit = () => {

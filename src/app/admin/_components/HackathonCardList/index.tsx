@@ -1,8 +1,8 @@
-import { getHackathons } from "@/lib/server/hackathons";
+import { fetchHackathons } from "@/lib/server/hackathons";
 import { HackathonCard } from "../HackathonCard";
 
 export async function HackathonCardList() {
-	const data = await getHackathons();
+	const data = await fetchHackathons();
 
 	if (!data || data.length === 0) {
 		return <div>データがありません。</div>;
