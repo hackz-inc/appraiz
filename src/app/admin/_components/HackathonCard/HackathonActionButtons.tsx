@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { EditIcon, DeleteIcon } from "@/components/ui/icons";
 import { useModalStore } from "@/stores";
 import type { Hackathon } from "@/lib/hackathons";
@@ -12,10 +13,6 @@ type Props = {
 export const HackathonActionButtons = ({ hackathon }: Props) => {
 	const { openModal } = useModalStore();
 
-	const handleHandshake = () => {
-		openModal("handshakeHackathon", { data: { hackathon } });
-	};
-
 	const handleEdit = () => {
 		openModal("editHackathon", { data: { hackathon } });
 	};
@@ -26,14 +23,13 @@ export const HackathonActionButtons = ({ hackathon }: Props) => {
 
 	return (
 		<div className="flex gap-2">
-			<button
-				type="button"
-				onClick={handleEdit}
-				className="inline-flex items-center justify-center w-9 h-9 rounded-lg border-none bg-transparent text-black-lighten1 cursor-pointer transition-all hover:bg-black-lighten4 hover:text-black active:scale-95"
-				aria-label="ゲスト"
+			<Link
+				href={`/admin?invite=${hackathon.id}`}
+				className="inline-flex items-center justify-center w-9 h-9 rounded-lg border-none bg-transparent text-black-lighten1 cursor-pointer transition-all hover:bg-black-lighten4 hover:text-black active:scale-95 no-underline"
+				aria-label="ゲスト招待"
 			>
 				<HandShakeIcon size={20} />
-			</button>
+			</Link>
 			<button
 				type="button"
 				onClick={handleEdit}
