@@ -8,9 +8,9 @@ export default async function AdminPage() {
 	return (
 		<>
 			<AdminHeader breadcrumbs={[{ label: "ホーム" }]} />
-			<main className="w-full p-24 min-h-screen bg-gradient-to-br from-[var(--black-lighten5)] via-white to-[var(--yellow-lighten1)]">
+			<main className="w-full p-24 min-h-screen bg-linear-to-br from-black-lighten5 via-white to-yellow-lighten1">
 				<div className="flex items-center justify-between mb-8">
-					<p className="text-[30px] font-black text-[var(--black-primary)] mb-2">
+					<p className="text-[30px] font-black text-black mb-2">
 						ハッカソン一覧
 					</p>
 					<CreateHackathonButton />

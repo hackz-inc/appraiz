@@ -136,7 +136,7 @@ const ResultsPageContent = () => {
 			</Container>
 		</div>
 	);
-}
+};
 
 const ResultsPage = () => {
 	const params = useParams();
@@ -147,6 +147,6 @@ const ResultsPage = () => {
 			<ResultsPageContent />
 		</AccessPasswordGuard>
 	);
-}
+};
 
 export default ResultsPage;
