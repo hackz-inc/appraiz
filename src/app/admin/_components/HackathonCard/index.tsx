@@ -51,6 +51,7 @@ export const HackathonCard = ({ hackathon }: Props) => {
 				<Link
 					href={`/admin/hackathons/${hackathon.id}`}
 					className="inline-flex items-center justify-center px-8 py-3 bg-yellow text-black font-bold text-base rounded-3xl no-underline transition-opacity hover:opacity-90"
+					prefetch={false}
 				>
 					フォーム一覧
 				</Link>

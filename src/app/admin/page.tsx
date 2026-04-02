@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import { AdminHeader } from "./_components/AdminHeader";
 import { CreateHackathonButton } from "./_components/CreateHackathonButton";
 import { HackathonCardList } from "./_components/HackathonCardList";
+import { InviteGuestModal } from "./_components/InviteGuestModal";
 import { LoadingIcon } from "@/components/ui/LoadingIcon";
-import { AdminPageModal } from "./_components/AdminPageModal";
 
 export default async function AdminPage() {
 	return (
@@ -21,8 +21,9 @@ export default async function AdminPage() {
 					<HackathonCardList />
 				</Suspense>
 			</main>
+
 			<Suspense fallback={null}>
-				<AdminPageModal />
+				<InviteGuestModal />
 			</Suspense>
 		</>
 	);
