@@ -29,7 +29,7 @@ export const CopyButton = ({ text, label, className }: Props) => {
 			onClick={handleCopy}
 			className={className}
 		>
-			{copied ? "✓ コピーしました" : label || "📋 コピー"}
+			{copied ? "✓ コピーしました" : label || "コピー"}
 		</Button>
 	);
-}
+};
