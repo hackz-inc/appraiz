@@ -24,6 +24,12 @@ const ScoringPageContent = () => {
 	const [saving, setSaving] = useState(false);
 	const [message, setMessage] = useState("");
 
+	const createInitialScores = (items: ScoringItem[]) =>
+		items.reduce<Record<string, number>>((acc, item) => {
+			acc[item.id] = 0;
+			return acc;
+		}, {});
+
 	useEffect(() => {
 		loadData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,6 +45,7 @@ const ScoringPageContent = () => {
 			setHackathon(h);
 			setTeamList(t);
 			setItemsList(items);
+			setScoreInputs(createInitialScores(items));
 		} catch (error) {
 			console.error("Failed to load data:", error);
 		} finally {
@@ -92,7 +99,7 @@ const ScoringPageContent = () => {
 			if (currentTeamIndex < teamList.length - 1) {
 				setTimeout(() => {
 					setCurrentTeamIndex((prev) => prev + 1);
-					setScoreInputs({});
+					setScoreInputs(createInitialScores(itemsList));
 					setComment("");
 					setMessage("");
 				}, 1000);
@@ -111,17 +118,19 @@ const ScoringPageContent = () => {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<div className="inline-block w-12 h-12 border-4 border-[var(--yellow-primary)] border-t-transparent rounded-full animate-spin" />
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-yellow)] to-[var(--color-yellow-light1)]">
+				<div className="inline-block w-12 h-12 border-4 border-[var(--color-black)] border-t-transparent rounded-full animate-spin" />
 			</div>
 		);
 	}
 
 	if (!hackathon) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-yellow)] to-[var(--color-yellow-light1)] p-8">
 				<Card>
-					<p className="text-center">ハッカソンが見つかりません</p>
+					<p className="text-center text-[var(--color-black)]">
+						ハッカソンが見つかりません
+					</p>
 				</Card>
 			</div>
 		);
@@ -129,9 +138,11 @@ const ScoringPageContent = () => {
 
 	if (teamList.length === 0) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-yellow)] to-[var(--color-yellow-light1)] p-8">
 				<Card>
-					<p className="text-center">チームが登録されていません</p>
+					<p className="text-center text-[var(--color-black)]">
+						チームが登録されていません
+					</p>
 				</Card>
 			</div>
 		);
@@ -139,9 +150,11 @@ const ScoringPageContent = () => {
 
 	if (itemsList.length === 0) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
+			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-yellow)] to-[var(--color-yellow-light1)] p-8">
 				<Card>
-					<p className="text-center">採点項目が登録されていません</p>
+					<p className="text-center text-[var(--color-black)]">
+						採点項目が登録されていません
+					</p>
 				</Card>
 			</div>
 		);
@@ -149,119 +162,139 @@ const ScoringPageContent = () => {
 
 	const currentTeam = teamList[currentTeamIndex];
 	const isError = message.includes("失敗") || message.includes("入力");
+	const totalScore = itemsList.reduce(
+		(sum, item) => sum + (scoreInputs[item.id] ?? 0),
+		0,
+	);
+	const maxTotalScore = itemsList.reduce((sum, item) => sum + item.max_score, 0);
 
 	return (
-		<div className="min-h-screen bg-[var(--black-lighten5)] pt-8 pb-8">
-			<Container maxWidth="md">
-				<Card className="mb-8">
-					<h1 className="text-3xl font-bold text-[var(--black-primary)] mb-2">
-						{hackathon.name} - スコアリング
-					</h1>
-					<p className="text-sm text-[var(--black-lighten1)] mb-4">
-						チーム {currentTeamIndex + 1} / {teamList.length}
-					</p>
+		<div className="min-h-screen bg-[var(--color-white)] py-10">
+			<Container maxWidth="xl">
+				<div className="rounded-2xl bg-[var(--color-white)] px-4 sm:px-8 py-6">
+					<div className="mb-6 flex items-start justify-between gap-4">
+						<div>
+							<p className="text-2xl sm:text-5xl font-bold text-[var(--color-black)] leading-tight">
+								No.{currentTeamIndex + 1} : {currentTeam.name}
+							</p>
+							<p className="mt-4 text-2xl font-bold text-[var(--color-blue)]">URL</p>
+							<p className="mt-4 text-base sm:text-lg text-[var(--color-black-light1)]">
+								{hackathon.name}
+							</p>
+						</div>
+						<p className="text-5xl sm:text-7xl font-extrabold text-[var(--color-yellow)] leading-none whitespace-nowrap">
+							{totalScore}点
+						</p>
+					</div>
 
 					{!judgeName && (
-						<div className="mb-4">
-							<label className="block text-sm font-medium text-[var(--black-primary)] mb-2">
+						<div className="mb-5 max-w-[420px]">
+							<label className="mb-2 block text-sm font-semibold text-[var(--color-black)]">
 								審査員名
 							</label>
 							<input
 								type="text"
-								className="w-full px-4 py-2 border border-[var(--black-lighten3)] rounded-md focus:outline-none focus:shadow-[0_0_0_2px_var(--yellow-primary)]"
+								className="w-full rounded-xl border-2 border-[var(--color-black-light2)] bg-[var(--color-white)] px-4 py-3 text-base focus:outline-none focus:shadow-[0_0_0_2px_var(--color-yellow)]"
 								placeholder="あなたの名前を入力してください"
 								value={judgeName}
 								onChange={(e) => setJudgeName(e.target.value)}
 							/>
 						</div>
 					)}
-				</Card>
 
-				{message && (
-					<div
-						className={`mb-4 p-4 rounded-md text-sm ${
-							isError
-								? 'bg-[var(--red)] bg-opacity-10 border border-[var(--red)] text-[var(--red)]'
-								: 'bg-[var(--yellow-lighten2)] bg-opacity-20 border border-[var(--yellow-primary)] text-[var(--black-primary)]'
-						}`}
-					>
-						{message}
-					</div>
-				)}
+					{message && (
+						<div
+							className={`mb-5 rounded-xl border px-4 py-3 text-sm ${
+								isError
+									? 'border-[var(--color-red)] bg-[rgba(235,83,83,0.12)] text-[var(--color-red)]'
+									: 'border-[var(--color-yellow)] bg-[rgba(250,190,0,0.18)] text-[var(--color-black)]'
+							}`}
+						>
+							{message}
+						</div>
+					)}
 
-				<Card className="mb-6">
-					<h2 className="text-2xl font-bold text-[var(--black-primary)] mb-6">
-						{currentTeam.name}
-					</h2>
-
-					<div className="flex flex-col gap-6">
+					<div className="space-y-8">
 						{itemsList.map((item) => {
-							const currentScore = scoreInputs[item.id];
+							const currentScore = scoreInputs[item.id] ?? 0;
+							const scoreRate = (currentScore / item.max_score) * 100;
 
 							return (
-								<div
-									key={item.id}
-									className="border-t border-[var(--black-lighten3)] pt-4 first:border-t-0 first:pt-0"
-								>
-									<div className="flex items-center justify-between mb-3">
-										<h3 className="font-bold text-[var(--black-primary)] text-lg">
-											{item.name}
-										</h3>
-										<div className="text-sm text-[var(--black-lighten1)]">
-											最大: {item.max_score}点
+								<div key={item.id}>
+									<p className="mb-4 text-2xl sm:text-4xl font-bold text-[var(--color-black-light1)]">
+										{item.name}
+									</p>
+									<div className="flex items-center gap-4 sm:gap-8">
+										<div className="flex-1 pt-2">
+											<input
+												type="range"
+												min={0}
+												max={item.max_score}
+												step={1}
+												value={currentScore}
+												onChange={(e) =>
+													handleScoreChange(item.id, Number(e.target.value))
+												}
+												style={{
+													background: `linear-gradient(to right, var(--color-yellow) ${scoreRate}%, var(--color-black-light2) ${scoreRate}%)`,
+												}}
+												className="h-2 w-full appearance-none rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--color-yellow)] [&::-webkit-slider-thumb]:shadow-[0_2px_6px_rgba(0,0,0,0.2)] [&::-moz-range-thumb]:h-7 [&::-moz-range-thumb]:w-7 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[var(--color-yellow)]"
+											/>
 										</div>
-									</div>
 
-									<div className="flex flex-wrap gap-2">
-										{Array.from(
-											{ length: item.max_score + 1 },
-											(_, i) => i,
-										).map((score) => (
-											<button
-												type="button"
-												key={score}
-												onClick={() => handleScoreChange(item.id, score)}
-												className={`px-6 py-3 rounded-lg font-bold transition-all border-none cursor-pointer ${
-													currentScore === score
-														? 'bg-[var(--yellow-primary)] text-white shadow-[var(--shadow-lg)] scale-105'
-														: 'bg-white border-2 border-[var(--black-lighten3)] text-[var(--black-primary)] hover:bg-[var(--black-lighten5)] hover:border-[var(--yellow-primary)]'
-												}`}
-											>
-												{score}
-											</button>
-										))}
+										<div className="w-[180px] shrink-0">
+											<div className="flex items-end justify-end gap-3 leading-none">
+												<p className="text-5xl sm:text-6xl font-extrabold text-[var(--color-yellow)]">
+													{currentScore}
+												</p>
+												<div className="h-12 w-[4px] rotate-[35deg] rounded-full bg-[var(--color-black-light2)]" />
+												<p className="text-4xl sm:text-5xl font-bold text-[var(--color-black-light2)]">
+													{item.max_score}
+												</p>
+											</div>
+										</div>
 									</div>
 								</div>
 							);
 						})}
 					</div>
 
-					<div className="mt-6 pt-6 border-t border-[var(--black-lighten3)]">
-						<label className="block text-sm font-medium text-[var(--black-primary)] mb-2">
-							コメント（任意）
+					<div className="mt-8 flex justify-end">
+						<Button
+							variant="primary"
+							size="lg"
+							onClick={handleSubmit}
+							isLoading={saving}
+							disabled={!judgeName.trim()}
+							className="h-16 min-w-[240px] rounded-full px-12 text-3xl font-bold shadow-[0_8px_14px_rgba(0,0,0,0.15)] text-[var(--color-black)] disabled:opacity-100"
+							style={{
+								backgroundColor: "#ffb300",
+								color: "var(--color-black)",
+								borderColor: "#ffb300",
+								filter: "saturate(1.25)",
+							}}
+						>
+							{currentTeamIndex < teamList.length - 1
+								? "一時保存"
+								: "採点完了"}
+						</Button>
+					</div>
+
+					<div className="mt-8 border-t border-[var(--color-black-light2)] pt-6">
+						<label className="mb-3 block text-2xl sm:text-4xl font-bold text-[var(--color-black-light1)]">
+							一言コメント
 						</label>
 						<TextArea
-							placeholder="このチームに対するコメントを入力してください"
+							placeholder="コメントを入力"
 							value={comment}
 							onChange={(e) => setComment(e.target.value)}
 							rows={4}
 							fullWidth
+							className="rounded-2xl border-4 border-[var(--color-black)] bg-[var(--color-black-light4)] text-lg"
+							style={{ backgroundColor: "var(--color-black-light4)" }}
 						/>
 					</div>
-				</Card>
-
-				<Button
-					variant="primary"
-					size="lg"
-					onClick={handleSubmit}
-					isLoading={saving}
-					disabled={!judgeName.trim()}
-					fullWidth
-				>
-					{currentTeamIndex < teamList.length - 1
-						? "次のチームへ"
-						: "採点を完了"}
-				</Button>
+				</div>
 			</Container>
 		</div>
 	);
