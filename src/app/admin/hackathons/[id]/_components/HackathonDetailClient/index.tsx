@@ -165,54 +165,6 @@ export const HackathonDetailClient = ({
 						)}
 					</Card>
 				</div>
-
-				{/* 共同開催者セクション */}
-				<div id="guests-section" className="mb-12">
-					<div className="mb-6">
-						<div>
-							<h2 className="text-3xl font-bold text-[var(--black-primary)] flex items-center gap-3">
-								<span className="text-4xl">🫱‍🫲</span>
-								<span>共同開催者</span>
-							</h2>
-						</div>
-					</div>
-
-					{!guests || guests.length === 0 ? (
-						<Card className="text-center py-12">
-							<div className="text-[var(--black-lighten1)]">共同開催者</div>
-						</Card>
-					) : (
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-							{guests.map((guest) => (
-								<Card key={guest.id} id={`guest-${guest.id}`}>
-									<div className="flex items-start gap-3">
-										<div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-[var(--yellow-lighten1)] rounded-full">
-											<span className="text-2xl">🎤</span>
-										</div>
-										<div className="flex-1 min-w-0">
-											<h3 className="text-lg font-bold text-[var(--black-primary)] mb-1 truncate">
-												{guest.name}
-											</h3>
-											<p className="text-sm text-[var(--black-lighten1)] mb-3 truncate">
-												{guest.company_name}
-											</p>
-											<div>
-												<Link
-													href={`/admin/hackathons/${hackathon.id}/guests`}
-													className="block"
-												>
-													<Button variant="secondary" size="sm" fullWidth>
-														⚙️ 管理
-													</Button>
-												</Link>
-											</div>
-										</div>
-									</div>
-								</Card>
-							))}
-						</div>
-					)}
-				</div>
 			</div>
 		</div>
 	);
