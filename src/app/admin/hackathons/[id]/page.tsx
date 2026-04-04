@@ -1,7 +1,6 @@
 import { getHackathonById } from "@/lib/server/hackathons";
 import { getTeamsByHackathon } from "@/lib/server/teams";
 import { getScoringItemsByHackathon } from "@/lib/server/scoring";
-import { getInvitedGuests } from "@/lib/server/guests";
 import { HackathonDetailClient } from "./_components/HackathonDetailClient";
 import { notFound } from "next/navigation";
 
@@ -14,11 +13,10 @@ export default async function HackathonDetailPage({
 	const hackathonId = resolvedParams.id;
 
 	try {
-		const [hackathon, teams, scoringItems, guests] = await Promise.all([
+		const [hackathon, teams, scoringItems] = await Promise.all([
 			getHackathonById(hackathonId),
 			getTeamsByHackathon(hackathonId),
 			getScoringItemsByHackathon(hackathonId),
-			getInvitedGuests(hackathonId),
 		]);
 
 		return (
@@ -26,7 +24,6 @@ export default async function HackathonDetailPage({
 				hackathon={hackathon}
 				teams={teams}
 				scoringItems={scoringItems}
-				guests={guests}
 			/>
 		);
 	} catch (error) {

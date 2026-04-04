@@ -24,7 +24,7 @@ export const HackathonActionButtons = ({ hackathon }: Props) => {
 	return (
 		<div className="flex gap-2">
 			<Link
-				href={`/admin?invite=${hackathon.id}`}
+				href={`/admin/invite-guest?hackathonId=${hackathon.id}`}
 				className="inline-flex items-center justify-center w-9 h-9 rounded-lg border-none bg-transparent text-black-lighten1 cursor-pointer transition-all hover:bg-black-lighten4 hover:text-black active:scale-95 no-underline"
 				aria-label="ゲスト招待"
 			>

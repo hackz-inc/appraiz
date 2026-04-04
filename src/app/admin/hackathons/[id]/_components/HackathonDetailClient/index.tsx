@@ -16,14 +16,12 @@ type Props = {
 	hackathon: Hackathon;
 	teams: Team[];
 	scoringItems: ScoringItem[];
-	guests: Guest[];
 };
 
 export const HackathonDetailClient = ({
 	hackathon,
 	teams,
 	scoringItems,
-	guests,
 }: Props) => {
 	return (
 		<div className="min-h-screen bg-[var(--black-lighten5)]">
