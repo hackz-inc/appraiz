@@ -4,10 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, Modal } from "@/components/ui";
 import type { GuestWithInviteStatus } from "@/lib/guests";
-import {
-	getGuestsWithInviteStatusAction,
-	updateInvitedGuestsAction,
-} from "@/lib/server/actions/guests";
+import { updateInvitedGuestsAction } from "@/lib/server/actions/guests";
+import { fetchGuests } from "@/lib/server/guests";
 
 export const InviteGuestModal = () => {
 	const router = useRouter();
@@ -28,12 +26,13 @@ export const InviteGuestModal = () => {
 
 		setFetching(true);
 		try {
-			const guestsData = await getGuestsWithInviteStatusAction(hackathonId);
-			setGuests(guestsData);
+			const res = await fetchGuests();
+
+			setGuests(res);
 
 			// 既に招待されているゲストを選択状態にする
 			const invitedIds = new Set(
-				guestsData.filter((g) => g.isInvited).map((g) => g.id),
+				res.filter((g) => g.isInvited).map((g) => g.id),
 			);
 			setSelectedGuestIds(invitedIds);
 		} catch (err) {
@@ -70,14 +69,6 @@ export const InviteGuestModal = () => {
 		});
 	};
 
-	const handleSelectAll = () => {
-		if (selectedGuestIds.size === guests.length) {
-			setSelectedGuestIds(new Set());
-		} else {
-			setSelectedGuestIds(new Set(guests.map((g) => g.id)));
-		}
-	};
-
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
@@ -106,9 +97,7 @@ export const InviteGuestModal = () => {
 				handleClose();
 			}, 1000);
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "招待の更新に失敗しました",
-			);
+			setError(err instanceof Error ? err.message : "招待の更新に失敗しました");
 		} finally {
 			setLoading(false);
 		}
@@ -133,26 +122,6 @@ export const InviteGuestModal = () => {
 						招待を更新しました
 					</div>
 				)}
-
-				<div className="flex items-center justify-between p-4 bg-gray-50 rounded-md">
-					<div>
-						<p className="text-sm text-gray-600">選択中</p>
-						<p className="font-bold text-gray-900">
-							{selectedGuestIds.size} / {guests.length} 人
-						</p>
-					</div>
-					<Button
-						type="button"
-						variant="secondary"
-						size="sm"
-						onClick={handleSelectAll}
-						disabled={fetching || loading}
-					>
-						{selectedGuestIds.size === guests.length
-							? "すべて解除"
-							: "すべて選択"}
-					</Button>
-				</div>
 
 				{fetching ? (
 					<div className="flex items-center justify-center py-8">
