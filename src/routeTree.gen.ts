@@ -11,6 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuestIndexRouteImport } from './routes/guest/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as GuestAuthSignupRouteImport } from './routes/guest/auth/signup'
+import { Route as GuestAuthLoginRouteImport } from './routes/guest/auth/login'
+import { Route as AdminAuthLoginRouteImport } from './routes/admin/auth/login'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -22,31 +27,98 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuestIndexRoute = GuestIndexRouteImport.update({
+  id: '/guest/',
+  path: '/guest/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuestAuthSignupRoute = GuestAuthSignupRouteImport.update({
+  id: '/guest/auth/signup',
+  path: '/guest/auth/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuestAuthLoginRoute = GuestAuthLoginRouteImport.update({
+  id: '/guest/auth/login',
+  path: '/guest/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuthLoginRoute = AdminAuthLoginRouteImport.update({
+  id: '/admin/auth/login',
+  path: '/admin/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin/': typeof AdminIndexRoute
+  '/guest/': typeof GuestIndexRoute
+  '/admin/auth/login': typeof AdminAuthLoginRoute
+  '/guest/auth/login': typeof GuestAuthLoginRoute
+  '/guest/auth/signup': typeof GuestAuthSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminIndexRoute
+  '/guest': typeof GuestIndexRoute
+  '/admin/auth/login': typeof AdminAuthLoginRoute
+  '/guest/auth/login': typeof GuestAuthLoginRoute
+  '/guest/auth/signup': typeof GuestAuthSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin/': typeof AdminIndexRoute
+  '/guest/': typeof GuestIndexRoute
+  '/admin/auth/login': typeof AdminAuthLoginRoute
+  '/guest/auth/login': typeof GuestAuthLoginRoute
+  '/guest/auth/signup': typeof GuestAuthSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/admin/'
+    | '/guest/'
+    | '/admin/auth/login'
+    | '/guest/auth/login'
+    | '/guest/auth/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/guest'
+    | '/admin/auth/login'
+    | '/guest/auth/login'
+    | '/guest/auth/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/admin/'
+    | '/guest/'
+    | '/admin/auth/login'
+    | '/guest/auth/login'
+    | '/guest/auth/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  GuestIndexRoute: typeof GuestIndexRoute
+  AdminAuthLoginRoute: typeof AdminAuthLoginRoute
+  GuestAuthLoginRoute: typeof GuestAuthLoginRoute
+  GuestAuthSignupRoute: typeof GuestAuthSignupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +137,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guest/': {
+      id: '/guest/'
+      path: '/guest'
+      fullPath: '/guest/'
+      preLoaderRoute: typeof GuestIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guest/auth/signup': {
+      id: '/guest/auth/signup'
+      path: '/guest/auth/signup'
+      fullPath: '/guest/auth/signup'
+      preLoaderRoute: typeof GuestAuthSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guest/auth/login': {
+      id: '/guest/auth/login'
+      path: '/guest/auth/login'
+      fullPath: '/guest/auth/login'
+      preLoaderRoute: typeof GuestAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/auth/login': {
+      id: '/admin/auth/login'
+      path: '/admin/auth/login'
+      fullPath: '/admin/auth/login'
+      preLoaderRoute: typeof AdminAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  GuestIndexRoute: GuestIndexRoute,
+  AdminAuthLoginRoute: AdminAuthLoginRoute,
+  GuestAuthLoginRoute: GuestAuthLoginRoute,
+  GuestAuthSignupRoute: GuestAuthSignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
