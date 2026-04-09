@@ -12,9 +12,15 @@ type Props = {
 	};
 	onEdit?: () => void;
 	onDelete?: () => void;
+	onCollaboratorClick?: () => void;
 };
 
-export const AdminHackathonCard = ({ hackathon, onEdit, onDelete }: Props) => {
+export const AdminHackathonCard = ({
+	hackathon,
+	onEdit,
+	onDelete,
+	onCollaboratorClick,
+}: Props) => {
 	return (
 		<div
 			className="w-full px-8 py-7 pb-10 shadow-md rounded-lg"
@@ -29,6 +35,7 @@ export const AdminHackathonCard = ({ hackathon, onEdit, onDelete }: Props) => {
 				className="mb-6"
 				onEdit={onEdit}
 				onDelete={onDelete}
+				onCollaboratorClick={onCollaboratorClick}
 			/>
 			<div className="flex flex-col gap-6 mb-8">
 				<CopyToClipboard

@@ -8,6 +8,7 @@ interface HackathonTitleProps {
 	className?: string;
 	onEdit?: () => void;
 	onDelete?: () => void;
+	onCollaboratorClick?: () => void;
 }
 
 export const HackathonTitle = ({
@@ -18,6 +19,7 @@ export const HackathonTitle = ({
 	className = "",
 	onEdit,
 	onDelete,
+	onCollaboratorClick,
 }: HackathonTitleProps) => {
 	const formatDate = (date: Date) => {
 		const year = date.getFullYear();
@@ -36,28 +38,32 @@ export const HackathonTitle = ({
 					{name}
 				</h2>
 				<div className="flex gap-3">
-					<button
-						type="button"
-						aria-label="共同開催者"
-						className="relative group"
-					>
-						<HandshakeIcon />
-					</button>
-					<button
-						type="button"
-						onClick={onEdit}
-						aria-label="編集する"
-						className="relative group"
-					>
-						<SquarePenIcon />
-					</button>
-
+					{onCollaboratorClick && (
+						<button
+							type="button"
+							onClick={onCollaboratorClick}
+							aria-label="共同開催者"
+							className="relative group hover:opacity-70 transition-opacity"
+						>
+							<HandshakeIcon />
+						</button>
+					)}
+					{onEdit && (
+						<button
+							type="button"
+							onClick={onEdit}
+							aria-label="編集する"
+							className="relative group hover:opacity-70 transition-opacity"
+						>
+							<SquarePenIcon />
+						</button>
+					)}
 					{onDelete && (
 						<button
 							type="button"
 							onClick={onDelete}
 							aria-label="削除する"
-							className="relative group"
+							className="relative group hover:opacity-70 transition-opacity"
 						>
 							<Trash2Icon />
 						</button>
