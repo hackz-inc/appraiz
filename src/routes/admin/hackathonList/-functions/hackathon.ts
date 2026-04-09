@@ -8,6 +8,8 @@ export const fetchHackathons = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const supabase = getSupabaseServerClient();
 
+		// await new Promise((r) => setTimeout(r, 3000));
+
 		const { data, error } = await supabase
 			.from("hackathon")
 			.select("*")
@@ -21,6 +23,7 @@ export const fetchHackathons = createServerFn({ method: "GET" }).handler(
 
 export const fetchHackathonById = createServerFn({ method: "GET" }).handler(
 	async ({ data: id }) => {
+		// await new Promise((r) => setTimeout(r, 10000));
 		const supabase = getSupabaseServerClient();
 
 		const { data, error } = await supabase
