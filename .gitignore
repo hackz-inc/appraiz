@@ -12,3 +12,10 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+
+# Supabase
+supabase/.branches
+supabase/.temp
+.env.production.local
+.env.development.local
+.env.test.local
