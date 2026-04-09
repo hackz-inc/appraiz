@@ -2,7 +2,7 @@ import { CopyToClipboard } from "./CopyToClipboard";
 import { HackathonTitle } from "./HackathonTitle";
 import { LinkButton } from "./LinkButton";
 
-interface AdminHackathonCardProps {
+type Props = {
 	hackathon: {
 		id: string;
 		name: string;
@@ -12,13 +12,9 @@ interface AdminHackathonCardProps {
 	};
 	onEdit?: () => void;
 	onDelete?: () => void;
-}
+};
 
-export const AdminHackathonCard = ({
-	hackathon,
-	onEdit,
-	onDelete,
-}: AdminHackathonCardProps) => {
+export const AdminHackathonCard = ({ hackathon, onEdit, onDelete }: Props) => {
 	return (
 		<div
 			className="w-full px-8 py-7 pb-10 shadow-md rounded-lg"
@@ -47,11 +43,13 @@ export const AdminHackathonCard = ({
 				/>
 			</div>
 			<div className="flex gap-[34px] justify-center">
-				<LinkButton to={`/admin/hackathonList/${hackathon.id}`}>
-					フォームに移動
+				<LinkButton to={`/admin/hackathonList/${hackathon.id}/setting`}>
+					チーム・採点項目を設定
 				</LinkButton>
 
-				<LinkButton to={`/admin/result/${hackathon.id}`}>結果を見る</LinkButton>
+				<LinkButton to={`/admin/hackathonList/${hackathon.id}/result`}>
+					結果を見る
+				</LinkButton>
 			</div>
 		</div>
 	);

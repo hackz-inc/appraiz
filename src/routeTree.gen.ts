@@ -15,8 +15,9 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminHackathonListIndexRouteImport } from './routes/admin/hackathonList/index'
 import { Route as GuestAuthSignupRouteImport } from './routes/guest/auth/signup'
 import { Route as GuestAuthLoginRouteImport } from './routes/guest/auth/login'
-import { Route as AdminHackathonListIdRouteImport } from './routes/admin/hackathonList/$id'
 import { Route as AdminAuthLoginRouteImport } from './routes/admin/auth/login'
+import { Route as AdminHackathonListIdSettingIndexRouteImport } from './routes/admin/hackathonList/$id/setting/index'
+import { Route as AdminHackathonListIdResultIndexRouteImport } from './routes/admin/hackathonList/$id/result/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -48,36 +49,45 @@ const GuestAuthLoginRoute = GuestAuthLoginRouteImport.update({
   path: '/guest/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminHackathonListIdRoute = AdminHackathonListIdRouteImport.update({
-  id: '/admin/hackathonList/$id',
-  path: '/admin/hackathonList/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminAuthLoginRoute = AdminAuthLoginRouteImport.update({
   id: '/admin/auth/login',
   path: '/admin/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminHackathonListIdSettingIndexRoute =
+  AdminHackathonListIdSettingIndexRouteImport.update({
+    id: '/admin/hackathonList/$id/setting/',
+    path: '/admin/hackathonList/$id/setting/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminHackathonListIdResultIndexRoute =
+  AdminHackathonListIdResultIndexRouteImport.update({
+    id: '/admin/hackathonList/$id/result/',
+    path: '/admin/hackathonList/$id/result/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin/': typeof AdminIndexRoute
   '/guest/': typeof GuestIndexRoute
   '/admin/auth/login': typeof AdminAuthLoginRoute
-  '/admin/hackathonList/$id': typeof AdminHackathonListIdRoute
   '/guest/auth/login': typeof GuestAuthLoginRoute
   '/guest/auth/signup': typeof GuestAuthSignupRoute
   '/admin/hackathonList/': typeof AdminHackathonListIndexRoute
+  '/admin/hackathonList/$id/result/': typeof AdminHackathonListIdResultIndexRoute
+  '/admin/hackathonList/$id/setting/': typeof AdminHackathonListIdSettingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminIndexRoute
   '/guest': typeof GuestIndexRoute
   '/admin/auth/login': typeof AdminAuthLoginRoute
-  '/admin/hackathonList/$id': typeof AdminHackathonListIdRoute
   '/guest/auth/login': typeof GuestAuthLoginRoute
   '/guest/auth/signup': typeof GuestAuthSignupRoute
   '/admin/hackathonList': typeof AdminHackathonListIndexRoute
+  '/admin/hackathonList/$id/result': typeof AdminHackathonListIdResultIndexRoute
+  '/admin/hackathonList/$id/setting': typeof AdminHackathonListIdSettingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,10 +95,11 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/guest/': typeof GuestIndexRoute
   '/admin/auth/login': typeof AdminAuthLoginRoute
-  '/admin/hackathonList/$id': typeof AdminHackathonListIdRoute
   '/guest/auth/login': typeof GuestAuthLoginRoute
   '/guest/auth/signup': typeof GuestAuthSignupRoute
   '/admin/hackathonList/': typeof AdminHackathonListIndexRoute
+  '/admin/hackathonList/$id/result/': typeof AdminHackathonListIdResultIndexRoute
+  '/admin/hackathonList/$id/setting/': typeof AdminHackathonListIdSettingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -97,30 +108,33 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/guest/'
     | '/admin/auth/login'
-    | '/admin/hackathonList/$id'
     | '/guest/auth/login'
     | '/guest/auth/signup'
     | '/admin/hackathonList/'
+    | '/admin/hackathonList/$id/result/'
+    | '/admin/hackathonList/$id/setting/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/guest'
     | '/admin/auth/login'
-    | '/admin/hackathonList/$id'
     | '/guest/auth/login'
     | '/guest/auth/signup'
     | '/admin/hackathonList'
+    | '/admin/hackathonList/$id/result'
+    | '/admin/hackathonList/$id/setting'
   id:
     | '__root__'
     | '/'
     | '/admin/'
     | '/guest/'
     | '/admin/auth/login'
-    | '/admin/hackathonList/$id'
     | '/guest/auth/login'
     | '/guest/auth/signup'
     | '/admin/hackathonList/'
+    | '/admin/hackathonList/$id/result/'
+    | '/admin/hackathonList/$id/setting/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -128,10 +142,11 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   GuestIndexRoute: typeof GuestIndexRoute
   AdminAuthLoginRoute: typeof AdminAuthLoginRoute
-  AdminHackathonListIdRoute: typeof AdminHackathonListIdRoute
   GuestAuthLoginRoute: typeof GuestAuthLoginRoute
   GuestAuthSignupRoute: typeof GuestAuthSignupRoute
   AdminHackathonListIndexRoute: typeof AdminHackathonListIndexRoute
+  AdminHackathonListIdResultIndexRoute: typeof AdminHackathonListIdResultIndexRoute
+  AdminHackathonListIdSettingIndexRoute: typeof AdminHackathonListIdSettingIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -178,18 +193,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/hackathonList/$id': {
-      id: '/admin/hackathonList/$id'
-      path: '/admin/hackathonList/$id'
-      fullPath: '/admin/hackathonList/$id'
-      preLoaderRoute: typeof AdminHackathonListIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/auth/login': {
       id: '/admin/auth/login'
       path: '/admin/auth/login'
       fullPath: '/admin/auth/login'
       preLoaderRoute: typeof AdminAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/hackathonList/$id/setting/': {
+      id: '/admin/hackathonList/$id/setting/'
+      path: '/admin/hackathonList/$id/setting'
+      fullPath: '/admin/hackathonList/$id/setting/'
+      preLoaderRoute: typeof AdminHackathonListIdSettingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/hackathonList/$id/result/': {
+      id: '/admin/hackathonList/$id/result/'
+      path: '/admin/hackathonList/$id/result'
+      fullPath: '/admin/hackathonList/$id/result/'
+      preLoaderRoute: typeof AdminHackathonListIdResultIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -200,10 +222,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   GuestIndexRoute: GuestIndexRoute,
   AdminAuthLoginRoute: AdminAuthLoginRoute,
-  AdminHackathonListIdRoute: AdminHackathonListIdRoute,
   GuestAuthLoginRoute: GuestAuthLoginRoute,
   GuestAuthSignupRoute: GuestAuthSignupRoute,
   AdminHackathonListIndexRoute: AdminHackathonListIndexRoute,
+  AdminHackathonListIdResultIndexRoute: AdminHackathonListIdResultIndexRoute,
+  AdminHackathonListIdSettingIndexRoute: AdminHackathonListIdSettingIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

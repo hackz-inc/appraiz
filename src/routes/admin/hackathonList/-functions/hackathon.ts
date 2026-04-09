@@ -3,12 +3,17 @@ import type { Database } from "#/lib/supabase/client";
 import { getSupabaseServerClient } from "#/lib/supabase/server";
 
 type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
+type Team = Database["public"]["Tables"]["team"]["Row"];
+type ScoringItem = Database["public"]["Tables"]["scoring_item"]["Row"];
+
+type HackathonWithDetails = Hackathon & {
+	team: Team[];
+	scoring_item: ScoringItem[];
+};
 
 export const fetchHackathons = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const supabase = getSupabaseServerClient();
-
-		// await new Promise((r) => setTimeout(r, 3000));
 
 		const { data, error } = await supabase
 			.from("hackathon")
@@ -22,8 +27,7 @@ export const fetchHackathons = createServerFn({ method: "GET" }).handler(
 );
 
 export const fetchHackathonById = createServerFn({ method: "GET" }).handler(
-	async ({ data: id }) => {
-		// await new Promise((r) => setTimeout(r, 10000));
+	async ({ data: id }: { data: string }) => {
 		const supabase = getSupabaseServerClient();
 
 		const { data, error } = await supabase
@@ -38,6 +42,6 @@ export const fetchHackathonById = createServerFn({ method: "GET" }).handler(
 
 		if (error) throw new Error(error.message);
 
-		return data as Hackathon;
+		return data as HackathonWithDetails;
 	},
 );

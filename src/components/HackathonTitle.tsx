@@ -1,3 +1,5 @@
+import { HandshakeIcon, SquarePenIcon, Trash2Icon } from "lucide-react";
+
 interface HackathonTitleProps {
 	name: string;
 	id: string;
@@ -34,37 +36,22 @@ export const HackathonTitle = ({
 					{name}
 				</h2>
 				<div className="flex gap-3">
-					{status === "scheduled" && onEdit && (
-						<button
-							type="button"
-							onClick={onEdit}
-							aria-label="編集する"
-							className="relative group"
-						>
-							<svg
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
-									stroke="#333"
-									strokeWidth="2"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
-								<path
-									d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"
-									stroke="#333"
-									strokeWidth="2"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
-							</svg>
-						</button>
-					)}
+					<button
+						type="button"
+						aria-label="共同開催者"
+						className="relative group"
+					>
+						<HandshakeIcon />
+					</button>
+					<button
+						type="button"
+						onClick={onEdit}
+						aria-label="編集する"
+						className="relative group"
+					>
+						<SquarePenIcon />
+					</button>
+
 					{onDelete && (
 						<button
 							type="button"
@@ -72,26 +59,14 @@ export const HackathonTitle = ({
 							aria-label="削除する"
 							className="relative group"
 						>
-							<svg
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"
-									stroke="#333"
-									strokeWidth="2"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
-							</svg>
+							<Trash2Icon />
 						</button>
 					)}
 				</div>
 			</div>
-			<p className="text-xl font-bold text-gray-600">{formatDate(scoringDate)}</p>
+			<p className="text-xl font-bold text-gray-600">
+				{formatDate(scoringDate)}
+			</p>
 		</div>
 	);
 };

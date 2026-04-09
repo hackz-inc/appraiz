@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { CopyIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface CopyToClipboardProps {
 	itemTitle: string;
@@ -56,28 +57,7 @@ export const CopyToClipboard = ({
 					className="flex-shrink-0"
 					data-testid="copy-button"
 				>
-					<svg
-						width="20"
-						height="20"
-						viewBox="0 0 20 20"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M13.333 10.75v4.583a1.917 1.917 0 01-1.916 1.917H4.583a1.917 1.917 0 01-1.916-1.917V8.5a1.917 1.917 0 011.916-1.917h4.584"
-							stroke="#333"
-							strokeWidth="1.5"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-						<path
-							d="M17.333 2.667H10.5a1.917 1.917 0 00-1.917 1.916v6.834a1.917 1.917 0 001.917 1.916h6.833a1.917 1.917 0 001.917-1.916V4.583a1.917 1.917 0 00-1.917-1.916z"
-							stroke="#333"
-							strokeWidth="1.5"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-					</svg>
+					<CopyIcon size={20} color={isCopy ? "green" : "gray"} />
 				</button>
 			</div>
 		</div>
