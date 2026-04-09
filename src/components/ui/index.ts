@@ -1,4 +1,8 @@
-export { Button } from './Button'
-export { TextInput } from './TextInput'
-export { Card } from './Card'
-export { Container } from './Container'
+export * from "./Button";
+export * from "./TextInput";
+export * from "./TextArea";
+export * from "./Container";
+export * from "./Card";
+export * from "./Modal";
+export * from "./LoadingScreen";
+export * from "./icons";

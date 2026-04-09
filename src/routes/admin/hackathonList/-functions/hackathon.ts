@@ -14,8 +14,27 @@ export const fetchHackathons = createServerFn({ method: "GET" }).handler(
 			.order("created_at", { ascending: false });
 
 		if (error) throw new Error(error.message);
-		console.log("Fetched hackathons:", data);
 
 		return data as Hackathon[];
+	},
+);
+
+export const fetchHackathonById = createServerFn({ method: "GET" }).handler(
+	async ({ data: id }) => {
+		const supabase = getSupabaseServerClient();
+
+		const { data, error } = await supabase
+			.from("hackathon")
+			.select(`
+				*,
+				team (*),
+				scoring_item (*)
+			`)
+			.eq("id", id)
+			.single();
+
+		if (error) throw new Error(error.message);
+
+		return data as Hackathon;
 	},
 );

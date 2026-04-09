@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { adminBeforeLoad } from "../-beforeLoad";
 import { fetchHackathons } from "./-functions/hackathon";
 
@@ -54,7 +54,13 @@ function HackathonList() {
 								{hackathons.map((hackathon) => (
 									<tr key={hackathon.id} className="hover:bg-gray-50">
 										<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-											{hackathon.name}
+											<Link
+												to="/admin/hackathonList/$id"
+												params={{ id: hackathon.id }}
+												className="text-blue-600 hover:text-blue-800 hover:underline"
+											>
+												{hackathon.name}
+											</Link>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
 											{new Date(hackathon.scoring_date).toLocaleDateString(
