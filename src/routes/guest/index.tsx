@@ -1,6 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { requireAuth } from '#/lib/auth/middleware'
 
 export const Route = createFileRoute('/guest/')({
+  beforeLoad: async () => {
+    return await requireAuth('guest')
+  },
   component: GuestDashboard,
 })
 

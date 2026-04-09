@@ -1,9 +1,13 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Button, TextInput, Container, Card } from "#/components/ui";
+import { Button, Card, Container, TextInput } from "#/components/ui";
 import { auth } from "#/lib/auth";
+import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
 export const Route = createFileRoute("/admin/auth/login")({
+	beforeLoad: async () => {
+		return await redirectIfAuthenticated();
+	},
 	component: AdminLoginPage,
 });
 
@@ -33,7 +37,8 @@ function AdminLoginPage() {
 			}
 
 			if (user) {
-				navigate({ to: "/admin" });
+				// Force full page reload to ensure session is properly initialized
+				window.location.href = "/admin";
 			}
 		} catch (err) {
 			setError("ログインに失敗しました");

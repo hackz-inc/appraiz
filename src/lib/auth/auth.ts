@@ -106,6 +106,14 @@ export const auth = {
   async getCurrentUser(): Promise<{ user: AuthUser | null; error: Error | null }> {
     try {
       const supabase = createClient()
+
+      // Check session first
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        return { user: null, error: null }
+      }
+
+      // Get user details
       const {
         data: { user: authUser },
         error: authError,
@@ -116,7 +124,7 @@ export const auth = {
 
       const user: AuthUser = {
         id: authUser.id,
-        email: authUser.email!,
+        email: authUser.email || '',
         role: authUser.user_metadata?.role || 'guest',
         metadata: authUser.user_metadata,
       }

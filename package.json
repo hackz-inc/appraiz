@@ -12,10 +12,18 @@
     "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:restart": "supabase stop && supabase start",
+    "supabase:status": "supabase status",
+    "supabase:reset": "supabase db reset",
+    "supabase:seed": "supabase db seed",
+    "supabase:migrate": "supabase db push",
+    "supabase:link": "supabase link"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.10.0",
+    "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.101.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
@@ -40,6 +48,7 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.4",
     "jsdom": "^28.1.0",
+    "supabase": "^2.87.2",
     "typescript": "^5.7.2",
     "vite": "^7.3.1",
     "vite-tsconfig-paths": "^5.1.4",

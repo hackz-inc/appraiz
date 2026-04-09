@@ -1,0 +1,6 @@
+.card {
+	border-radius: 0.75rem;
+	padding: 1.5rem;
+	background-color: white;
+	box-shadow: 0 4px 8px var(--black-lighten1);
+}

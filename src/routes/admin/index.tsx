@@ -1,20 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { adminBeforeLoad } from "./-beforeLoad";
 
-export const Route = createFileRoute('/admin/')({
-  component: AdminDashboard,
-})
+export const Route = createFileRoute("/admin/")({
+	beforeLoad: async () => {
+		await adminBeforeLoad();
 
-function AdminDashboard() {
-  return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-black mb-8">
-          管理者ダッシュボード
-        </h1>
-        <p className="text-gray-600">
-          管理者用のダッシュボードページです。
-        </p>
-      </div>
-    </div>
-  )
-}
+		throw redirect({
+			to: "/admin/hackathonList",
+			replace: true,
+		});
+	},
+});

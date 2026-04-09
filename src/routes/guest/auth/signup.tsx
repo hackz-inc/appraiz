@@ -2,8 +2,12 @@ import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
 import { useState } from "react";
 import { Button, TextInput, Container, Card } from "#/components/ui";
 import { auth } from "#/lib/auth";
+import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
 export const Route = createFileRoute('/guest/auth/signup')({
+  beforeLoad: async () => {
+    return await redirectIfAuthenticated();
+  },
   component: GuestSignUpPage,
 })
 
@@ -56,7 +60,8 @@ function GuestSignUpPage() {
 			}
 
 			if (user) {
-				navigate({ to: "/guest" });
+				// Force full page reload to ensure session is properly initialized
+				window.location.href = "/guest";
 			}
 		} catch (err) {
 			setError("登録に失敗しました");
