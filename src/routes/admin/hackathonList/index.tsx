@@ -8,10 +8,10 @@ export const Route = createFileRoute("/admin/hackathonList/")({
 		return { hackathons };
 	},
 	beforeLoad: adminBeforeLoad,
-	component: HackathonList,
+	component: HackathonListPage,
 });
 
-function HackathonList() {
+function HackathonListPage() {
 	const { hackathons } = Route.useLoaderData();
 
 	return (
