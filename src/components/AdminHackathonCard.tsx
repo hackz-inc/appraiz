@@ -47,14 +47,11 @@ export const AdminHackathonCard = ({
 				/>
 			</div>
 			<div className="flex gap-[34px] justify-center">
-				{hackathon.status === "scheduled" && (
-					<LinkButton to={`/admin/hackathonList/${hackathon.id}`}>
-						フォームに移動
-					</LinkButton>
-				)}
-				<LinkButton to={`/admin/result/${hackathon.id}`}>
-					結果を見る
+				<LinkButton to={`/admin/hackathonList/${hackathon.id}`}>
+					フォームに移動
 				</LinkButton>
+
+				<LinkButton to={`/admin/result/${hackathon.id}`}>結果を見る</LinkButton>
 			</div>
 		</div>
 	);
