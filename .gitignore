@@ -16,6 +16,7 @@ todos.json
 # Supabase
 supabase/.branches
 supabase/.temp
+supabase/config.toml
 .env.production.local
 .env.development.local
 .env.test.local
