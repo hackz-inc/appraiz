@@ -9,6 +9,7 @@ export const Route = createFileRoute("/admin/hackathonList/$id")({
 		const hackathon = await fetchHackathonById({ data: params.id });
 		return { hackathon };
 	},
+	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,
 	beforeLoad: adminBeforeLoad,
 	component: HackathonListDetailPage,
 });
