@@ -1,4 +1,4 @@
-import { HandshakeIcon, SquarePenIcon, Trash2Icon } from "lucide-react";
+import { SquarePenIcon, Trash2Icon } from "lucide-react";
 
 interface HackathonTitleProps {
 	name: string;
@@ -8,7 +8,6 @@ interface HackathonTitleProps {
 	className?: string;
 	onEdit?: () => void;
 	onDelete?: () => void;
-	onCollaboratorClick?: () => void;
 }
 
 export const HackathonTitle = ({
@@ -19,7 +18,6 @@ export const HackathonTitle = ({
 	className = "",
 	onEdit,
 	onDelete,
-	onCollaboratorClick,
 }: HackathonTitleProps) => {
 	const formatDate = (date: Date) => {
 		const year = date.getFullYear();
@@ -38,16 +36,6 @@ export const HackathonTitle = ({
 					{name}
 				</h2>
 				<div className="flex gap-3">
-					{onCollaboratorClick && (
-						<button
-							type="button"
-							onClick={onCollaboratorClick}
-							aria-label="共同開催者"
-							className="relative group hover:opacity-70 transition-opacity"
-						>
-							<HandshakeIcon />
-						</button>
-					)}
 					{onEdit && (
 						<button
 							type="button"

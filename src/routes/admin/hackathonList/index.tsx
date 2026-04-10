@@ -4,7 +4,6 @@ import { Suspense, useState } from "react";
 import { AdminHackathonCard } from "#/components/AdminHackathonCard";
 import { DeleteHackathonModal } from "#/components/DeleteHackathonModal";
 import { EditHackathonModal } from "#/components/EditHackathonModal";
-import { CollaboratorModal } from "#/components/CollaboratorModal";
 import Header from "#/components/Header";
 import { adminBeforeLoad } from "../-beforeLoad";
 import { fetchHackathons } from "./-functions/hackathon";
@@ -55,16 +54,18 @@ function HackathonListPage() {
 
 	return (
 		<>
-			<Header>
-				<h1 className="text-3xl font-bold">ハッカソン一覧</h1>
-				<button
-					type="button"
-					className="size-12 flex justify-center items-center rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors cursor-pointer"
-					aria-label="ハッカソンを作成する"
-				>
-					<PlusIcon size={32} color="white" />
-				</button>
-			</Header>
+			<Header
+				breadcrumbItems={[{ name: "ハッカソン一覧" }]}
+				actions={
+					<button
+						type="button"
+						className="size-12 flex justify-center items-center rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors cursor-pointer"
+						aria-label="ハッカソンを作成する"
+					>
+						<PlusIcon size={32} color="white" />
+					</button>
+				}
+			/>
 			<div className="min-h-screen bg-gray-50 p-8 pb-20">
 				<div className="max-w-5xl mx-auto">
 					<Suspense
@@ -127,14 +128,6 @@ function HackathonListPage() {
 					hackathonId={editTarget.id}
 					name={editTarget.name}
 					scoringDate={editTarget.scoringDate}
-					onClose={handleCloseModal}
-				/>
-			)}
-
-			{collaboratorTarget && (
-				<CollaboratorModal
-					hackathonId={collaboratorTarget.id}
-					guests={[]}
 					onClose={handleCloseModal}
 				/>
 			)}
