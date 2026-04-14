@@ -4,9 +4,9 @@ import { z } from "zod";
 import Header from "#/components/Header";
 import { adminBeforeLoad } from "#/routes/admin/-beforeLoad";
 import { fetchHackathonById } from "../../-functions/hackathon";
-import { TeamList } from "./-components/TeamList";
-import { ScoringItemList } from "./-components/ScoringItemList";
 import { GuestList } from "./-components/GuestList";
+import { ScoringItemList } from "./-components/ScoringItemList";
+import { TeamList } from "./-components/TeamList";
 
 const searchSchema = z.object({
 	tab: z.enum(["team", "score", "guest"]).optional().default("team"),
