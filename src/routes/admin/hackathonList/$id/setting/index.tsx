@@ -3,7 +3,7 @@ import { HandshakeIcon, NotebookPenIcon, UsersIcon } from "lucide-react";
 import { z } from "zod";
 import Header from "#/components/Header";
 import { adminBeforeLoad } from "#/routes/admin/-beforeLoad";
-import { getSupabaseServerClient } from "#/lib/supabase/server";
+import { createClient } from "#/lib/supabase/client";
 import type { Database } from "#/lib/supabase/client";
 import { GuestList } from "./-components/GuestList";
 import { ScoringItemList } from "./-components/ScoringItemList";
@@ -28,7 +28,7 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/admin/hackathonList/$id/setting/")({
 	validateSearch: searchSchema,
 	loader: async ({ params }) => {
-		const supabase = getSupabaseServerClient();
+		const supabase = createClient();
 
 		// Fetch hackathon with details
 		const { data: hackathon, error: hackathonError } = await supabase
