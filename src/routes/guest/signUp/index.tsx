@@ -1,67 +1,69 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import Header from "#/components/Header";
-import { signUpGuest } from "../-functions/auth";
+import { auth } from "#/lib/auth";
+import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
 export const Route = createFileRoute("/guest/signUp/")({
+	beforeLoad: async () => {
+		return await redirectIfAuthenticated();
+	},
 	component: GuestSignUpPage,
 });
 
 function GuestSignUpPage() {
-	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		email: "",
-		password: "",
-		confirmPassword: "",
-		name: "",
-		company_name: "",
-	});
-	const [error, setError] = useState<string | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-	};
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [name, setName] = useState("");
+	const [companyName, setCompanyName] = useState("");
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setError(null);
+		setError("");
 
 		// バリデーション
-		if (!formData.email || !formData.password || !formData.name || !formData.company_name) {
+		if (!email || !password || !name || !companyName) {
 			setError("すべての項目を入力してください");
 			return;
 		}
 
-		if (formData.password !== formData.confirmPassword) {
+		if (password !== confirmPassword) {
 			setError("パスワードが一致しません");
 			return;
 		}
 
-		if (formData.password.length < 6) {
+		if (password.length < 6) {
 			setError("パスワードは6文字以上で入力してください");
 			return;
 		}
 
-		setIsLoading(true);
+		setLoading(true);
 
 		try {
-			await signUpGuest({
-				data: {
-					email: formData.email,
-					password: formData.password,
-					name: formData.name,
-					company_name: formData.company_name,
-				},
+			const { user, error: signUpError } = await auth.signUp({
+				email,
+				password,
+				role: "guest",
+				name,
+				company_name: companyName,
 			});
 
-			// サインアップ成功後、ログインページへリダイレクト
-			navigate({ to: "/guest/login" });
+			if (signUpError) {
+				setError(signUpError.message);
+				setLoading(false);
+				return;
+			}
+
+			if (user) {
+				// Force full page reload to ensure session is properly initialized
+				window.location.href = "/guest";
+			}
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "サインアップに失敗しました");
-		} finally {
-			setIsLoading(false);
+			setError("サインアップに失敗しました");
+			setLoading(false);
 		}
 	};
 
@@ -94,8 +96,8 @@ function GuestSignUpPage() {
 									type="text"
 									id="name"
 									name="name"
-									value={formData.name}
-									onChange={handleChange}
+									value={name}
+									onChange={(e) => setName(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
 									required
 								/>
@@ -112,8 +114,8 @@ function GuestSignUpPage() {
 									type="text"
 									id="company_name"
 									name="company_name"
-									value={formData.company_name}
-									onChange={handleChange}
+									value={companyName}
+									onChange={(e) => setCompanyName(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
 									required
 								/>
@@ -130,8 +132,8 @@ function GuestSignUpPage() {
 									type="email"
 									id="email"
 									name="email"
-									value={formData.email}
-									onChange={handleChange}
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
 									required
 								/>
@@ -148,8 +150,8 @@ function GuestSignUpPage() {
 									type="password"
 									id="password"
 									name="password"
-									value={formData.password}
-									onChange={handleChange}
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
 									required
 									minLength={6}
@@ -167,8 +169,8 @@ function GuestSignUpPage() {
 									type="password"
 									id="confirmPassword"
 									name="confirmPassword"
-									value={formData.confirmPassword}
-									onChange={handleChange}
+									value={confirmPassword}
+									onChange={(e) => setConfirmPassword(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
 									required
 									minLength={6}
@@ -177,10 +179,10 @@ function GuestSignUpPage() {
 
 							<button
 								type="submit"
-								disabled={isLoading}
+								disabled={loading}
 								className="w-full h-11 flex justify-center items-center rounded-tl-[26px] rounded-bl-none rounded-br-[26px] rounded-tr-none text-base font-bold cursor-pointer border-2 border-yellow-500 shadow-md bg-gradient-to-r from-white from-0% via-white via-50% to-yellow-500 to-50% bg-[length:200%_auto] bg-right hover:bg-left transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
 							>
-								{isLoading ? "作成中..." : "アカウント作成"}
+								{loading ? "作成中..." : "アカウント作成"}
 							</button>
 						</form>
 

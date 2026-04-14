@@ -3,10 +3,23 @@ import { HandshakeIcon, NotebookPenIcon, UsersIcon } from "lucide-react";
 import { z } from "zod";
 import Header from "#/components/Header";
 import { adminBeforeLoad } from "#/routes/admin/-beforeLoad";
-import { fetchHackathonById } from "../../-functions/hackathon";
+import { getSupabaseServerClient } from "#/lib/supabase/server";
+import type { Database } from "#/lib/supabase/client";
 import { GuestList } from "./-components/GuestList";
 import { ScoringItemList } from "./-components/ScoringItemList";
 import { TeamList } from "./-components/TeamList";
+
+type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
+type Team = Database["public"]["Tables"]["team"]["Row"];
+type ScoringItem = Database["public"]["Tables"]["scoring_item"]["Row"];
+type Guest = Database["public"]["Tables"]["guest"]["Row"];
+type HackathonGuest = Database["public"]["Tables"]["hackathon_guest"]["Row"];
+
+type HackathonWithDetails = Hackathon & {
+	team: Team[];
+	scoring_item: ScoringItem[];
+	hackathon_guest: (HackathonGuest & { guest: Guest })[];
+};
 
 const searchSchema = z.object({
 	tab: z.enum(["team", "score", "guest"]).optional().default("team"),
@@ -15,8 +28,34 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/admin/hackathonList/$id/setting/")({
 	validateSearch: searchSchema,
 	loader: async ({ params }) => {
-		const hackathon = await fetchHackathonById({ data: params.id });
-		return { hackathon };
+		const supabase = getSupabaseServerClient();
+
+		// Fetch hackathon with details
+		const { data: hackathon, error: hackathonError } = await supabase
+			.from("hackathon")
+			.select(`
+				*,
+				team (*),
+				scoring_item (*),
+				hackathon_guest (*, guest (*))
+			`)
+			.eq("id", params.id)
+			.single();
+
+		if (hackathonError) throw new Error(hackathonError.message);
+
+		// Fetch all guests
+		const { data: allGuests, error: guestsError } = await supabase
+			.from("guest")
+			.select("*")
+			.order("created_at", { ascending: false });
+
+		if (guestsError) throw new Error(guestsError.message);
+
+		return {
+			hackathon: hackathon as HackathonWithDetails,
+			allGuests: allGuests as Guest[]
+		};
 	},
 	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,
 	beforeLoad: adminBeforeLoad,
@@ -24,7 +63,7 @@ export const Route = createFileRoute("/admin/hackathonList/$id/setting/")({
 });
 
 function HackathonSettingPage() {
-	const { hackathon } = Route.useLoaderData();
+	const { hackathon, allGuests } = Route.useLoaderData();
 	const { tab } = Route.useSearch();
 
 	const tabs = [
@@ -96,7 +135,15 @@ function HackathonSettingPage() {
 						)}
 
 						{tab === "guest" && (
-							<GuestList hackathonId={hackathon.id} guests={[]} />
+							<GuestList
+								hackathonId={hackathon.id}
+								guests={allGuests.map((guest) => ({
+									...guest,
+									is_invited: hackathon.hackathon_guest.some(
+										(hg) => hg.guest_id === guest.id,
+									),
+								}))}
+							/>
 						)}
 					</div>
 				</div>

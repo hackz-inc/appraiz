@@ -100,6 +100,7 @@ export type Database = {
 					id: string;
 					name: string;
 					hackathon_id: string;
+					topaz_link: string | null;
 					created_at: string;
 					updated_at: string;
 				};
@@ -107,6 +108,7 @@ export type Database = {
 					id?: string;
 					name: string;
 					hackathon_id: string;
+					topaz_link?: string | null;
 					created_at?: string;
 					updated_at?: string;
 				};
@@ -114,6 +116,7 @@ export type Database = {
 					id?: string;
 					name?: string;
 					hackathon_id?: string;
+					topaz_link?: string | null;
 					created_at?: string;
 					updated_at?: string;
 				};

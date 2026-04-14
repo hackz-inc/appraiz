@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import Header from "#/components/Header";
 import { guestBeforeLoad } from "../-beforeLoad";
-import { logoutGuest } from "../-functions/auth";
+import { auth } from "#/lib/auth";
 
 export const Route = createFileRoute("/guest/dashboard/")({
 	beforeLoad: guestBeforeLoad,
@@ -10,15 +10,13 @@ export const Route = createFileRoute("/guest/dashboard/")({
 });
 
 function GuestDashboardPage() {
-	const navigate = useNavigate();
-	const { guest } = Route.useRouteContext();
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
 	const handleLogout = async () => {
 		setIsLoggingOut(true);
 		try {
-			await logoutGuest({ data: {} });
-			navigate({ to: "/guest/login" });
+			await auth.signOut();
+			window.location.href = "/guest/login";
 		} catch (error) {
 			console.error("ログアウトに失敗しました:", error);
 			setIsLoggingOut(false);
@@ -45,28 +43,6 @@ function GuestDashboardPage() {
 						</div>
 
 						<div className="space-y-4">
-							<div className="border-b border-gray-300 pb-4">
-								<h2 className="text-lg font-bold text-gray-700 mb-2">
-									ユーザー情報
-								</h2>
-								<div className="space-y-2">
-									<p className="text-base">
-										<span className="font-bold text-gray-600">お名前:</span>{" "}
-										{guest.name}
-									</p>
-									<p className="text-base">
-										<span className="font-bold text-gray-600">会社名:</span>{" "}
-										{guest.company_name}
-									</p>
-									<p className="text-base">
-										<span className="font-bold text-gray-600">
-											メールアドレス:
-										</span>{" "}
-										{guest.email}
-									</p>
-								</div>
-							</div>
-
 							<div>
 								<h2 className="text-lg font-bold text-gray-700 mb-2">
 									参加中のハッカソン

@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
 import { X } from "lucide-react";
+import type { ReactNode } from "react";
 import { Overlay } from "./Overlay";
 
 interface BaseModalProps {

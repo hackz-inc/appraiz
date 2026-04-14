@@ -1,53 +1,47 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import Header from "#/components/Header";
-import { loginGuest } from "../-functions/auth";
+import { auth } from "#/lib/auth";
+import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
 export const Route = createFileRoute("/guest/login/")({
+	beforeLoad: async () => {
+		return await redirectIfAuthenticated();
+	},
 	component: GuestLoginPage,
 });
 
 function GuestLoginPage() {
-	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		email: "",
-		password: "",
-	});
-	const [error, setError] = useState<string | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-	};
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setError(null);
-
-		// バリデーション
-		if (!formData.email || !formData.password) {
-			setError("メールアドレスとパスワードを入力してください");
-			return;
-		}
-
-		setIsLoading(true);
+		setError("");
+		setLoading(true);
 
 		try {
-			await loginGuest({
-				data: {
-					email: formData.email,
-					password: formData.password,
-				},
+			const { user, error: signInError } = await auth.signIn({
+				email,
+				password,
+				role: "guest",
 			});
 
-			// ログイン成功後、ゲストのダッシュボードへリダイレクト
-			// TODO: ゲストのダッシュボードページを作成後、適切なパスに変更
-			navigate({ to: "/guest/dashboard" });
+			if (signInError) {
+				setError(signInError.message);
+				setLoading(false);
+				return;
+			}
+
+			if (user) {
+				// Force full page reload to ensure session is properly initialized
+				window.location.href = "/guest";
+			}
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "ログインに失敗しました");
-		} finally {
-			setIsLoading(false);
+			setError("ログインに失敗しました");
+			setLoading(false);
 		}
 	};
 
@@ -80,8 +74,8 @@ function GuestLoginPage() {
 									type="email"
 									id="email"
 									name="email"
-									value={formData.email}
-									onChange={handleChange}
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
 									required
 								/>
@@ -98,8 +92,8 @@ function GuestLoginPage() {
 									type="password"
 									id="password"
 									name="password"
-									value={formData.password}
-									onChange={handleChange}
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
 									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
 									required
 								/>
@@ -107,10 +101,10 @@ function GuestLoginPage() {
 
 							<button
 								type="submit"
-								disabled={isLoading}
+								disabled={loading}
 								className="w-full h-11 flex justify-center items-center rounded-tl-[26px] rounded-bl-none rounded-br-[26px] rounded-tr-none text-base font-bold cursor-pointer border-2 border-yellow-500 shadow-md bg-gradient-to-r from-white from-0% via-white via-50% to-yellow-500 to-50% bg-[length:200%_auto] bg-right hover:bg-left transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
 							>
-								{isLoading ? "ログイン中..." : "ログイン"}
+								{loading ? "ログイン中..." : "ログイン"}
 							</button>
 						</form>
 

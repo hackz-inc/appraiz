@@ -1,10 +1,15 @@
 import { useState } from "react";
+import {
+	addGuestToHackathon,
+	removeGuestFromHackathon,
+} from "../../../-functions/hackathon";
 
 interface Guest {
 	id: string;
 	name: string;
 	company_name: string;
-	is_sponsored: boolean;
+	email: string;
+	is_invited: boolean;
 }
 
 interface GuestListProps {
@@ -13,71 +18,89 @@ interface GuestListProps {
 }
 
 export const GuestList = ({ hackathonId, guests }: GuestListProps) => {
-	const [checkedList, setCheckedList] = useState<string[]>(
-		guests.filter((guest) => guest.is_sponsored).map((guest) => guest.id),
-	);
-	const [isLoading, setIsLoading] = useState(false);
+	const [localGuests, setLocalGuests] = useState<Guest[]>(guests);
+	const [isUpdating, setIsUpdating] = useState(false);
 
-	const handleChange = (guestId: string, checked: boolean) => {
-		if (checked) {
-			setCheckedList([...checkedList, guestId]);
-		} else {
-			setCheckedList(checkedList.filter((id) => id !== guestId));
-		}
-	};
-
-	const handleSubmit = async () => {
-		setIsLoading(true);
+	const handleToggle = async (guestId: string, currentStatus: boolean) => {
+		setIsUpdating(true);
 		try {
-			// TODO: API呼び出しを実装
-			console.log("Updating guest list:", {
-				hackathonId,
-				guestIdList: checkedList,
-			});
+			if (currentStatus) {
+				// Remove guest from hackathon
+				await removeGuestFromHackathon({
+					data: {
+						hackathonId,
+						guestId,
+					},
+				});
+			} else {
+				// Add guest to hackathon
+				await addGuestToHackathon({
+					data: {
+						hackathonId,
+						guestId,
+					},
+				});
+			}
+
+			// Update local state
+			setLocalGuests(
+				localGuests.map((g) =>
+					g.id === guestId ? { ...g, is_invited: !currentStatus } : g,
+				),
+			);
 		} catch (error) {
-			console.error("Failed to update guest list:", error);
+			console.error("Failed to update guest status:", error);
+			alert("エラーが発生しました。もう一度お試しください。");
 		} finally {
-			setIsLoading(false);
+			setIsUpdating(false);
 		}
 	};
+
 
 	return (
 		<div>
-			{guests.length === 0 ? (
+			<div className="mb-6">
+				<p className="text-sm text-gray-600 mb-2">
+					全てのゲストが表示されています。トグルボタンでこのハッカソンの共同開催者として追加/削除できます。
+				</p>
+			</div>
+
+			{localGuests.length === 0 ? (
 				<div className="bg-white border border-gray-300 rounded-lg p-12 text-center">
 					<p className="text-gray-500">共同開催者がいません</p>
 				</div>
 			) : (
-				<>
-					<div className="bg-white border border-gray-300 rounded-lg p-6 mb-6">
-						{guests.map((guest) => (
-							<label
-								key={guest.id}
-								className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded cursor-pointer"
-							>
+				<div className="bg-white border border-gray-300 rounded-lg">
+					{localGuests.map((guest, index) => (
+						<div
+							key={guest.id}
+							className={`flex items-center justify-between p-6 ${
+								index !== localGuests.length - 1
+									? "border-b border-gray-300"
+									: ""
+							}`}
+						>
+							<div className="flex-1">
+								<p className="text-base font-bold mb-1">
+									{guest.name} - {guest.company_name}
+								</p>
+								<p className="text-sm text-gray-600">{guest.email}</p>
+							</div>
+							<label className="relative inline-flex items-center cursor-pointer">
 								<input
 									type="checkbox"
-									checked={checkedList.includes(guest.id)}
-									onChange={(e) => handleChange(guest.id, e.target.checked)}
-									className="w-5 h-5 text-yellow-500 border-gray-300 rounded focus:ring-yellow-500"
-									data-testid="guest-item"
+									checked={guest.is_invited}
+									onChange={() => handleToggle(guest.id, guest.is_invited)}
+									disabled={isUpdating}
+									className="sr-only peer"
 								/>
-								<span className="text-base font-bold">
-									{guest.name}_{guest.company_name}
-								</span>
+								<div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500" />
 							</label>
-						))}
-					</div>
-					<button
-						type="button"
-						onClick={handleSubmit}
-						disabled={isLoading}
-						className="mx-auto block w-[244px] h-11 flex justify-center items-center rounded-tl-[26px] rounded-bl-none rounded-br-[26px] rounded-tr-none text-base font-bold cursor-pointer border-2 border-yellow-500 shadow-md bg-gradient-to-r from-white from-0% via-white via-50% to-yellow-500 to-50% bg-[length:200%_auto] bg-right hover:bg-left transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-					>
-						{isLoading ? "保存中..." : "保存"}
-					</button>
-				</>
+						</div>
+					))}
+				</div>
 			)}
+
 		</div>
 	);
 };
