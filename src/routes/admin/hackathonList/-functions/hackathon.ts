@@ -47,7 +47,7 @@ export const fetchAllGuests = createServerFn({ method: "GET" }).handler(
 export const fetchHackathonById = createServerFn({
 	method: "GET",
 }).handler(async (ctx) => {
-	const id = ctx.data as string;
+	const id = (ctx.data ?? "") as string;
 	const supabase = getSupabaseServerClient();
 
 	const { data, error } = await supabase
@@ -69,7 +69,10 @@ export const fetchHackathonById = createServerFn({
 export const addGuestToHackathon = createServerFn({
 	method: "POST",
 }).handler(async (ctx) => {
-	const data = ctx.data as { hackathonId: string; guestId: string };
+	const data = (ctx.data ?? {
+		hackathonId: "",
+		guestId: "",
+	}) as { hackathonId: string; guestId: string };
 	const supabase = getSupabaseServerClient();
 
 	const { error } = await supabase.from("hackathon_guest").insert({
@@ -85,7 +88,10 @@ export const addGuestToHackathon = createServerFn({
 export const removeGuestFromHackathon = createServerFn({
 	method: "POST",
 }).handler(async (ctx) => {
-	const data = ctx.data as { hackathonId: string; guestId: string };
+	const data = (ctx.data ?? {
+		hackathonId: "",
+		guestId: "",
+	}) as { hackathonId: string; guestId: string };
 	const supabase = getSupabaseServerClient();
 
 	const { error } = await supabase

@@ -1,15 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import Header from "#/components/Header";
 import { guestBeforeLoad } from "../-beforeLoad";
 import { auth } from "#/lib/auth";
+import { fetchGuestHackathons } from "../-functions/hackathon";
 
 export const Route = createFileRoute("/guest/dashboard/")({
 	beforeLoad: guestBeforeLoad,
+	loader: async () => {
+		const hackathons = await fetchGuestHackathons();
+		return { hackathons };
+	},
 	component: GuestDashboardPage,
 });
 
 function GuestDashboardPage() {
+	const { hackathons } = Route.useLoaderData();
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
 	const handleLogout = async () => {
@@ -45,13 +51,36 @@ function GuestDashboardPage() {
 						<div className="space-y-4">
 							<div>
 								<h2 className="text-lg font-bold text-gray-700 mb-2">
-									参加中のハッカソン
+									招待されているハッカソン
 								</h2>
-								<div className="bg-gray-100 border border-gray-300 rounded-lg p-6 text-center">
-									<p className="text-gray-500">
-										参加中のハッカソンはありません
-									</p>
-								</div>
+								{hackathons.length === 0 ? (
+									<div className="bg-gray-100 border border-gray-300 rounded-lg p-6 text-center">
+										<p className="text-gray-500">
+											招待されているハッカソンはありません
+										</p>
+									</div>
+								) : (
+									<div className="space-y-3">
+										{hackathons.map((hackathon) => (
+											<Link
+												key={hackathon.id}
+												to="/guest/hackathon/$id"
+												params={{ id: hackathon.id }}
+												className="block bg-white border border-gray-300 rounded-lg p-6 hover:shadow-md transition-shadow"
+											>
+												<h3 className="text-lg font-bold mb-2">
+													{hackathon.name}
+												</h3>
+												<p className="text-sm text-gray-600">
+													採点日:{" "}
+													{new Date(hackathon.scoring_date).toLocaleDateString(
+														"ja-JP",
+													)}
+												</p>
+											</Link>
+										))}
+									</div>
+								)}
 							</div>
 						</div>
 					</div>
