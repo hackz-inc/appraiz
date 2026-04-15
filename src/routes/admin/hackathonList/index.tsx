@@ -1,11 +1,11 @@
 import { Await, createFileRoute, defer } from "@tanstack/react-router";
-import { PlusIcon } from "lucide-react";
 import { Suspense, useState } from "react";
 import { AdminHackathonCard } from "#/components/AdminHackathonCard";
 import { DeleteHackathonModal } from "#/components/DeleteHackathonModal";
 import { EditHackathonModal } from "#/components/EditHackathonModal";
 import Header from "#/components/Header";
 import { adminBeforeLoad } from "../-beforeLoad";
+import { PlusIconButton } from "../-components/PlusIconButton";
 import { fetchHackathons } from "./-functions/hackathon";
 
 export const Route = createFileRoute("/admin/hackathonList/")({
@@ -57,13 +57,11 @@ function HackathonListPage() {
 			<Header
 				breadcrumbItems={[{ name: "ハッカソン一覧" }]}
 				actions={
-					<button
+					<PlusIconButton
 						type="button"
-						className="size-12 flex justify-center items-center rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors cursor-pointer"
 						aria-label="ハッカソンを作成する"
-					>
-						<PlusIcon size={32} color="white" />
-					</button>
+						onClick={() => {}}
+					/>
 				}
 			/>
 			<div className="min-h-screen bg-gray-50 p-8 pb-20">

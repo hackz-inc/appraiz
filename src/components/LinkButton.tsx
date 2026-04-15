@@ -20,7 +20,7 @@ export const LinkButton = ({
 			params={params}
 			className={`
 				w-[244px] h-11 flex justify-center items-center
-				rounded-tl-[26px] rounded-bl-none rounded-br-[26px] rounded-tr-none
+				rounded-tl-[26px] rounded-bl-[26px] rounded-br-[26px] rounded-tr-none
 				text-base font-bold cursor-pointer
 				border-2 border-yellow-500
 				shadow-md
