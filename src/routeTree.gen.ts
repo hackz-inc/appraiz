@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuestIndexRouteImport } from './routes/guest/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as ScoringHackathonIdIndexRouteImport } from './routes/scoring/$hackathonId/index'
+import { Route as ScorerHackathonIdIndexRouteImport } from './routes/scorer/$hackathonId/index'
 import { Route as GuestSignUpIndexRouteImport } from './routes/guest/signUp/index'
 import { Route as GuestLoginIndexRouteImport } from './routes/guest/login/index'
 import { Route as GuestDashboardIndexRouteImport } from './routes/guest/dashboard/index'
@@ -38,9 +38,9 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ScoringHackathonIdIndexRoute = ScoringHackathonIdIndexRouteImport.update({
-  id: '/scoring/$hackathonId/',
-  path: '/scoring/$hackathonId/',
+const ScorerHackathonIdIndexRoute = ScorerHackathonIdIndexRouteImport.update({
+  id: '/scorer/$hackathonId/',
+  path: '/scorer/$hackathonId/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuestSignUpIndexRoute = GuestSignUpIndexRouteImport.update({
@@ -102,7 +102,7 @@ export interface FileRoutesByFullPath {
   '/guest/dashboard/': typeof GuestDashboardIndexRoute
   '/guest/login/': typeof GuestLoginIndexRoute
   '/guest/signUp/': typeof GuestSignUpIndexRoute
-  '/scoring/$hackathonId/': typeof ScoringHackathonIdIndexRoute
+  '/scorer/$hackathonId/': typeof ScorerHackathonIdIndexRoute
   '/admin/hackathonList/$id/result/': typeof AdminHackathonListIdResultIndexRoute
   '/admin/hackathonList/$id/setting/': typeof AdminHackathonListIdSettingIndexRoute
 }
@@ -117,7 +117,7 @@ export interface FileRoutesByTo {
   '/guest/dashboard': typeof GuestDashboardIndexRoute
   '/guest/login': typeof GuestLoginIndexRoute
   '/guest/signUp': typeof GuestSignUpIndexRoute
-  '/scoring/$hackathonId': typeof ScoringHackathonIdIndexRoute
+  '/scorer/$hackathonId': typeof ScorerHackathonIdIndexRoute
   '/admin/hackathonList/$id/result': typeof AdminHackathonListIdResultIndexRoute
   '/admin/hackathonList/$id/setting': typeof AdminHackathonListIdSettingIndexRoute
 }
@@ -133,7 +133,7 @@ export interface FileRoutesById {
   '/guest/dashboard/': typeof GuestDashboardIndexRoute
   '/guest/login/': typeof GuestLoginIndexRoute
   '/guest/signUp/': typeof GuestSignUpIndexRoute
-  '/scoring/$hackathonId/': typeof ScoringHackathonIdIndexRoute
+  '/scorer/$hackathonId/': typeof ScorerHackathonIdIndexRoute
   '/admin/hackathonList/$id/result/': typeof AdminHackathonListIdResultIndexRoute
   '/admin/hackathonList/$id/setting/': typeof AdminHackathonListIdSettingIndexRoute
 }
@@ -150,7 +150,7 @@ export interface FileRouteTypes {
     | '/guest/dashboard/'
     | '/guest/login/'
     | '/guest/signUp/'
-    | '/scoring/$hackathonId/'
+    | '/scorer/$hackathonId/'
     | '/admin/hackathonList/$id/result/'
     | '/admin/hackathonList/$id/setting/'
   fileRoutesByTo: FileRoutesByTo
@@ -165,7 +165,7 @@ export interface FileRouteTypes {
     | '/guest/dashboard'
     | '/guest/login'
     | '/guest/signUp'
-    | '/scoring/$hackathonId'
+    | '/scorer/$hackathonId'
     | '/admin/hackathonList/$id/result'
     | '/admin/hackathonList/$id/setting'
   id:
@@ -180,7 +180,7 @@ export interface FileRouteTypes {
     | '/guest/dashboard/'
     | '/guest/login/'
     | '/guest/signUp/'
-    | '/scoring/$hackathonId/'
+    | '/scorer/$hackathonId/'
     | '/admin/hackathonList/$id/result/'
     | '/admin/hackathonList/$id/setting/'
   fileRoutesById: FileRoutesById
@@ -196,7 +196,7 @@ export interface RootRouteChildren {
   GuestDashboardIndexRoute: typeof GuestDashboardIndexRoute
   GuestLoginIndexRoute: typeof GuestLoginIndexRoute
   GuestSignUpIndexRoute: typeof GuestSignUpIndexRoute
-  ScoringHackathonIdIndexRoute: typeof ScoringHackathonIdIndexRoute
+  ScorerHackathonIdIndexRoute: typeof ScorerHackathonIdIndexRoute
   AdminHackathonListIdResultIndexRoute: typeof AdminHackathonListIdResultIndexRoute
   AdminHackathonListIdSettingIndexRoute: typeof AdminHackathonListIdSettingIndexRoute
 }
@@ -224,11 +224,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/scoring/$hackathonId/': {
-      id: '/scoring/$hackathonId/'
-      path: '/scoring/$hackathonId'
-      fullPath: '/scoring/$hackathonId/'
-      preLoaderRoute: typeof ScoringHackathonIdIndexRouteImport
+    '/scorer/$hackathonId/': {
+      id: '/scorer/$hackathonId/'
+      path: '/scorer/$hackathonId'
+      fullPath: '/scorer/$hackathonId/'
+      preLoaderRoute: typeof ScorerHackathonIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guest/signUp/': {
@@ -308,7 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuestDashboardIndexRoute: GuestDashboardIndexRoute,
   GuestLoginIndexRoute: GuestLoginIndexRoute,
   GuestSignUpIndexRoute: GuestSignUpIndexRoute,
-  ScoringHackathonIdIndexRoute: ScoringHackathonIdIndexRoute,
+  ScorerHackathonIdIndexRoute: ScorerHackathonIdIndexRoute,
   AdminHackathonListIdResultIndexRoute: AdminHackathonListIdResultIndexRoute,
   AdminHackathonListIdSettingIndexRoute: AdminHackathonListIdSettingIndexRoute,
 }

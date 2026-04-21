@@ -1,4 +1,6 @@
 import type { ScoringFormData } from "./ScoringForm";
+import { Slider } from "#/components/ui/Slider";
+import { ScoreFraction } from "#/components/ui/ScoreFraction";
 
 type Props = {
 	team: ScoringFormData;
@@ -44,27 +46,17 @@ export function ScoringFormItem({ team, onScoreChange, onCommentChange }: Props)
 			<div className="space-y-6">
 				{team.scoringItems.map((item) => (
 					<div key={item.id} className="space-y-2">
-						<label htmlFor={`${team.teamId}-${item.id}`} className="block text-sm font-medium text-gray-700">
+						<label className="block text-base font-medium text-gray-700">
 							{item.name}
 						</label>
 						<div className="flex items-center gap-4">
-							<input
-								id={`${team.teamId}-${item.id}`}
-								type="range"
-								min="0"
+							<Slider
+								min={0}
 								max={item.maxScore}
 								value={item.score}
-								onChange={(e) =>
-									onScoreChange(team.teamId, item.id, Number(e.target.value))
-								}
-								className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+								onChange={(_, value) => onScoreChange(team.teamId, item.id, value)}
 							/>
-							<div className="min-w-[80px] text-right">
-								<span className="text-lg font-semibold text-gray-900">
-									{item.score}
-								</span>
-								<span className="text-sm text-gray-500"> / {item.maxScore}</span>
-							</div>
+							<ScoreFraction score={item.score} maxScore={item.maxScore} />
 						</div>
 					</div>
 				))}
@@ -72,7 +64,7 @@ export function ScoringFormItem({ team, onScoreChange, onCommentChange }: Props)
 
 			{/* Comment */}
 			<div className="space-y-2">
-				<label htmlFor={`${team.teamId}-comment`} className="block text-sm font-medium text-gray-700">
+				<label htmlFor={`${team.teamId}-comment`} className="block text-base font-medium text-gray-700">
 					一言コメント
 				</label>
 				<textarea

@@ -5,4 +5,6 @@ export * from "./Container";
 export * from "./Card";
 export * from "./Modal";
 export * from "./LoadingScreen";
+export * from "./Slider";
+export * from "./ScoreFraction";
 export * from "./icons";

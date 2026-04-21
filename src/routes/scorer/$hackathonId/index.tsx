@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { createClient } from "#/lib/supabase/client";
 import type { Database } from "#/lib/supabase/client";
+import { createClient } from "#/lib/supabase/client";
 import { ScoringForm } from "./-components/ScoringForm";
 
 type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
@@ -17,7 +17,7 @@ type HackathonWithDetails = Hackathon & {
 	scoring_items: ScoringItem[];
 };
 
-export const Route = createFileRoute("/scoring/$hackathonId/")({
+export const Route = createFileRoute("/scorer/$hackathonId/")({
 	loader: async ({ params }) => {
 		const supabase = createClient();
 
@@ -78,10 +78,10 @@ export const Route = createFileRoute("/scoring/$hackathonId/")({
 		};
 	},
 	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,
-	component: ScoringPage,
+	component: ScorerPage,
 });
 
-function ScoringPage() {
+function ScorerPage() {
 	const { hackathon } = Route.useLoaderData();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -91,7 +91,9 @@ function ScoringPage() {
 			<header className="bg-white border-b border-gray-200 sticky top-0 z-10">
 				<div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
 					<div className="flex items-center justify-between">
-						<h1 className="text-2xl font-bold text-gray-900">{hackathon.name}</h1>
+						<h1 className="text-2xl font-bold text-gray-900">
+							{hackathon.name}
+						</h1>
 						<button
 							type="button"
 							onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -124,9 +126,7 @@ function ScoringPage() {
 
 				{/* Main Content */}
 				<main className="flex-1">
-					<ScoringForm
-						hackathon={hackathon}
-					/>
+					<ScoringForm hackathon={hackathon} />
 				</main>
 			</div>
 		</div>

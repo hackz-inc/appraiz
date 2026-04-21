@@ -1,3 +1,4 @@
+import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 
 interface TeamFormProps {
@@ -70,21 +71,7 @@ export const TeamForm = ({ hackathonId, onTeamAdded }: TeamFormProps) => {
 					className="h-12 w-12 flex justify-center items-center rounded-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
 					aria-label="チームを追加する"
 				>
-					<svg
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M12 5v14M5 12h14"
-							stroke="#fff"
-							strokeWidth="2"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-					</svg>
+					<PlusIcon size={32} color="white" />
 				</button>
 			</div>
 		</form>

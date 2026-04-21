@@ -132,17 +132,21 @@ export function ScoringForm({ hackathon }: Props) {
 			// Create scoring results for each team
 			for (const team of scoringData) {
 				// Insert scoring result
-				const { data: scoringResult, error: resultError } = await supabase
+				const { data: scoringResults, error: resultError } = await supabase
 					.from("scoring_result")
 					.insert({
 						judge_name: judgeName,
 						comment: team.comment,
 						team_id: team.teamId,
 					})
-					.select()
-					.single();
+					.select();
 
 				if (resultError) throw resultError;
+				if (!scoringResults || scoringResults.length === 0) {
+					throw new Error("採点結果の作成に失敗しました");
+				}
+
+				const scoringResult = scoringResults[0];
 
 				// Insert scoring item results
 				const itemResults = team.scoringItems.map((item) => ({
