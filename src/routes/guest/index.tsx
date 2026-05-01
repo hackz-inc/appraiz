@@ -5,7 +5,7 @@ export const Route = createFileRoute("/guest/")({
 	beforeLoad: async () => {
 		await guestBeforeLoad();
 		throw redirect({
-			to: "/guest/dashboard",
-		});
+			to: "/guest/hackathonList",
+		})
 	},
 });

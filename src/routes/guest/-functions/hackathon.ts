@@ -9,8 +9,7 @@ export const fetchGuestHackathons = createServerFn({ method: "GET" }).handler(
 		const supabase = getSupabaseServerClient();
 
 		// Get current user
-		const { data: userData, error: userError } =
-			await supabase.auth.getUser();
+		const { data: userData, error: userError } = await supabase.auth.getUser();
 
 		if (userError || !userData.user?.email) {
 			throw new Error("User not authenticated");

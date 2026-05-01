@@ -5,16 +5,16 @@ import { auth } from "#/lib/auth";
 import { guestBeforeLoad } from "../-beforeLoad";
 import { fetchGuestHackathons } from "../-functions/hackathon";
 
-export const Route = createFileRoute("/guest/dashboard/")({
+export const Route = createFileRoute("/guest/hackathonList/")({
 	beforeLoad: guestBeforeLoad,
 	loader: async () => {
 		const hackathons = await fetchGuestHackathons();
 		return { hackathons };
 	},
-	component: GuestDashboardPage,
+	component: GuestHackathonListPage,
 });
 
-function GuestDashboardPage() {
+function GuestHackathonListPage() {
 	const { hackathons } = Route.useLoaderData();
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
