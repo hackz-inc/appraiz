@@ -179,10 +179,10 @@ export function ScoringForm({ hackathon }: Props) {
 	};
 
 	return (
-		<div className="space-y-8">
+		<div className="pt-30 space-y-0">
 			{/* Judge Name Input */}
-			<div className="bg-white rounded-lg shadow-sm p-6">
-				<label htmlFor="judge-name" className="block text-sm font-medium text-gray-700 mb-2">
+			<div className="w-full max-w-[800px] mx-auto py-12 border-b border-gray-300">
+				<label htmlFor="judge-name" className="block text-base font-bold leading-7 text-gray-700 tracking-wide mb-0">
 					名前・会社名
 				</label>
 				<input
@@ -190,10 +190,10 @@ export function ScoringForm({ hackathon }: Props) {
 					type="text"
 					value={judgeName}
 					onChange={(e) => handleJudgeNameChange(e.target.value)}
-					className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					className="w-[calc(100%-96px)] mx-auto mt-5 block px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 				/>
 				{judgeNameError && (
-					<p className="mt-2 text-sm text-red-600">{judgeNameError}</p>
+					<p className="w-[calc(100%-96px)] mx-auto mt-2 text-sm text-red-600">{judgeNameError}</p>
 				)}
 			</div>
 
@@ -208,23 +208,25 @@ export function ScoringForm({ hackathon }: Props) {
 			))}
 
 			{/* Action Buttons */}
-			<div className="flex flex-col gap-4 sticky bottom-4">
+			<div className="w-full max-w-[800px] mx-auto mt-12 mb-20">
 				<button
 					type="button"
 					onClick={handleConfirm}
 					disabled={isSubmitting}
-					className="w-full bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+					className="w-full max-w-md mx-auto block bg-gradient-to-r from-blue-600 to-blue-500 text-white px-8 py-4 rounded-[26px_0_26px_26px] text-base font-bold shadow-md hover:shadow-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
 				>
 					{isSubmitting ? "送信中..." : "採点データを送信"}
 				</button>
-				<button
-					type="button"
-					onClick={handleSave}
-					className="w-full bg-gray-600 text-white px-6 py-3 rounded-md font-medium hover:bg-gray-700"
-				>
-					一時保存
-				</button>
 			</div>
+
+			{/* Temporary Save Button (Fixed Position) */}
+			<button
+				type="button"
+				onClick={handleSave}
+				className="fixed right-20 lg:right-40 bottom-20 bg-gradient-to-r from-gray-600 to-gray-500 text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all"
+			>
+				一時保存
+			</button>
 
 			{/* Confirmation Modal */}
 			{isConfirmModalOpen && (

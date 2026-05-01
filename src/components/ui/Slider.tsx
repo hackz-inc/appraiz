@@ -1,6 +1,6 @@
 import { ComponentPropsWithRef } from "react";
 
-export type SliderProps = ComponentPropsWithRef<"input"> & {
+export type SliderProps = Omit<ComponentPropsWithRef<"input">, "onChange"> & {
 	min?: number;
 	max?: number;
 	value?: number;
