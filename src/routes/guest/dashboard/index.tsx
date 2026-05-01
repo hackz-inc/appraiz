@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import Header from "#/components/Header";
-import { guestBeforeLoad } from "../-beforeLoad";
 import { auth } from "#/lib/auth";
+import { guestBeforeLoad } from "../-beforeLoad";
 import { fetchGuestHackathons } from "../-functions/hackathon";
 
 export const Route = createFileRoute("/guest/dashboard/")({
@@ -64,7 +64,7 @@ function GuestDashboardPage() {
 										{hackathons.map((hackathon) => (
 											<Link
 												key={hackathon.id}
-												to="/guest/hackathon/$id"
+												to="/guest/hackathonList/$id"
 												params={{ id: hackathon.id }}
 												className="block bg-white border border-gray-300 rounded-lg p-6 hover:shadow-md transition-shadow"
 											>

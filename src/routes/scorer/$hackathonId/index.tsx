@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Database } from "#/lib/supabase/client";
 import { createClient } from "#/lib/supabase/client";
+import { AccessPasswordForm } from "./-components/AccessPasswordForm";
 import { ScoringForm } from "./-components/ScoringForm";
 
 type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
@@ -82,6 +83,50 @@ export const Route = createFileRoute("/scorer/$hackathonId/")({
 function ScorerPage() {
 	const { hackathon } = Route.useLoaderData();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isChecking, setIsChecking] = useState(true);
+	const [passwordError, setPasswordError] = useState("");
+
+	// localStorage key for storing the password
+	const storageKey = `scorer_access_password_${hackathon.id}`;
+
+	// Check if the stored password matches on mount
+	useEffect(() => {
+		const storedPassword = localStorage.getItem(storageKey);
+		if (storedPassword === hackathon.access_password) {
+			setIsAuthenticated(true);
+		}
+		setIsChecking(false);
+	}, [hackathon.access_password, storageKey]);
+
+	// Handle password submission
+	const handlePasswordSubmit = (password: string) => {
+		if (password === hackathon.access_password) {
+			localStorage.setItem(storageKey, password);
+			setIsAuthenticated(true);
+			setPasswordError("");
+		} else {
+			setPasswordError("パスワードが正しくありません");
+		}
+	};
+
+	// Show loading state while checking authentication
+	if (isChecking) {
+		return <div className="min-h-screen bg-white" />;
+	}
+
+	// Show password form if not authenticated
+	if (!isAuthenticated) {
+		return (
+			<AccessPasswordForm
+				hackathonId={hackathon.id}
+				hackathonName={hackathon.name}
+				onSubmit={handlePasswordSubmit}
+				externalError={passwordError}
+				onError={setPasswordError}
+			/>
+		);
+	}
 
 	return (
 		<div className="min-h-screen bg-white">

@@ -44,9 +44,9 @@ export const AdminHackathonCard = ({
 				/>
 				<CopyToClipboard
 					itemTitle="採点リンク"
-					hackathonItem={`https://${
+					hackathonItem={`http://${
 						typeof window !== "undefined" ? window.location.host : ""
-					}/${hackathon.id}`}
+					}/scorer/${hackathon.id}`}
 				/>
 			</div>
 			<div className="flex gap-[34px] justify-center">
