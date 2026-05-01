@@ -7,6 +7,8 @@ import { ScoringForm } from "./-components/ScoringForm";
 type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
 type Team = Database["public"]["Tables"]["team"]["Row"];
 type ScoringItem = Database["public"]["Tables"]["scoring_item"]["Row"];
+type PresentationOrder =
+	Database["public"]["Tables"]["presentation_order"]["Row"];
 
 type TeamWithOrder = Team & {
 	order: number;
@@ -17,63 +19,59 @@ type HackathonWithDetails = Hackathon & {
 	scoring_items: ScoringItem[];
 };
 
+type HackathonWithRelations = Hackathon & {
+	teams: (Team & {
+		presentation_order: PresentationOrder[];
+	})[];
+	scoring_items: ScoringItem[];
+};
+
 export const Route = createFileRoute("/scorer/$hackathonId/")({
 	loader: async ({ params }) => {
 		const supabase = createClient();
 
-		// Fetch hackathon
+		// Fetch hackathon with teams and scoring items in one query
 		const { data: hackathon, error: hackathonError } = await supabase
 			.from("hackathon")
-			.select("*")
+			.select(`
+				*,
+				teams:team(
+					*,
+					presentation_order(order)
+				),
+				scoring_items:scoring_item(*)
+			`)
 			.eq("id", params.hackathonId)
 			.single();
 
 		if (hackathonError) throw new Error(hackathonError.message);
 
-		// Fetch teams
-		const { data: teams, error: teamsError } = await supabase
-			.from("team")
-			.select("*")
-			.eq("hackathon_id", params.hackathonId);
+		const hackathonWithRelations =
+			hackathon as unknown as HackathonWithRelations;
 
-		if (teamsError) throw new Error(teamsError.message);
-
-		// Fetch presentation orders
-		const { data: orders, error: ordersError } = await supabase
-			.from("presentation_order")
-			.select("*")
-			.in(
-				"team_id",
-				teams.map((t) => t.id),
-			);
-
-		if (ordersError) throw new Error(ordersError.message);
-
-		// Merge teams with orders
-		const teamsWithOrder = teams
-			.map((team) => {
-				const order = orders?.find((o) => o.team_id === team.id);
-				return {
-					...team,
-					order: order?.order ?? 0,
-				};
-			})
+		// Sort teams by presentation order and flatten the structure
+		const teamsWithOrder = (hackathonWithRelations.teams || [])
+			.map((team) => ({
+				...team,
+				order: team.presentation_order?.[0]?.order ?? 0,
+			}))
 			.sort((a, b) => a.order - b.order);
 
-		// Fetch scoring items
-		const { data: scoringItems, error: scoringItemsError } = await supabase
-			.from("scoring_item")
-			.select("*")
-			.eq("hackathon_id", params.hackathonId)
-			.order("created_at", { ascending: true });
+		// Sort scoring items by created_at
+		const sortedScoringItems = (
+			hackathonWithRelations.scoring_items || []
+		).sort(
+			(a, b) =>
+				new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+		);
 
-		if (scoringItemsError) throw new Error(scoringItemsError.message);
+		console.info("scoringItems", sortedScoringItems);
 
 		return {
 			hackathon: {
-				...hackathon,
+				...hackathonWithRelations,
 				teams: teamsWithOrder,
-				scoring_items: scoringItems,
+				scoring_items: sortedScoringItems,
 			} as HackathonWithDetails,
 		};
 	},

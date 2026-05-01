@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { Database } from "#/lib/supabase/client";
-import { ScoringFormItem } from "./ScoringFormItem";
-import { ConfirmScoringModal } from "./ConfirmScoringModal";
 import { createClient } from "#/lib/supabase/client";
+import { ConfirmScoringModal } from "./ConfirmScoringModal";
+import { ScoringFormItem } from "./ScoringFormItem";
 
 type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
 type Team = Database["public"]["Tables"]["team"]["Row"];
@@ -39,7 +39,9 @@ const STORAGE_KEY_PREFIX = "hackathon_scoring_";
 
 export function ScoringForm({ hackathon }: Props) {
 	const [judgeName, setJudgeName] = useState(() => {
-		const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`);
+		const stored = localStorage.getItem(
+			`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
+		);
 		return stored || "";
 	});
 	const [judgeNameError, setJudgeNameError] = useState("");
@@ -48,7 +50,9 @@ export function ScoringForm({ hackathon }: Props) {
 
 	// Initialize scoring data
 	const [scoringData, setScoringData] = useState<ScoringFormData[]>(() => {
-		const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_data`);
+		const stored = localStorage.getItem(
+			`${STORAGE_KEY_PREFIX}${hackathon.id}_data`,
+		);
 		if (stored) {
 			try {
 				return JSON.parse(stored);
@@ -81,7 +85,11 @@ export function ScoringForm({ hackathon }: Props) {
 		setJudgeName(value);
 	};
 
-	const handleScoreChange = (teamId: string, scoringItemId: string, score: number) => {
+	const handleScoreChange = (
+		teamId: string,
+		scoringItemId: string,
+		score: number,
+	) => {
 		setScoringData((prev) =>
 			prev.map((team) =>
 				team.teamId === teamId
@@ -98,13 +106,21 @@ export function ScoringForm({ hackathon }: Props) {
 
 	const handleCommentChange = (teamId: string, comment: string) => {
 		setScoringData((prev) =>
-			prev.map((team) => (team.teamId === teamId ? { ...team, comment } : team)),
+			prev.map((team) =>
+				team.teamId === teamId ? { ...team, comment } : team,
+			),
 		);
 	};
 
 	const handleSave = () => {
-		localStorage.setItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`, judgeName);
-		localStorage.setItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_data`, JSON.stringify(scoringData));
+		localStorage.setItem(
+			`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
+			judgeName,
+		);
+		localStorage.setItem(
+			`${STORAGE_KEY_PREFIX}${hackathon.id}_data`,
+			JSON.stringify(scoringData),
+		);
 		alert("一時保存しました");
 	};
 
@@ -163,7 +179,9 @@ export function ScoringForm({ hackathon }: Props) {
 			}
 
 			// Clear localStorage
-			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`);
+			localStorage.removeItem(
+				`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
+			);
 			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_data`);
 
 			// Redirect to completion page (or show success message)
@@ -182,7 +200,10 @@ export function ScoringForm({ hackathon }: Props) {
 		<div className="pt-30 space-y-0">
 			{/* Judge Name Input */}
 			<div className="w-full max-w-[800px] mx-auto py-12 border-b border-gray-300">
-				<label htmlFor="judge-name" className="block text-base font-bold leading-7 text-gray-700 tracking-wide mb-0">
+				<label
+					htmlFor="judge-name"
+					className="block text-base font-bold leading-7 text-gray-700 tracking-wide mb-0"
+				>
 					名前・会社名
 				</label>
 				<input
@@ -193,7 +214,9 @@ export function ScoringForm({ hackathon }: Props) {
 					className="w-[calc(100%-96px)] mx-auto mt-5 block px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 				/>
 				{judgeNameError && (
-					<p className="w-[calc(100%-96px)] mx-auto mt-2 text-sm text-red-600">{judgeNameError}</p>
+					<p className="w-[calc(100%-96px)] mx-auto mt-2 text-sm text-red-600">
+						{judgeNameError}
+					</p>
 				)}
 			</div>
 

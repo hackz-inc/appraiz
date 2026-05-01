@@ -1,10 +1,13 @@
-import { ComponentPropsWithRef } from "react";
+import type { ComponentPropsWithRef } from "react";
 
 export type SliderProps = Omit<ComponentPropsWithRef<"input">, "onChange"> & {
 	min?: number;
 	max?: number;
 	value?: number;
-	onChange?: (event: React.ChangeEvent<HTMLInputElement>, value: number) => void;
+	onChange?: (
+		event: React.ChangeEvent<HTMLInputElement>,
+		value: number,
+	) => void;
 };
 
 export function Slider({

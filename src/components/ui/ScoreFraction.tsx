@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from "react";
+import type { ComponentPropsWithRef } from "react";
 
 interface ScoreFractionProps extends ComponentPropsWithRef<"div"> {
 	score: number;
