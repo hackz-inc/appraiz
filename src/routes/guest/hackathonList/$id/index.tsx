@@ -1,27 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { eq } from "drizzle-orm";
 import Header from "#/components/Header";
-import type { Database } from "#/lib/supabase/client";
-import { createClient } from "#/lib/supabase/client";
+import { getDb } from "#/lib/db/client";
+import { hackathon } from "#/lib/db/schema";
+import type { Hackathon } from "#/lib/db/types";
 import { guestBeforeLoad } from "../../-beforeLoad";
 import { GuestHackathonCard } from "./-components/GuestHackathonCard";
 
-type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
+const fetchHackathonDetail = createServerFn({ method: "GET" })
+	.inputValidator((id: string) => id)
+	.handler(async (ctx) => {
+		const id = ctx.data;
+		const db = getDb();
+		const data = await db
+			.select()
+			.from(hackathon)
+			.where(eq(hackathon.id, id))
+			.get();
+		if (!data) throw new Error("Hackathon not found");
+		return data as Hackathon;
+	});
 
 export const Route = createFileRoute("/guest/hackathonList/$id/")({
 	beforeLoad: guestBeforeLoad,
 	loader: async ({ params }) => {
-		const supabase = createClient();
-
-		// Fetch hackathon details
-		const { data: hackathon, error } = await supabase
-			.from("hackathon")
-			.select("*")
-			.eq("id", params.id)
-			.single();
-
-		if (error) throw new Error(error.message);
-
-		return { hackathon: hackathon as Hackathon };
+		const hackathonData = await fetchHackathonDetail({ data: params.id });
+		return { hackathon: hackathonData as Hackathon };
 	},
 	component: GuestHackathonDetailPage,
 });
@@ -33,7 +38,7 @@ function GuestHackathonDetailPage() {
 		<>
 			<Header
 				breadcrumbItems={[
-					{ name: "ハッカソン一覧", href: "/guest/hackathonList" },
+					{ name: "ハッカソン一覧", path: "/guest/hackathonList" },
 					{ name: hackathon.name },
 				]}
 			/>

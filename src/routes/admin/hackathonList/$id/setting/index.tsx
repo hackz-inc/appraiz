@@ -2,24 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HandshakeIcon, NotebookPenIcon, UsersIcon } from "lucide-react";
 import { z } from "zod";
 import Header from "#/components/Header";
+import type { SafeGuest } from "#/lib/db/types";
 import { adminBeforeLoad } from "#/routes/admin/-beforeLoad";
-import { createClient } from "#/lib/supabase/client";
-import type { Database } from "#/lib/supabase/client";
+import {
+	fetchAllGuests,
+	fetchHackathonById,
+} from "../../-functions/hackathon";
 import { GuestList } from "./-components/GuestList";
 import { ScoringItemList } from "./-components/ScoringItemList";
 import { TeamList } from "./-components/TeamList";
-
-type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
-type Team = Database["public"]["Tables"]["team"]["Row"];
-type ScoringItem = Database["public"]["Tables"]["scoring_item"]["Row"];
-type Guest = Database["public"]["Tables"]["guest"]["Row"];
-type HackathonGuest = Database["public"]["Tables"]["hackathon_guest"]["Row"];
-
-type HackathonWithDetails = Hackathon & {
-	team: Team[];
-	scoring_item: ScoringItem[];
-	hackathon_guest: (HackathonGuest & { guest: Guest })[];
-};
 
 const searchSchema = z.object({
 	tab: z.enum(["team", "score", "guest"]).optional().default("team"),
@@ -28,34 +19,11 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/admin/hackathonList/$id/setting/")({
 	validateSearch: searchSchema,
 	loader: async ({ params }) => {
-		const supabase = createClient();
-
-		// Fetch hackathon with details
-		const { data: hackathon, error: hackathonError } = await supabase
-			.from("hackathon")
-			.select(`
-				*,
-				team (*),
-				scoring_item (*),
-				hackathon_guest (*, guest (*))
-			`)
-			.eq("id", params.id)
-			.single();
-
-		if (hackathonError) throw new Error(hackathonError.message);
-
-		// Fetch all guests
-		const { data: allGuests, error: guestsError } = await supabase
-			.from("guest")
-			.select("*")
-			.order("created_at", { ascending: false });
-
-		if (guestsError) throw new Error(guestsError.message);
-
-		return {
-			hackathon: hackathon as HackathonWithDetails,
-			allGuests: allGuests as Guest[]
-		};
+		const [hackathon, allGuests] = await Promise.all([
+			fetchHackathonById({ data: params.id }),
+			fetchAllGuests(),
+		]);
+		return { hackathon, allGuests };
 	},
 	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,
 	beforeLoad: adminBeforeLoad,
@@ -89,7 +57,6 @@ function HackathonSettingPage() {
 
 			<div className="min-h-screen bg-gray-50">
 				<div className="max-w-5xl mx-auto px-8 py-8">
-					{/* タブナビゲーション */}
 					<div className="mb-8">
 						<div className="border-b border-gray-300">
 							<nav className="flex gap-8">
@@ -121,26 +88,25 @@ function HackathonSettingPage() {
 						</div>
 					</div>
 
-					{/* タブコンテンツ */}
 					<div>
 						{tab === "team" && (
-							<TeamList hackathonId={hackathon.id} teams={hackathon.team} />
+							<TeamList hackathonId={hackathon.id} teams={hackathon.teams} />
 						)}
 
 						{tab === "score" && (
 							<ScoringItemList
 								hackathonId={hackathon.id}
-								scoringItems={hackathon.scoring_item}
+								scoringItems={hackathon.scoring_items}
 							/>
 						)}
 
 						{tab === "guest" && (
 							<GuestList
 								hackathonId={hackathon.id}
-								guests={allGuests.map((guest) => ({
-									...guest,
-									is_invited: hackathon.hackathon_guest.some(
-										(hg) => hg.guest_id === guest.id,
+								guests={(allGuests as SafeGuest[]).map((g) => ({
+									...g,
+									is_invited: hackathon.hackathon_guests.some(
+										(hg: { guest_id: string }) => hg.guest_id === g.id,
 									),
 								}))}
 							/>

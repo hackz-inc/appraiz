@@ -7,24 +7,19 @@
   },
   "scripts": {
     "dev": "vite dev --port 3000",
+    "dev:wrangler": "wrangler pages dev .output/public --d1=DB",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "wrangler pages dev .output/public",
     "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
-    "supabase:start": "supabase start",
-    "supabase:stop": "supabase stop",
-    "supabase:restart": "supabase stop && supabase start",
-    "supabase:status": "supabase status",
-    "supabase:reset": "supabase db reset",
-    "supabase:seed": "supabase db seed",
-    "supabase:migrate": "supabase db push",
-    "supabase:link": "supabase link"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 execute appraiz --local --file=./drizzle/migrations/0000_init.sql",
+    "db:migrate:remote": "wrangler d1 execute appraiz --remote --file=./drizzle/migrations/0000_init.sql",
+    "secret:put": "wrangler pages secret put"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.10.2",
-    "@supabase/supabase-js": "^2.101.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-router": "latest",
@@ -32,6 +27,8 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "^1.132.0",
+    "drizzle-orm": "^0.45.2",
+    "jose": "^6.2.3",
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -41,6 +38,7 @@
   "devDependencies": {
     "@apple-yagi/oxlint-config": "^0.1.3",
     "@biomejs/biome": "2.4.5",
+    "@cloudflare/workers-types": "^4.20260522.1",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
@@ -49,13 +47,15 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.4",
+    "drizzle-kit": "^0.31.10",
     "jsdom": "^28.1.0",
     "oxlint": "^1.62.0",
     "oxlint-tsgolint": "^0.22.1",
     "typescript": "^5.7.2",
     "vite": "^8.0.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "wrangler": "^4.93.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

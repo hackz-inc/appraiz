@@ -19,7 +19,7 @@ export const AdminHackathonCard = ({
 	hackathon,
 	onEdit,
 	onDelete,
-	onCollaboratorClick,
+	onCollaboratorClick: _onCollaboratorClick,
 }: Props) => {
 	return (
 		<div
@@ -35,7 +35,6 @@ export const AdminHackathonCard = ({
 				className="mb-6"
 				onEdit={onEdit}
 				onDelete={onDelete}
-				onCollaboratorClick={onCollaboratorClick}
 			/>
 			<div className="flex flex-col gap-6 mb-8">
 				<CopyToClipboard

@@ -1,16 +1,12 @@
+import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import type { Database } from "#/lib/supabase/client";
-import { createClient } from "#/lib/supabase/client";
+import { getDb } from "#/lib/db/client";
+import { scoring_item_result, scoring_result } from "#/lib/db/schema";
+import type { Hackathon, ScoringItem, Team } from "#/lib/db/types";
 import { ConfirmScoringModal } from "./ConfirmScoringModal";
 import { ScoringFormItem } from "./ScoringFormItem";
 
-type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
-type Team = Database["public"]["Tables"]["team"]["Row"];
-type ScoringItem = Database["public"]["Tables"]["scoring_item"]["Row"];
-
-type TeamWithOrder = Team & {
-	order: number;
-};
+type TeamWithOrder = Team & { order: number };
 
 type HackathonWithDetails = Hackathon & {
 	teams: TeamWithOrder[];
@@ -37,6 +33,39 @@ type Props = {
 
 const STORAGE_KEY_PREFIX = "hackathon_scoring_";
 
+type SubmitScoringInput = { judgeName: string; scoringData: ScoringFormData[] };
+
+const submitScoringFn = createServerFn({ method: "POST" })
+	.inputValidator((data: SubmitScoringInput) => data)
+	.handler(async (ctx) => {
+		const { judgeName, scoringData } = ctx.data;
+		const db = getDb();
+
+		for (const team of scoringData) {
+			const resultId = crypto.randomUUID();
+			await db.insert(scoring_result).values({
+				id: resultId,
+				judge_name: judgeName,
+				comment: team.comment,
+				team_id: team.teamId,
+			});
+
+			if (team.scoringItems.length > 0) {
+				await db.insert(scoring_item_result).values(
+					team.scoringItems.map((item) => ({
+						id: crypto.randomUUID(),
+						score: item.score,
+						scoring_item_id: item.id,
+						scoring_result_id: resultId,
+					})),
+				);
+			}
+		}
+
+		return { success: true };
+	},
+);
+
 export function ScoringForm({ hackathon }: Props) {
 	const [judgeName, setJudgeName] = useState(() => {
 		const stored = localStorage.getItem(
@@ -48,7 +77,6 @@ export function ScoringForm({ hackathon }: Props) {
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	// Initialize scoring data
 	const [scoringData, setScoringData] = useState<ScoringFormData[]>(() => {
 		const stored = localStorage.getItem(
 			`${STORAGE_KEY_PREFIX}${hackathon.id}_data`,
@@ -57,10 +85,9 @@ export function ScoringForm({ hackathon }: Props) {
 			try {
 				return JSON.parse(stored);
 			} catch {
-				// Fall through to initialize new data
+				// fall through
 			}
 		}
-
 		return hackathon.teams.map((team) => ({
 			teamId: team.id,
 			teamName: team.name,
@@ -143,48 +170,13 @@ export function ScoringForm({ hackathon }: Props) {
 		setIsSubmitting(true);
 
 		try {
-			const supabase = createClient();
+			await submitScoringFn({ data: { judgeName, scoringData } });
 
-			// Create scoring results for each team
-			for (const team of scoringData) {
-				// Insert scoring result
-				const { data: scoringResults, error: resultError } = await supabase
-					.from("scoring_result")
-					.insert({
-						judge_name: judgeName,
-						comment: team.comment,
-						team_id: team.teamId,
-					})
-					.select();
-
-				if (resultError) throw resultError;
-				if (!scoringResults || scoringResults.length === 0) {
-					throw new Error("採点結果の作成に失敗しました");
-				}
-
-				const scoringResult = scoringResults[0];
-
-				// Insert scoring item results
-				const itemResults = team.scoringItems.map((item) => ({
-					score: item.score,
-					scoring_item_id: item.id,
-					scoring_result_id: scoringResult.id,
-				}));
-
-				const { error: itemsError } = await supabase
-					.from("scoring_item_result")
-					.insert(itemResults);
-
-				if (itemsError) throw itemsError;
-			}
-
-			// Clear localStorage
 			localStorage.removeItem(
 				`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
 			);
 			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_data`);
 
-			// Redirect to completion page (or show success message)
 			alert("採点データを送信しました");
 			window.location.href = "/";
 		} catch (error) {
@@ -198,7 +190,6 @@ export function ScoringForm({ hackathon }: Props) {
 
 	return (
 		<div className="pt-30 space-y-0">
-			{/* Judge Name Input */}
 			<div className="w-full max-w-[800px] mx-auto py-12 border-b border-gray-300">
 				<label
 					htmlFor="judge-name"
@@ -220,7 +211,6 @@ export function ScoringForm({ hackathon }: Props) {
 				)}
 			</div>
 
-			{/* Scoring Form Items */}
 			{scoringData.map((team) => (
 				<ScoringFormItem
 					key={team.teamId}
@@ -230,7 +220,6 @@ export function ScoringForm({ hackathon }: Props) {
 				/>
 			))}
 
-			{/* Action Buttons */}
 			<div className="w-full max-w-[800px] mx-auto mt-12 mb-20">
 				<button
 					type="button"
@@ -242,7 +231,6 @@ export function ScoringForm({ hackathon }: Props) {
 				</button>
 			</div>
 
-			{/* Temporary Save Button (Fixed Position) */}
 			<button
 				type="button"
 				onClick={handleSave}
@@ -251,7 +239,6 @@ export function ScoringForm({ hackathon }: Props) {
 				一時保存
 			</button>
 
-			{/* Confirmation Modal */}
 			{isConfirmModalOpen && (
 				<ConfirmScoringModal
 					onConfirm={handleSubmit}

@@ -1,0 +1,12 @@
+name = "appraiz"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".output/public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "appraiz"
+database_id = "c8703838-447a-4cad-9e05-06f7bc4af964"
+
+[vars]
+# JWT_SECRET は wrangler secret put JWT_SECRET で設定

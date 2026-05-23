@@ -12,9 +12,9 @@ interface HackathonTitleProps {
 
 export const HackathonTitle = ({
 	name,
-	id,
+	id: _id,
 	scoringDate,
-	status,
+	status: _status,
 	className = "",
 	onEdit,
 	onDelete,

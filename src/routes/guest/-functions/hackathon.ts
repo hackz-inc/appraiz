@@ -1,42 +1,32 @@
 import { createServerFn } from "@tanstack/react-start";
-import type { Database } from "#/lib/supabase/client";
-import { getSupabaseServerClient } from "#/lib/supabase/server";
-
-type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
+import { eq } from "drizzle-orm";
+import { getCurrentUserFn } from "#/lib/auth/server";
+import { getDb } from "#/lib/db/client";
+import { guest, hackathon_guest } from "#/lib/db/schema";
+import type { Hackathon } from "#/lib/db/types";
 
 export const fetchGuestHackathons = createServerFn({ method: "GET" }).handler(
 	async () => {
-		const supabase = getSupabaseServerClient();
+		const session = await getCurrentUserFn();
+		if (!session?.email) throw new Error("User not authenticated");
 
-		// Get current user
-		const { data: userData, error: userError } = await supabase.auth.getUser();
+		const db = getDb();
 
-		if (userError || !userData.user?.email) {
-			throw new Error("User not authenticated");
-		}
+		const guestRecord = await db
+			.select({ id: guest.id })
+			.from(guest)
+			.where(eq(guest.email, session.email))
+			.get();
 
-		// Get guest ID from email
-		const { data: guest, error: guestError } = await supabase
-			.from("guest")
-			.select("id")
-			.eq("email", userData.user.email)
-			.single();
+		if (!guestRecord) throw new Error("Guest not found");
 
-		if (guestError) throw new Error(guestError.message);
+		const relations = await db.query.hackathon_guest.findMany({
+			where: eq(hackathon_guest.guest_id, guestRecord.id),
+			with: { hackathon: true },
+		});
 
-		// Get hackathons where guest is invited
-		const { data, error } = await supabase
-			.from("hackathon_guest")
-			.select("hackathon (*)")
-			.eq("guest_id", guest.id);
-
-		if (error) throw new Error(error.message);
-
-		// Extract hackathon objects from the nested structure
-		const hackathons = data
-			.map((item) => item.hackathon)
-			.filter((h): h is Hackathon => h !== null);
-
-		return hackathons;
+		return relations
+			.map((r) => r.hackathon)
+			.filter(Boolean) as Hackathon[];
 	},
 );

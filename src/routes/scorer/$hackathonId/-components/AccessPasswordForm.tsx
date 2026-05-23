@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const AccessPasswordForm = ({
-	hackathonId,
+	hackathonId: _hackathonId,
 	hackathonName,
 	onSubmit,
 	onError,

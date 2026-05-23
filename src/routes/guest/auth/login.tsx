@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from "react";
 import { Button, TextInput, Container, Card } from "#/components/ui";
 import { auth } from "#/lib/auth";
@@ -12,7 +12,6 @@ export const Route = createFileRoute('/guest/auth/login')({
 })
 
 function GuestLoginPage() {
-	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");

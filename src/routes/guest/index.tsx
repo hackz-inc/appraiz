@@ -6,6 +6,6 @@ export const Route = createFileRoute("/guest/")({
 		await guestBeforeLoad();
 		throw redirect({
 			to: "/guest/hackathonList",
-		})
+		});
 	},
 });

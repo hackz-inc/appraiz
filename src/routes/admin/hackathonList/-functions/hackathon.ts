@@ -1,106 +1,96 @@
 import { createServerFn } from "@tanstack/react-start";
-import type { Database } from "#/lib/supabase/client";
-import { getSupabaseServerClient } from "#/lib/supabase/server";
-
-type Hackathon = Database["public"]["Tables"]["hackathon"]["Row"];
-type Team = Database["public"]["Tables"]["team"]["Row"];
-type ScoringItem = Database["public"]["Tables"]["scoring_item"]["Row"];
-type Guest = Database["public"]["Tables"]["guest"]["Row"];
-type HackathonGuest = Database["public"]["Tables"]["hackathon_guest"]["Row"];
-
-type HackathonWithDetails = Hackathon & {
-	team: Team[];
-	scoring_item: ScoringItem[];
-	hackathon_guest: (HackathonGuest & { guest: Guest })[];
-};
+import { and, desc, eq } from "drizzle-orm";
+import { getDb } from "#/lib/db/client";
+import { guest, hackathon, hackathon_guest } from "#/lib/db/schema";
+import type { Hackathon, SafeGuest } from "#/lib/db/types";
 
 export const fetchHackathons = createServerFn({ method: "GET" }).handler(
 	async () => {
-		const supabase = getSupabaseServerClient();
-
-		const { data, error } = await supabase
-			.from("hackathon")
-			.select("*")
-			.order("created_at", { ascending: false });
-
-		if (error) throw new Error(error.message);
-
+		const db = getDb();
+		const data = await db
+			.select()
+			.from(hackathon)
+			.orderBy(desc(hackathon.created_at));
 		return data as Hackathon[];
 	},
 );
 
 export const fetchAllGuests = createServerFn({ method: "GET" }).handler(
 	async () => {
-		const supabase = getSupabaseServerClient();
-
-		const { data, error } = await supabase
-			.from("guest")
-			.select("*")
-			.order("created_at", { ascending: false });
-
-		if (error) throw new Error(error.message);
-
-		return data as Guest[];
+		const db = getDb();
+		const data = await db
+			.select({
+				id: guest.id,
+				name: guest.name,
+				company_name: guest.company_name,
+				email: guest.email,
+				created_at: guest.created_at,
+				updated_at: guest.updated_at,
+			})
+			.from(guest)
+			.orderBy(desc(guest.created_at));
+		return data as SafeGuest[];
 	},
 );
 
-export const fetchHackathonById = createServerFn({
-	method: "GET",
-}).handler(async (ctx) => {
-	const id = (ctx.data ?? "") as string;
-	const supabase = getSupabaseServerClient();
+export const fetchHackathonById = createServerFn({ method: "GET" })
+	.inputValidator((id: string) => id)
+	.handler(async (ctx) => {
+		const id = ctx.data;
+		const db = getDb();
 
-	const { data, error } = await supabase
-		.from("hackathon")
-		.select(`
-			*,
-			team (*),
-			scoring_item (*),
-			hackathon_guest (*, guest (*))
-		`)
-		.eq("id", id)
-		.single();
+		const data = await db.query.hackathon.findFirst({
+			where: eq(hackathon.id, id),
+			with: {
+				teams: true,
+				scoring_items: true,
+				hackathon_guests: {
+					with: {
+						guest: {
+							columns: {
+								id: true,
+								name: true,
+								company_name: true,
+								email: true,
+								created_at: true,
+								updated_at: true,
+							},
+						},
+					},
+				},
+			},
+		});
 
-	if (error) throw new Error(error.message);
-
-	return data as HackathonWithDetails;
-});
-
-export const addGuestToHackathon = createServerFn({
-	method: "POST",
-}).handler(async (ctx) => {
-	const data = (ctx.data ?? {
-		hackathonId: "",
-		guestId: "",
-	}) as { hackathonId: string; guestId: string };
-	const supabase = getSupabaseServerClient();
-
-	const { error } = await supabase.from("hackathon_guest").insert({
-		hackathon_id: data.hackathonId,
-		guest_id: data.guestId,
+		if (!data) throw new Error("Hackathon not found");
+		return data;
 	});
 
-	if (error) throw new Error(error.message);
+type GuestToggleInput = { hackathonId: string; guestId: string };
 
-	return { success: true };
-});
+export const addGuestToHackathon = createServerFn({ method: "POST" })
+	.inputValidator((data: GuestToggleInput) => data)
+	.handler(async (ctx) => {
+		const data = ctx.data;
+		const db = getDb();
+		await db.insert(hackathon_guest).values({
+			hackathon_id: data.hackathonId,
+			guest_id: data.guestId,
+		});
+		return { success: true };
+	});
 
-export const removeGuestFromHackathon = createServerFn({
-	method: "POST",
-}).handler(async (ctx) => {
-	const data = (ctx.data ?? {
-		hackathonId: "",
-		guestId: "",
-	}) as { hackathonId: string; guestId: string };
-	const supabase = getSupabaseServerClient();
-
-	const { error } = await supabase
-		.from("hackathon_guest")
-		.delete()
-		.eq("hackathon_id", data.hackathonId)
-		.eq("guest_id", data.guestId);
-
-	if (error) throw new Error(error.message);
-
-	return { success: true };
-});
+export const removeGuestFromHackathon = createServerFn({ method: "POST" })
+	.inputValidator((data: GuestToggleInput) => data)
+	.handler(async (ctx) => {
+		const data = ctx.data;
+		const db = getDb();
+		await db
+			.delete(hackathon_guest)
+			.where(
+				and(
+					eq(hackathon_guest.hackathon_id, data.hackathonId),
+					eq(hackathon_guest.guest_id, data.guestId),
+				),
+			);
+		return { success: true };
+	});

@@ -30,7 +30,7 @@ function HackathonListPage() {
 		name: string;
 		scoringDate: Date;
 	} | null>(null);
-	const [collaboratorTarget, setCollaboratorTarget] = useState<{
+	const [_collaboratorTarget, setCollaboratorTarget] = useState<{
 		id: string;
 	} | null>(null);
 
