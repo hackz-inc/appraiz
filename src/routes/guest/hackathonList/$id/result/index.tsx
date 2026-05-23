@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import Header from "#/components/Header";
 import { getDb } from "#/lib/db/client";
 import { hackathon } from "#/lib/db/schema";
+import "#/types/cloudflare";
 import type { Hackathon } from "#/lib/db/types";
 import { guestBeforeLoad } from "../../../-beforeLoad";
 
@@ -11,7 +12,8 @@ const fetchHackathonDetail = createServerFn({ method: "GET" })
 	.inputValidator((id: string) => id)
 	.handler(async (ctx) => {
 		const id = ctx.data;
-		const db = getDb();
+		// biome-ignore lint/style/noNonNullAssertion: always set in Cloudflare Worker
+		const db = getDb(ctx.context!);
 		const data = await db
 			.select()
 			.from(hackathon)

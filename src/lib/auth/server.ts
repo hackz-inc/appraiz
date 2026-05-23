@@ -4,13 +4,15 @@ import { eq } from "drizzle-orm";
 import { SignJWT, jwtVerify } from "jose";
 import { getDb } from "#/lib/db/client";
 import { admin, guest } from "#/lib/db/schema";
+import type { Env } from "#/types/cloudflare";
+import "#/types/cloudflare";
 import type { UserRole } from "./types";
 
 const COOKIE_NAME = "session";
 
-function getJwtSecret() {
-	const secret = process.env.JWT_SECRET;
-	if (!secret) throw new Error("JWT_SECRET environment variable is not set");
+function getJwtSecret(env: Env) {
+	const secret = env.JWT_SECRET;
+	if (!secret) throw new Error("JWT_SECRET is not set");
 	return new TextEncoder().encode(secret);
 }
 
@@ -41,6 +43,7 @@ async function verifyPassword(
 ): Promise<boolean> {
 	const [saltHex, hashHex] = storedHash.split(":");
 	const salt = new Uint8Array(
+		// biome-ignore lint/style/noNonNullAssertion: guaranteed by hash format
 		saltHex.match(/.{2}/g)!.map((b) => Number.parseInt(b, 16)),
 	);
 	const keyMaterial = await crypto.subtle.importKey(
@@ -61,22 +64,21 @@ async function verifyPassword(
 	return hashHex === newHashHex;
 }
 
-async function createSessionToken(payload: {
-	userId: string;
-	email: string;
-	role: UserRole;
-}) {
+async function createSessionToken(
+	payload: { userId: string; email: string; role: UserRole },
+	jwtSecret: Uint8Array,
+) {
 	return new SignJWT(payload)
 		.setProtectedHeader({ alg: "HS256" })
 		.setIssuedAt()
 		.setExpirationTime("7d")
-		.sign(getJwtSecret());
+		.sign(jwtSecret);
 }
 
 function setSessionCookie(token: string) {
 	setCookie(COOKIE_NAME, token, {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
+		secure: true,
 		sameSite: "lax",
 		maxAge: 60 * 60 * 24 * 7,
 		path: "/",
@@ -101,7 +103,9 @@ export const signUpFn = createServerFn({ method: "POST" })
 	.inputValidator((data: SignUpInput) => data)
 	.handler(async (ctx) => {
 		const { email, password, role, name, company_name } = ctx.data;
-		const db = getDb();
+		// biome-ignore lint/style/noNonNullAssertion: always set in Cloudflare Worker
+		const env = ctx.context!.cloudflare.env;
+		const db = getDb(ctx.context!);
 		const id = crypto.randomUUID();
 		const password_hash = await hashPassword(password);
 
@@ -129,7 +133,8 @@ export const signUpFn = createServerFn({ method: "POST" })
 			});
 		}
 
-		const token = await createSessionToken({ userId: id, email, role });
+		const jwtSecret = getJwtSecret(env);
+		const token = await createSessionToken({ userId: id, email, role }, jwtSecret);
 		setSessionCookie(token);
 
 		return { user: { id, email, role, metadata: { name, company_name } } };
@@ -139,7 +144,9 @@ export const signInFn = createServerFn({ method: "POST" })
 	.inputValidator((data: SignInInput) => data)
 	.handler(async (ctx) => {
 		const { email, password, role } = ctx.data;
-		const db = getDb();
+		// biome-ignore lint/style/noNonNullAssertion: always set in Cloudflare Worker
+		const env = ctx.context!.cloudflare.env;
+		const db = getDb(ctx.context!);
 
 		let userId: string | undefined;
 		let passwordHash: string | undefined;
@@ -182,7 +189,8 @@ export const signInFn = createServerFn({ method: "POST" })
 			throw new Error("メールアドレスまたはパスワードが正しくありません");
 		}
 
-		const token = await createSessionToken({ userId, email: userEmail, role });
+		const jwtSecret = getJwtSecret(env);
+		const token = await createSessionToken({ userId, email: userEmail, role }, jwtSecret);
 		setSessionCookie(token);
 
 		return { user: { id: userId, email: userEmail, role } };
@@ -196,13 +204,15 @@ export const signOutFn = createServerFn({ method: "POST" }).handler(
 );
 
 export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
-	async () => {
+	async (ctx) => {
 		const cookies = getCookies();
 		const token = cookies[COOKIE_NAME];
 		if (!token) return null;
 
 		try {
-			const { payload } = await jwtVerify(token, getJwtSecret());
+			// biome-ignore lint/style/noNonNullAssertion: always set in Cloudflare Worker
+			const jwtSecret = getJwtSecret(ctx.context!.cloudflare.env);
+			const { payload } = await jwtVerify(token, jwtSecret);
 			return payload as { userId: string; email: string; role: UserRole };
 		} catch {
 			return null;

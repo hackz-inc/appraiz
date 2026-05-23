@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getDb } from "#/lib/db/client";
 import { scoring_item_result, scoring_result } from "#/lib/db/schema";
+import "#/types/cloudflare";
 import type { Hackathon, ScoringItem, Team } from "#/lib/db/types";
 import { ConfirmScoringModal } from "./ConfirmScoringModal";
 import { ScoringFormItem } from "./ScoringFormItem";
@@ -39,7 +40,8 @@ const submitScoringFn = createServerFn({ method: "POST" })
 	.inputValidator((data: SubmitScoringInput) => data)
 	.handler(async (ctx) => {
 		const { judgeName, scoringData } = ctx.data;
-		const db = getDb();
+		// biome-ignore lint/style/noNonNullAssertion: always set in Cloudflare Worker
+		const db = getDb(ctx.context!);
 
 		for (const team of scoringData) {
 			const resultId = crypto.randomUUID();
@@ -63,8 +65,7 @@ const submitScoringFn = createServerFn({ method: "POST" })
 		}
 
 		return { success: true };
-	},
-);
+	});
 
 export function ScoringForm({ hackathon }: Props) {
 	const [judgeName, setJudgeName] = useState(() => {

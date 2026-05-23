@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { getDb } from "#/lib/db/client";
 import { hackathon } from "#/lib/db/schema";
+import "#/types/cloudflare";
 import type { Hackathon, ScoringItem, Team } from "#/lib/db/types";
 import { AccessPasswordForm } from "./-components/AccessPasswordForm";
 import { ScoringForm } from "./-components/ScoringForm";
@@ -19,7 +20,7 @@ const fetchScorerHackathon = createServerFn({ method: "GET" })
 	.inputValidator((hackathonId: string) => hackathonId)
 	.handler(async (ctx) => {
 		const hackathonId = ctx.data;
-		const db = getDb();
+		const db = getDb(ctx.context!);
 
 		const data = await db.query.hackathon.findFirst({
 			where: eq(hackathon.id, hackathonId),
@@ -50,8 +51,7 @@ const fetchScorerHackathon = createServerFn({ method: "GET" })
 			teams: teamsWithOrder,
 			scoring_items: sortedScoringItems,
 		} as HackathonWithDetails;
-	},
-);
+	});
 
 export const Route = createFileRoute("/scorer/$hackathonId/")({
 	loader: async ({ params }) => {

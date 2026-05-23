@@ -3,14 +3,15 @@ import { eq } from "drizzle-orm";
 import { getCurrentUserFn } from "#/lib/auth/server";
 import { getDb } from "#/lib/db/client";
 import { guest, hackathon_guest } from "#/lib/db/schema";
+import "#/types/cloudflare";
 import type { Hackathon } from "#/lib/db/types";
 
 export const fetchGuestHackathons = createServerFn({ method: "GET" }).handler(
-	async () => {
+	async (ctx) => {
 		const session = await getCurrentUserFn();
 		if (!session?.email) throw new Error("User not authenticated");
 
-		const db = getDb();
+		const db = getDb(ctx.context!);
 
 		const guestRecord = await db
 			.select({ id: guest.id })

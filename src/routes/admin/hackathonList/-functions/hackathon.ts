@@ -2,11 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "#/lib/db/client";
 import { guest, hackathon, hackathon_guest } from "#/lib/db/schema";
+import "#/types/cloudflare";
 import type { Hackathon, SafeGuest } from "#/lib/db/types";
 
 export const fetchHackathons = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const db = getDb();
+	async (ctx) => {
+		const db = getDb(ctx.context!);
 		const data = await db
 			.select()
 			.from(hackathon)
@@ -16,8 +17,8 @@ export const fetchHackathons = createServerFn({ method: "GET" }).handler(
 );
 
 export const fetchAllGuests = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const db = getDb();
+	async (ctx) => {
+		const db = getDb(ctx.context!);
 		const data = await db
 			.select({
 				id: guest.id,
@@ -37,7 +38,7 @@ export const fetchHackathonById = createServerFn({ method: "GET" })
 	.inputValidator((id: string) => id)
 	.handler(async (ctx) => {
 		const id = ctx.data;
-		const db = getDb();
+		const db = getDb(ctx.context!);
 
 		const data = await db.query.hackathon.findFirst({
 			where: eq(hackathon.id, id),
@@ -70,11 +71,10 @@ type GuestToggleInput = { hackathonId: string; guestId: string };
 export const addGuestToHackathon = createServerFn({ method: "POST" })
 	.inputValidator((data: GuestToggleInput) => data)
 	.handler(async (ctx) => {
-		const data = ctx.data;
-		const db = getDb();
+		const db = getDb(ctx.context!);
 		await db.insert(hackathon_guest).values({
-			hackathon_id: data.hackathonId,
-			guest_id: data.guestId,
+			hackathon_id: ctx.data.hackathonId,
+			guest_id: ctx.data.guestId,
 		});
 		return { success: true };
 	});
@@ -82,14 +82,13 @@ export const addGuestToHackathon = createServerFn({ method: "POST" })
 export const removeGuestFromHackathon = createServerFn({ method: "POST" })
 	.inputValidator((data: GuestToggleInput) => data)
 	.handler(async (ctx) => {
-		const data = ctx.data;
-		const db = getDb();
+		const db = getDb(ctx.context!);
 		await db
 			.delete(hackathon_guest)
 			.where(
 				and(
-					eq(hackathon_guest.hackathon_id, data.hackathonId),
-					eq(hackathon_guest.guest_id, data.guestId),
+					eq(hackathon_guest.hackathon_id, ctx.data.hackathonId),
+					eq(hackathon_guest.guest_id, ctx.data.guestId),
 				),
 			);
 		return { success: true };

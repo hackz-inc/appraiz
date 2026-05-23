@@ -1,20 +1,15 @@
 import { drizzle } from "drizzle-orm/d1";
-import { getEvent } from "vinxi/http";
+import type { Env } from "#/types/cloudflare";
 import * as schema from "./schema";
 
-export function getDb() {
-	const event = getEvent() as unknown as {
-		context?: { cloudflare?: { env?: { DB?: D1Database } } };
-	};
-	const DB = event?.context?.cloudflare?.env?.DB;
+type CloudflareContext = { cloudflare?: { env?: Env } };
 
+export function getDb(context: CloudflareContext) {
+	const DB = context?.cloudflare?.env?.DB;
 	if (!DB) {
 		throw new Error(
-			"Cloudflare D1 binding \"DB\" not found.\n" +
-			"ローカル開発は `pnpm dev:wrangler` を使用してください。\n" +
-			"または wrangler.toml の database_id を設定後、wrangler pages dev を実行してください。",
+			'D1 database not available. Make sure the Cloudflare context is passed correctly.',
 		);
 	}
-
 	return drizzle(DB, { schema });
 }
