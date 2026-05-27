@@ -6,6 +6,7 @@ import "#/types/cloudflare";
 import type { Hackathon, ScoringItem, Team } from "#/lib/db/types";
 import { ConfirmScoringModal } from "./ConfirmScoringModal";
 import { ScoringFormItem } from "./ScoringFormItem";
+import { ScoringPreview } from "./ScoringPreview";
 
 type TeamWithOrder = Team & { order: number };
 
@@ -77,6 +78,7 @@ export function ScoringForm({ hackathon }: Props) {
 	const [judgeNameError, setJudgeNameError] = useState("");
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState(false);
 
 	const [scoringData, setScoringData] = useState<ScoringFormData[]>(() => {
 		const stored = localStorage.getItem(
@@ -177,9 +179,15 @@ export function ScoringForm({ hackathon }: Props) {
 				`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
 			);
 			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_data`);
+			localStorage.setItem(
+				`${STORAGE_KEY_PREFIX}${hackathon.id}_preview`,
+				JSON.stringify({ judgeName, scoringData }),
+			);
 
-			alert("採点データを送信しました");
-			window.location.href = "/";
+			const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
+			document.cookie = `scored_${hackathon.id}=true; expires=${expires}; path=/; SameSite=Lax`;
+
+			setIsSubmitted(true);
 		} catch (error) {
 			console.error(error);
 			alert("送信に失敗しました");
@@ -188,6 +196,10 @@ export function ScoringForm({ hackathon }: Props) {
 			setIsConfirmModalOpen(false);
 		}
 	};
+
+	if (isSubmitted) {
+		return <ScoringPreview judgeName={judgeName} scoringData={scoringData} />;
+	}
 
 	return (
 		<div className="pt-30 space-y-0">

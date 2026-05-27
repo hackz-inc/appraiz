@@ -8,6 +8,8 @@ import "#/types/cloudflare";
 import type { Hackathon, ScoringItem, Team } from "#/lib/db/types";
 import { AccessPasswordForm } from "./-components/AccessPasswordForm";
 import { ScoringForm } from "./-components/ScoringForm";
+import { ScoringPreview } from "./-components/ScoringPreview";
+import type { ScoringFormData } from "./-components/ScoringForm";
 
 type TeamWithOrder = Team & { order: number };
 
@@ -72,14 +74,21 @@ function ScorerPage() {
 	const [passwordError, setPasswordError] = useState("");
 
 	const storageKey = `scorer_access_password_${hackathonData.id}`;
+	const scoredCookieKey = `scored_${hackathonData.id}`;
+
+	const [alreadyScored, setAlreadyScored] = useState(false);
 
 	useEffect(() => {
 		const storedPassword = localStorage.getItem(storageKey);
 		if (storedPassword === hackathonData.access_password) {
 			setIsAuthenticated(true);
 		}
+		const scored = document.cookie
+			.split(";")
+			.some((c) => c.trim().startsWith(`${scoredCookieKey}=`));
+		setAlreadyScored(scored);
 		setIsChecking(false);
-	}, [hackathonData.access_password, storageKey]);
+	}, [hackathonData.access_password, storageKey, scoredCookieKey]);
 
 	const handlePasswordSubmit = (password: string) => {
 		if (password === hackathonData.access_password) {
@@ -93,6 +102,30 @@ function ScorerPage() {
 
 	if (isChecking) {
 		return <div className="min-h-screen bg-white" />;
+	}
+
+	if (alreadyScored) {
+		const previewKey = `hackathon_scoring_${hackathonData.id}_preview`;
+		const raw = localStorage.getItem(previewKey);
+		if (raw) {
+			try {
+				const { judgeName, scoringData } = JSON.parse(raw) as {
+					judgeName: string;
+					scoringData: ScoringFormData[];
+				};
+				return <ScoringPreview judgeName={judgeName} scoringData={scoringData} />;
+			} catch {
+				// fall through to simple message
+			}
+		}
+		return (
+			<div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
+				<p className="text-xl font-bold text-gray-800">採点は完了しています</p>
+				<p className="text-sm text-gray-500">
+					このハッカソンへの採点は既に送信済みです。
+				</p>
+			</div>
+		);
 	}
 
 	if (!isAuthenticated) {
@@ -115,19 +148,19 @@ function ScorerPage() {
 						<h1 className="text-2xl font-bold text-gray-900">
 							{hackathonData.name}
 						</h1>
-						<button
+						{/* <button
 							type="button"
 							onClick={() => setIsMenuOpen(!isMenuOpen)}
 							className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
 						>
 							{isMenuOpen ? "メニューを閉じる" : "メニューを開く"}
-						</button>
+						</button> */}
 					</div>
 				</div>
 			</header>
 
 			<div className="flex">
-				{isMenuOpen && (
+				{/* {isMenuOpen && (
 					<aside className="w-64 bg-white border-r border-gray-200 p-4 h-screen sticky top-16 overflow-y-auto">
 						<h2 className="text-lg font-bold text-gray-900 mb-4">チーム一覧</h2>
 						<nav className="space-y-2">
@@ -142,7 +175,7 @@ function ScorerPage() {
 							))}
 						</nav>
 					</aside>
-				)}
+				)} */}
 
 				<main className="flex-1">
 					<ScoringForm hackathon={hackathonData} />
