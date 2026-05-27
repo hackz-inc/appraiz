@@ -15,6 +15,7 @@
     "lint": "biome lint",
     "check": "biome check",
     "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
     "db:migrate:local": "wrangler d1 execute appraiz --local --file=./drizzle/migrations/0000_init.sql",
     "db:migrate:remote": "wrangler d1 execute appraiz --remote --file=./drizzle/migrations/0000_init.sql",
     "secret:put": "wrangler secret put"
@@ -45,10 +46,12 @@
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.4",
+    "better-sqlite3": "^12.10.0",
     "drizzle-kit": "^0.31.10",
     "jsdom": "^28.1.0",
     "oxlint": "^1.62.0",
@@ -63,7 +66,8 @@
       "esbuild",
       "lightningcss",
       "@parcel/watcher",
-      "workerd"
+      "workerd",
+      "better-sqlite3"
     ]
   },
   "packageManager": "pnpm@10.33.0"

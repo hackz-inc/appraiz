@@ -15,3 +15,6 @@ todos.json
 
 # Cloudflare
 .dev.vars
+
+# Localflare generated files
+.localflare/
