@@ -1,204 +1,149 @@
-Welcome to your new TanStack Start app! 
+# appraiz
 
-# Getting Started
+ハッカソン採点管理システム。管理者がハッカソン・チーム・採点項目を設定し、審査員がURLとアクセスパスワードで採点フォームにアクセスして投票する。
 
-To run this application:
+## 技術スタック
 
-```bash
-npm install
-npm run dev
-```
+- **フレームワーク**: TanStack Start (React SSR)
+- **ランタイム**: Cloudflare Workers
+- **DB**: Cloudflare D1 (SQLite)
+- **ORM**: Drizzle ORM
+- **認証**: JWT (jose) + PBKDF2パスワードハッシュ
+- **スタイル**: Tailwind CSS v4
+- **Lint/Format**: Biome
 
-# Building For Production
+## ロール
 
-To build this application for production:
+| ロール | 説明 |
+|--------|------|
+| Admin | ハッカソン・チーム・採点項目の管理、結果閲覧 |
+| Guest | 招待された共同開催者（閲覧権限） |
+| Scorer | URLとアクセスパスワードで採点するゲスト審査員（アカウント不要） |
 
-```bash
-npm run build
-```
+## ローカル開発
 
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
-
-```bash
-npm run test
-```
-
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-## Linting & Formatting
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
+### 1. 依存パッケージのインストール
 
 ```bash
-npm run lint
-npm run format
-npm run check
+pnpm install
 ```
 
+### 2. 環境変数の設定
 
+`.dev.vars` をプロジェクトルートに作成：
 
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
+```
+JWT_SECRET=任意の文字列
 ```
 
-Then anywhere in your JSX you can use it like so:
+### 3. ローカルDBのマイグレーション
 
-```tsx
-<Link to="/about">About</Link>
+```bash
+pnpm db:migrate:local
 ```
 
-This will create a link that will navigate to the `/about` route.
+### 4. 開発サーバー起動
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
+```bash
+pnpm dev
 ```
 
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
+http://localhost:3000 でアクセス可能。
 
-## Server Functions
+### テスト用データの投入（ローカル）
 
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
+```bash
+pnpm db:seed:local
 ```
 
-## API Routes
+| 項目 | 値 |
+|------|----|
+| Admin Email | admin@example.com |
+| Admin Password | password123 |
 
-You can create API routes by using the `server` property in your route definitions:
+### DBの確認（Drizzle Studio）
 
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
+```bash
+pnpm db:studio
 ```
 
-## Data Fetching
+## 環境構成
 
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
+| 環境 | DB | デプロイコマンド |
+|------|-----|----------------|
+| ローカル (dev) | miniflare自動生成SQLite | `pnpm dev` |
+| Staging | Cloudflare D1（STG用） | `pnpm deploy:staging` |
+| Production | Cloudflare D1（PRD用） | `pnpm deploy:production` |
 
-For example:
+## STG/PRD 初回セットアップ
 
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
+```bash
+# 1. Cloudflareにログイン
+pnpm wrangler login
 
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
+# 2. D1データベースをSTG/PRD別に作成
+pnpm wrangler d1 create appraiz-staging
+pnpm wrangler d1 create appraiz-production
+# 出力された database_id を wrangler.toml の各envセクションに設定
 
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
+# 3. DBにマイグレーションを適用
+pnpm db:migrate:staging
+pnpm db:migrate:production
+
+# 4. JWT_SECRETをシークレットに登録
+pnpm secret:put:staging JWT_SECRET
+pnpm secret:put:production JWT_SECRET
 ```
 
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
+## スクリプト一覧
 
-# Demo files
+| コマンド | 内容 |
+|---------|------|
+| `pnpm dev` | 開発サーバー起動（ローカルDB自動生成） |
+| `pnpm build` | 本番ビルド |
+| `pnpm deploy:staging` | ビルド + Stagingへデプロイ |
+| `pnpm deploy:production` | ビルド + Productionへデプロイ |
+| `pnpm db:generate` | スキーマ変更からマイグレーションファイルを生成 |
+| `pnpm db:migrate:local` | ローカルD1にマイグレーションを適用 |
+| `pnpm db:migrate:staging` | STG D1にマイグレーションを適用 |
+| `pnpm db:migrate:production` | PRD D1にマイグレーションを適用 |
+| `pnpm db:seed:local` | ローカルDBに初期データ投入 |
+| `pnpm db:seed:staging` | STG DBに初期データ投入 |
+| `pnpm db:seed:production` | PRD DBに初期データ投入 |
+| `pnpm db:studio` | Drizzle Studio（ローカルDB GUI）を起動 |
+| `pnpm lint` | Biome lintを実行 |
+| `pnpm format` | Biome formatを実行 |
+| `pnpm test` | Vitestでテストを実行 |
 
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+## ディレクトリ構成
 
-# Learn More
+```
+src/
+├── components/        # 共通UIコンポーネント
+├── lib/
+│   ├── auth/          # JWT認証・セッション管理
+│   └── db/            # Drizzleスキーマ・クライアント・型定義
+├── routes/
+│   ├── admin/         # 管理者画面（ハッカソン管理・結果閲覧）
+│   ├── guest/         # ゲスト画面
+│   └── scorer/        # 採点フォーム（アカウント不要）
+└── types/             # Cloudflare環境型定義
+```
 
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+## 採点スコアの計算方法
 
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+審査員ごとのスコアを正規化して合算する方式（legacyシステム準拠）。
+
+**正規化の目的**: 点数幅が大きい審査員が結果を支配しないようにする。
+
+**計算式**:
+```
+各審査員ごとに：
+  diff  = その審査員のmax点 - min点（チーム間）
+  worth = floor(1000 / diff)
+  チームのpoint = (スコア - min点) × worth
+
+totalPoint = 全審査員のpointの合計でランキング
+```
+
+表示には生の合計スコア（`totalScore`）を使用し、ランキングは `totalPoint` で決定する。

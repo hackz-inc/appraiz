@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
-    "deploy": "pnpm run build && wrangler deploy",
+    "deploy:staging": "CLOUDFLARE_ENV=staging vite build && wrangler deploy",
+    "deploy:production": "CLOUDFLARE_ENV=production vite build && wrangler deploy",
     "preview": "pnpm run build && wrangler dev",
     "test": "vitest run",
     "format": "biome format",
@@ -17,8 +18,13 @@
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:migrate:local": "wrangler d1 execute appraiz --local --file=./drizzle/migrations/0000_init.sql",
-    "db:migrate:remote": "wrangler d1 execute appraiz --remote --file=./drizzle/migrations/0000_init.sql",
-    "secret:put": "wrangler secret put"
+    "db:migrate:staging": "wrangler d1 execute appraiz-staging --env staging --remote --file=./drizzle/migrations/0000_init.sql",
+    "db:migrate:production": "wrangler d1 execute appraiz-production --env production --remote --file=./drizzle/migrations/0000_init.sql",
+    "db:seed:local": "wrangler d1 execute appraiz --local --file=./drizzle/seed.sql",
+    "db:seed:staging": "wrangler d1 execute appraiz-staging --env staging --remote --file=./drizzle/seed.sql",
+    "db:seed:production": "wrangler d1 execute appraiz-production --env production --remote --file=./drizzle/seed.sql",
+    "secret:put:staging": "wrangler secret put --env staging --name appraiz-staging",
+    "secret:put:production": "wrangler secret put --env production --name appraiz-production"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",

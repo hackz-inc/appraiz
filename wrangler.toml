@@ -3,10 +3,35 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 main = "./src/entry.cloudflare.ts"
 
+# ローカル開発用（pnpm dev）
+# database_id はminiflareが自動でローカルSQLiteを生成するため参照されない
 [[d1_databases]]
 binding = "DB"
 database_name = "appraiz"
-database_id = "0aff19e8-0e73-48c8-885a-357fc123297f"
 
 [vars]
-# JWT_SECRET は wrangler secret put JWT_SECRET で設定
+ENVIRONMENT = "development"
+
+# --- Staging ---
+[env.staging]
+name = "appraiz-staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "appraiz-staging"
+database_id = "bc8c769f-a750-4bf3-ae3c-295083f46a88"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+
+# --- Production ---
+[env.production]
+name = "appraiz-production"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "appraiz-production"
+database_id = "e87329db-43e0-4a3e-b5f9-120f556f681d"
+
+[env.production.vars]
+ENVIRONMENT = "production"
