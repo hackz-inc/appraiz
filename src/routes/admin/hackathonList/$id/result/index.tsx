@@ -42,6 +42,31 @@ function AdminResultPage() {
 
 	const maxTotal = data.scoring_items.reduce((s, i) => s + i.max_score, 0);
 
+	// 審査員ごとのチーム別スコアを集計
+	const judgeMap = new Map<string, { teamId: string; total: number }[]>();
+	for (const team of data.teams) {
+		for (const r of team.scoring_results) {
+			const total = r.scoring_item_results.reduce((s, ir) => s + ir.score, 0);
+			const existing = judgeMap.get(r.judge_name) ?? [];
+			existing.push({ teamId: team.id, total });
+			judgeMap.set(r.judge_name, existing);
+		}
+	}
+
+	// 審査員ごとに正規化ポイントを計算（legacyのtotalPoint方式）
+	const teamPoints = new Map<string, number>();
+	for (const judgeResults of judgeMap.values()) {
+		const scores = judgeResults.map((r) => r.total);
+		const min = Math.min(...scores);
+		const max = Math.max(...scores);
+		const diff = max - min;
+		const worth = diff === 0 ? 0 : Math.floor(1000 / diff);
+		for (const { teamId, total } of judgeResults) {
+			const point = (total - min) * worth;
+			teamPoints.set(teamId, (teamPoints.get(teamId) ?? 0) + point);
+		}
+	}
+
 	const teams = data.teams
 		.map((team) => {
 			const judges = team.scoring_results.map((r) => ({
@@ -49,25 +74,18 @@ function AdminResultPage() {
 				total: r.scoring_item_results.reduce((s, ir) => s + ir.score, 0),
 				itemScores: r.scoring_item_results,
 			}));
-			const avg =
-				judges.length > 0
-					? judges.reduce((s, j) => s + j.total, 0) / judges.length
-					: 0;
-			const itemAverages = data.scoring_items.map((item) => {
-				const scores = judges.flatMap((j) =>
-					j.itemScores
-						.filter((ir) => ir.scoring_item_id === item.id)
-						.map((ir) => ir.score),
-				);
-				const itemAvg =
-					scores.length > 0
-						? scores.reduce((a, b) => a + b, 0) / scores.length
-						: 0;
-				return { ...item, avgScore: Math.round(itemAvg * 10) / 10 };
+			const totalScore = judges.reduce((s, j) => s + j.total, 0);
+			const totalPoint = teamPoints.get(team.id) ?? 0;
+			const itemTotals = data.scoring_items.map((item) => {
+				const itemTotal = judges.reduce((s, j) => {
+					const ir = j.itemScores.find((r) => r.scoring_item_id === item.id);
+					return s + (ir?.score ?? 0);
+				}, 0);
+				return { ...item, itemTotal, maxScore: item.max_score * judges.length };
 			});
-			return { ...team, judges, avg, itemAverages };
+			return { ...team, judges, totalScore, totalPoint, itemTotals };
 		})
-		.sort((a, b) => b.avg - a.avg);
+		.sort((a, b) => b.totalPoint - a.totalPoint);
 
 	return (
 		<>
@@ -112,31 +130,31 @@ function AdminResultPage() {
 								</div>
 								<div className="flex flex-col items-end">
 									<ScoreFraction
-										score={Math.round(team.avg * 10) / 10}
-										maxScore={maxTotal}
+										score={team.totalScore}
+										maxScore={maxTotal * team.judges.length}
 									/>
 									<p className="text-xs text-gray-400 mt-1">
-										{team.judges.length}名の平均
+										{team.judges.length}名の合計
 									</p>
 								</div>
 							</div>
 
-							{/* 項目別平均スコア */}
+							{/* 項目別合計スコア */}
 							<div className="space-y-4 mb-8">
-								{team.itemAverages.map((item) => (
+								{team.itemTotals.map((item) => (
 									<div key={item.id}>
 										<div className="flex items-center justify-between mb-1">
 											<span className="text-sm font-bold text-gray-600">
 												{item.name}
 											</span>
 											<span className="text-sm font-bold text-gray-800">
-												{item.avgScore} / {item.max_score}
+												{item.itemTotal} / {item.maxScore}
 											</span>
 										</div>
 										<Slider
 											min={0}
-											max={item.max_score}
-											value={item.avgScore}
+											max={item.maxScore}
+											value={item.itemTotal}
 											readOnly
 											className="pointer-events-none w-full"
 										/>

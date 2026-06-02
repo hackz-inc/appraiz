@@ -62,10 +62,7 @@ function TeamResultPage() {
 		itemScores: r.scoring_item_results,
 	}));
 
-	const totalAvg =
-		judges.length > 0
-			? judges.reduce((s, j) => s + j.total, 0) / judges.length
-			: 0;
+	const totalSum = judges.reduce((s, j) => s + j.total, 0);
 
 	return (
 		<>
@@ -101,11 +98,11 @@ function TeamResultPage() {
 						</div>
 						<div className="flex flex-col items-end">
 							<ScoreFraction
-								score={Math.round(totalAvg * 10) / 10}
-								maxScore={maxTotal}
+								score={totalSum}
+								maxScore={maxTotal * judges.length}
 							/>
 							<p className="text-xs text-gray-400 mt-1">
-								{judges.length}名の平均
+								{judges.length}名の合計
 							</p>
 						</div>
 					</div>
