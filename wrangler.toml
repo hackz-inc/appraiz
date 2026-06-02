@@ -6,7 +6,7 @@ main = "./src/entry.cloudflare.ts"
 [[d1_databases]]
 binding = "DB"
 database_name = "appraiz"
-database_id = "c8703838-447a-4cad-9e05-06f7bc4af964"
+database_id = "0aff19e8-0e73-48c8-885a-357fc123297f"
 
 [vars]
 # JWT_SECRET は wrangler secret put JWT_SECRET で設定
