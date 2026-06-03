@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Button, CardxtITextITextITextInput } from "#/components/ui";
+import { Button } from "#/components/ui";
 import { auth } from "#/lib/auth";
 import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
