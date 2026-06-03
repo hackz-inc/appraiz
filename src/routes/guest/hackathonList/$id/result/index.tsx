@@ -8,6 +8,13 @@ import { getDb } from "#/lib/db/client";
 import { hackathon } from "#/lib/db/schema";
 import "#/types/cloudflare";
 import { guestBeforeLoad } from "../../../-beforeLoad";
+import type { Hackathon, ScoringItem, ScoringItemResult, ScoringResult, Team } from "#/lib/db/types";
+
+type GuestHackathonResultData = Hackathon & {
+	teams: Team[];
+	scoring_items: ScoringItem[];
+	scoring_results: (ScoringResult & { scoring_item_results: ScoringItemResult[] })[];
+};
 
 const fetchHackathonResult = createServerFn({ method: "GET" })
 	.inputValidator((id: string) => id)
@@ -29,9 +36,10 @@ const fetchHackathonResult = createServerFn({ method: "GET" })
 	});
 
 export const Route = createFileRoute("/guest/hackathonList/$id/result/")({
-	head: ({ loaderData }) => ({
-		meta: [{ title: `${loaderData?.name} - 結果 | Apprai'z` }],
-	}),
+	head: ({ loaderData }) => {
+		const d = loaderData as { name: string } | undefined;
+		return { meta: [{ title: `${d?.name ?? ""} - 結果 | Apprai'z` }] };
+	},
 	beforeLoad: guestBeforeLoad,
 	loader: async ({ params }) => fetchHackathonResult({ data: params.id }),
 	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,
@@ -39,7 +47,7 @@ export const Route = createFileRoute("/guest/hackathonList/$id/result/")({
 });
 
 function GuestResultPage() {
-	const data = Route.useLoaderData();
+	const data = Route.useLoaderData() as GuestHackathonResultData;
 
 	const maxTotal = data.scoring_items.reduce((s, i) => s + i.max_score, 0);
 

@@ -8,6 +8,16 @@ import { getDb } from "#/lib/db/client";
 import { hackathon, team } from "#/lib/db/schema";
 import "#/types/cloudflare";
 import { adminBeforeLoad } from "#/routes/admin/-beforeLoad";
+import type { Hackathon, ScoringItem, ScoringItemResult, ScoringResult, Team } from "#/lib/db/types";
+
+type TeamResultData = {
+	hackathon: Hackathon & {
+		scoring_items: ScoringItem[];
+		scoring_results: (ScoringResult & { scoring_item_results: ScoringItemResult[] })[];
+	};
+	team: Team;
+	judges: { name: string; comment: string; itemScores: ScoringItemResult[]; total: number }[];
+};
 
 type Input = { hackathonId: string; teamId: string };
 
@@ -55,13 +65,10 @@ const fetchTeamResult = createServerFn({ method: "GET" })
 export const Route = createFileRoute(
 	"/admin/hackathonList/$id/result/$teamId/",
 )({
-	head: ({ loaderData }) => ({
-		meta: [
-			{
-				title: `${loaderData?.team.name} - ${loaderData?.hackathon.name} | Apprai'z`,
-			},
-		],
-	}),
+	head: ({ loaderData }) => {
+		const d = loaderData as { hackathon: { name: string }; team: { name: string } } | undefined;
+		return { meta: [{ title: `${d?.team?.name ?? ""} - ${d?.hackathon?.name ?? ""} | Apprai'z` }] };
+	},
 	beforeLoad: adminBeforeLoad,
 	loader: async ({ params }) =>
 		fetchTeamResult({
@@ -76,7 +83,7 @@ function TeamResultPage() {
 		hackathon: hackathonData,
 		team: teamData,
 		judges,
-	} = Route.useLoaderData();
+	} = Route.useLoaderData() as TeamResultData;
 
 	const maxTotal = hackathonData.scoring_items.reduce(
 		(s, i) => s + i.max_score,

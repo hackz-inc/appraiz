@@ -57,9 +57,10 @@ const fetchScorerHackathon = createServerFn({ method: "GET" })
 	});
 
 export const Route = createFileRoute("/scorer/$hackathonId/")({
-	head: ({ loaderData }) => ({
-		meta: [{ title: `${loaderData?.hackathon.name} - 採点 | Apprai'z` }],
-	}),
+	head: ({ loaderData }) => {
+		const d = loaderData as { hackathon: { name: string } } | undefined;
+		return { meta: [{ title: `${d?.hackathon?.name ?? ""} - 採点 | Apprai'z` }] };
+	},
 	loader: async ({ params }) => {
 		const hackathonData = await fetchScorerHackathon({
 			data: params.hackathonId,
@@ -71,7 +72,7 @@ export const Route = createFileRoute("/scorer/$hackathonId/")({
 });
 
 function ScorerPage() {
-	const { hackathon: hackathonData } = Route.useLoaderData();
+	const { hackathon: hackathonData } = Route.useLoaderData() as { hackathon: HackathonWithDetails };
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [isChecking, setIsChecking] = useState(true);
 	const [passwordError, setPasswordError] = useState("");

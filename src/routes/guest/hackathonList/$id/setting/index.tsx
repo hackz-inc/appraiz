@@ -17,7 +17,10 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/guest/hackathonList/$id/setting/")({
-	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.hackathon.name} - 設定 | appraiz` }] }),
+	head: ({ loaderData }) => {
+		const d = loaderData as { hackathon: { name: string } } | undefined;
+		return { meta: [{ title: `${d?.hackathon?.name ?? ""} - 設定 | Apprai'z` }] };
+	},
 	validateSearch: searchSchema,
 	beforeLoad: guestBeforeLoad,
 	loader: async ({ params }) => {
@@ -34,7 +37,7 @@ export const Route = createFileRoute("/guest/hackathonList/$id/setting/")({
 });
 
 function GuestSettingPage() {
-	const { hackathon } = Route.useLoaderData();
+	const { hackathon } = Route.useLoaderData() as { hackathon: NonNullable<Awaited<ReturnType<typeof fetchGuestHackathonSetting>>>["hackathon"]; permission: "view" | "edit" };
 	const { tab } = Route.useSearch();
 
 	const tabs = [

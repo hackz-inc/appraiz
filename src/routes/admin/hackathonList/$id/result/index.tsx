@@ -8,6 +8,13 @@ import { getDb } from "#/lib/db/client";
 import { hackathon } from "#/lib/db/schema";
 import "#/types/cloudflare";
 import { adminBeforeLoad } from "#/routes/admin/-beforeLoad";
+import type { Hackathon, ScoringItem, ScoringItemResult, ScoringResult, Team } from "#/lib/db/types";
+
+type HackathonResultData = Hackathon & {
+	teams: Team[];
+	scoring_items: ScoringItem[];
+	scoring_results: (ScoringResult & { scoring_item_results: ScoringItemResult[] })[];
+};
 
 const fetchHackathonResult = createServerFn({ method: "GET" })
 	.inputValidator((id: string) => id)
@@ -22,13 +29,16 @@ const fetchHackathonResult = createServerFn({ method: "GET" })
 					with: { scoring_item_results: true },
 				},
 			},
-		});
+		})
 		if (!data) throw new Error("Hackathon not found");
 		return data;
-	});
+	})
 
 export const Route = createFileRoute("/admin/hackathonList/$id/result/")({
-	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.name} - 結果 | appraiz` }] }),
+	head: ({ loaderData }) => {
+		const d = loaderData as { name: string } | undefined;
+		return { meta: [{ title: `${d?.name ?? ""} - 結果 | Apprai'z` }] };
+	},
 	beforeLoad: adminBeforeLoad,
 	loader: async ({ params }) => fetchHackathonResult({ data: params.id }),
 	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,
@@ -36,7 +46,7 @@ export const Route = createFileRoute("/admin/hackathonList/$id/result/")({
 });
 
 function AdminResultPage() {
-	const data = Route.useLoaderData();
+	const data = Route.useLoaderData() as HackathonResultData;
 
 	const maxTotal = data.scoring_items.reduce((s, i) => s + i.max_score, 0);
 
@@ -46,8 +56,11 @@ function AdminResultPage() {
 		for (const ir of r.scoring_item_results) {
 			teamTotals.set(ir.team_id, (teamTotals.get(ir.team_id) ?? 0) + ir.score);
 		}
-		return Array.from(teamTotals.entries()).map(([teamId, total]) => ({ teamId, total }));
-	});
+		return Array.from(teamTotals.entries()).map(([teamId, total]) => ({
+			teamId,
+			total,
+		}))
+	})
 
 	// 審査員ごとに正規化ポイントを計算（legacyのtotalPoint方式）
 	const teamPoints = new Map<string, number>();
@@ -70,12 +83,12 @@ function AdminResultPage() {
 				.map((r) => {
 					const teamItems = r.scoring_item_results.filter(
 						(ir) => ir.team_id === team.id,
-					);
+					)
 					return {
 						name: r.judge_name,
 						total: teamItems.reduce((s, ir) => s + ir.score, 0),
 						itemScores: teamItems,
-					};
+					}
 				})
 				.filter((j) => j.itemScores.length > 0);
 
@@ -85,13 +98,13 @@ function AdminResultPage() {
 				const itemTotal = judges.reduce((s, j) => {
 					const ir = j.itemScores.find((r) => r.scoring_item_id === item.id);
 					return s + (ir?.score ?? 0);
-				}, 0);
+				}, 0)
 				return {
 					...item,
 					itemTotal,
 					maxScore: item.max_score * Math.max(1, judges.length),
-				};
-			});
+				}
+			})
 			return { ...team, judges, totalScore, totalPoint, itemTotals };
 		})
 		// 1位: totalPoint降順、同点なら totalScore降順
@@ -99,7 +112,7 @@ function AdminResultPage() {
 			b.totalPoint !== a.totalPoint
 				? b.totalPoint - a.totalPoint
 				: b.totalScore - a.totalScore,
-		);
+		)
 
 	// 同点考慮した順位計算
 	const rankedTeams = sortedTeams.map((team, index) => {
@@ -114,7 +127,7 @@ function AdminResultPage() {
 			}
 		}
 		return { ...team, rank };
-	});
+	})
 
 	return (
 		<>
@@ -128,7 +141,9 @@ function AdminResultPage() {
 			<div className="min-h-screen bg-white py-10 px-4">
 				<div className="max-w-[928px] mx-auto space-y-0">
 					{rankedTeams.length === 0 && (
-						<p className="text-gray-500 py-12 text-center">まだ採点データがありません。</p>
+						<p className="text-gray-500 py-12 text-center">
+							まだ採点データがありません。
+						</p>
 					)}
 
 					{rankedTeams.map((team) => (
@@ -211,5 +226,5 @@ function AdminResultPage() {
 				</div>
 			</div>
 		</>
-	);
+	)
 }

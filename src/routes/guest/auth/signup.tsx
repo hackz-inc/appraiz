@@ -1,15 +1,15 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Button, TextInput, Container, Card } from "#/components/ui";
+import { Button } from "#/components/ui";
 import { auth } from "#/lib/auth";
 import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
-export const Route = createFileRoute('/guest/auth/signup')({
-  beforeLoad: async () => {
-    return await redirectIfAuthenticated();
-  },
-  component: GuestSignUpPage,
-})
+export const Route = createFileRoute("/guest/auth/signup")({
+	beforeLoad: async () => {
+		return await redirectIfAuthenticated();
+	},
+	component: GuestSignUpPage,
+});
 
 function GuestSignUpPage() {
 	const [formData, setFormData] = useState({
@@ -73,9 +73,7 @@ function GuestSignUpPage() {
 			<Container maxWidth="sm">
 				<Card className="w-full">
 					<div className="text-center mb-8">
-						<h1 className="text-4xl font-bold text-black mb-2">
-							Appraiz
-						</h1>
+						<h1 className="text-4xl font-bold text-black mb-2">Apprai'z</h1>
 						<p className="text-lg text-gray-600">ゲスト新規登録</p>
 					</div>
 

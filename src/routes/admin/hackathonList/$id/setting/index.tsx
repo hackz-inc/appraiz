@@ -14,9 +14,10 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/admin/hackathonList/$id/setting/")({
-	head: ({ loaderData }) => ({
-		meta: [{ title: `${loaderData?.hackathon.name} - 設定 | Apprai'z` }],
-	}),
+	head: ({ loaderData }) => {
+		const d = loaderData as { hackathon: { name: string } } | undefined;
+		return { meta: [{ title: `${d?.hackathon?.name ?? ""} - 設定 | Apprai'z` }] };
+	},
 	validateSearch: searchSchema,
 	loader: async ({ params }) => {
 		const [hackathon, allGuests] = await Promise.all([
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/admin/hackathonList/$id/setting/")({
 });
 
 function HackathonSettingPage() {
-	const { hackathon, allGuests } = Route.useLoaderData();
+	const { hackathon, allGuests } = Route.useLoaderData() as { hackathon: ReturnType<typeof fetchHackathonById> extends Promise<infer T> ? T : never; allGuests: SafeGuest[] };
 	const { tab } = Route.useSearch();
 
 	const tabs = [

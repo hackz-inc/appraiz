@@ -22,7 +22,7 @@ function TopPage() {
 					{/* Guest */}
 					<Link
 						to="/guest/hackathonList"
-						className="flex-1 group bg-white rounded-[28px_0_28px_28px] p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+						className="flex-1 group bg-white rounded-[28px_0_28px_28px] p-8 shadow-xl hover:shadow-2xl transition-all duration-300"
 					>
 						<div className="mb-4">
 							<span className="inline-block text-3xl mb-3">🤝</span>
