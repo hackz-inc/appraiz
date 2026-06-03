@@ -6,6 +6,7 @@ interface EditHackathonModalProps {
 	hackathonId: string;
 	name: string;
 	scoringDate: Date;
+	mode?: "name" | "date";
 	onClose: () => void;
 	onUpdate?: () => void;
 }
@@ -14,28 +15,29 @@ export const EditHackathonModal = ({
 	hackathonId,
 	name,
 	scoringDate,
+	mode,
 	onClose,
 	onUpdate,
 }: EditHackathonModalProps) => {
 	const [hackathonName, setHackathonName] = useState(name);
-	const [date, setDate] = useState(
-		scoringDate.toISOString().split("T")[0],
-	);
+	const [date, setDate] = useState(scoringDate.toISOString().split("T")[0]);
 	const [isLoading, setIsLoading] = useState(false);
+
+	const title =
+		mode === "name"
+			? "タイトルを編集"
+			: mode === "date"
+				? "採点日を編集"
+				: "ハッカソン編集";
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsLoading(true);
-
 		try {
 			await updateHackathon({
 				data: { id: hackathonId, name: hackathonName, scoringDate: date },
 			});
-
-			if (onUpdate) {
-				onUpdate();
-			}
-
+			onUpdate?.();
 			onClose();
 		} catch (error) {
 			console.error("Failed to update hackathon:", error);
@@ -51,41 +53,49 @@ export const EditHackathonModal = ({
 					className="text-3xl font-bold mb-8"
 					data-testid="edit-hackathon-title"
 				>
-					ハッカソン編集
+					{title}
 				</h2>
 
 				<div className="flex flex-col gap-8 mb-8">
-					<div>
-						<label className="block mb-2">
-							<span className="text-base font-bold text-gray-600">
-								ハッカソン名
-								<span className="text-red-500 ml-1">*</span>
-							</span>
-						</label>
-						<input
-							type="text"
-							value={hackathonName}
-							onChange={(e) => setHackathonName(e.target.value)}
-							className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-							required
-						/>
-					</div>
+					{(!mode || mode === "name") && (
+						<div>
+							<label className="block mb-2">
+								<span className="text-base font-bold text-gray-600">
+									ハッカソン名
+									<span className="text-red-500 ml-1">*</span>
+								</span>
+							</label>
+							<input
+								type="text"
+								value={hackathonName}
+								onChange={(e) => setHackathonName(e.target.value)}
+								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+								required
+								// biome-ignore lint/a11y/noAutofocus: モード別に開くためフォーカスが自然
+								autoFocus={mode === "name"}
+							/>
+						</div>
+					)}
 
-					<div>
-						<label className="block mb-2">
-							<span className="text-base font-bold text-gray-600">
-								採点日
-								<span className="text-red-500 ml-1">*</span>
-							</span>
-						</label>
-						<input
-							type="date"
-							value={date}
-							onChange={(e) => setDate(e.target.value)}
-							className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-							required
-						/>
-					</div>
+					{(!mode || mode === "date") && (
+						<div>
+							<label className="block mb-2">
+								<span className="text-base font-bold text-gray-600">
+									採点日
+									<span className="text-red-500 ml-1">*</span>
+								</span>
+							</label>
+							<input
+								type="date"
+								value={date}
+								onChange={(e) => setDate(e.target.value)}
+								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+								required
+								// biome-ignore lint/a11y/noAutofocus: モード別に開くためフォーカスが自然
+								autoFocus={mode === "date"}
+							/>
+						</div>
+					)}
 				</div>
 
 				<button

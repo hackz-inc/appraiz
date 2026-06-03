@@ -20,6 +20,7 @@ export type ScoringFormData = {
 	teamName: string;
 	topazLink: string | null;
 	order: number;
+	comment: string;
 	scoringItems: {
 		id: string;
 		name: string;
@@ -30,6 +31,7 @@ export type ScoringFormData = {
 
 type Props = {
 	hackathon: HackathonWithDetails;
+	sessionId: string;
 };
 
 const STORAGE_KEY_PREFIX = "hackathon_scoring_";
@@ -39,13 +41,13 @@ type SubmitScoringInput = {
 	judgeName: string;
 	comment: string;
 	scoringData: ScoringFormData[];
-	userAgent: string;
+	sessionId: string;
 };
 
 const submitScoringFn = createServerFn({ method: "POST" })
 	.inputValidator((data: SubmitScoringInput) => data)
 	.handler(async (ctx) => {
-		const { hackathonId, judgeName, comment, scoringData, userAgent } = ctx.data;
+		const { hackathonId, judgeName, comment, scoringData, sessionId } = ctx.data;
 		// biome-ignore lint/style/noNonNullAssertion: always set in Cloudflare Worker
 		const db = getDb(ctx.context!);
 
@@ -54,7 +56,7 @@ const submitScoringFn = createServerFn({ method: "POST" })
 			id: resultId,
 			judge_name: judgeName,
 			comment,
-			user_agent: userAgent,
+			user_agent: sessionId,
 			hackathon_id: hackathonId,
 		});
 
@@ -75,7 +77,7 @@ const submitScoringFn = createServerFn({ method: "POST" })
 		return { success: true };
 	});
 
-export function ScoringForm({ hackathon }: Props) {
+export function ScoringForm({ hackathon, sessionId }: Props) {
 	const [judgeName, setJudgeName] = useState(() => {
 		const stored = localStorage.getItem(
 			`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
@@ -83,9 +85,6 @@ export function ScoringForm({ hackathon }: Props) {
 		return stored || "";
 	});
 	const [judgeNameError, setJudgeNameError] = useState("");
-	const [comment, setComment] = useState(() => {
-		return localStorage.getItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_comment`) || "";
-	});
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
@@ -99,6 +98,7 @@ export function ScoringForm({ hackathon }: Props) {
 				const parsed = JSON.parse(stored) as ScoringFormData[];
 				return parsed.map((item, index) => ({
 					...item,
+					comment: item.comment ?? "",
 					order: item.order || index + 1,
 				}));
 			} catch {
@@ -110,6 +110,7 @@ export function ScoringForm({ hackathon }: Props) {
 			teamName: team.name,
 			topazLink: team.topaz_link,
 			order: team.order || index + 1,
+			comment: "",
 			scoringItems: hackathon.scoring_items.map((item) => ({
 				id: item.id,
 				name: item.name,
@@ -147,6 +148,14 @@ export function ScoringForm({ hackathon }: Props) {
 		);
 	};
 
+	const handleCommentChange = (teamId: string, comment: string) => {
+		setScoringData((prev) =>
+			prev.map((team) =>
+				team.teamId === teamId ? { ...team, comment } : team,
+			),
+		);
+	};
+
 	const handleSave = () => {
 		localStorage.setItem(
 			`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
@@ -156,7 +165,6 @@ export function ScoringForm({ hackathon }: Props) {
 			`${STORAGE_KEY_PREFIX}${hackathon.id}_data`,
 			JSON.stringify(scoringData),
 		);
-		localStorage.setItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_comment`, comment);
 		alert("一時保存しました");
 	};
 
@@ -178,23 +186,27 @@ export function ScoringForm({ hackathon }: Props) {
 
 		setIsSubmitting(true);
 
+		// チームごとのコメントをJSONとして保存
+		const teamComments = Object.fromEntries(
+			scoringData.map((t) => [t.teamId, t.comment]),
+		);
+
 		try {
 			await submitScoringFn({
 				data: {
 					hackathonId: hackathon.id,
 					judgeName,
-					comment,
+					comment: JSON.stringify(teamComments),
 					scoringData,
-					userAgent: navigator.userAgent,
+					sessionId,
 				},
 			});
 
 			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`);
 			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_data`);
-			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_comment`);
 			localStorage.setItem(
 				`${STORAGE_KEY_PREFIX}${hackathon.id}_preview`,
-				JSON.stringify({ judgeName, comment, scoringData }),
+				JSON.stringify({ judgeName, scoringData }),
 			);
 
 			const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
@@ -211,7 +223,7 @@ export function ScoringForm({ hackathon }: Props) {
 	};
 
 	if (isSubmitted) {
-		return <ScoringPreview judgeName={judgeName} comment={comment} scoringData={scoringData} />;
+		return <ScoringPreview judgeName={judgeName} scoringData={scoringData} />;
 	}
 
 	return (
@@ -242,25 +254,9 @@ export function ScoringForm({ hackathon }: Props) {
 					key={team.teamId}
 					team={team}
 					onScoreChange={handleScoreChange}
+					onCommentChange={handleCommentChange}
 				/>
 			))}
-
-			<div className="w-full max-w-[800px] mx-auto py-12 border-b border-gray-300">
-				<label
-					htmlFor="overall-comment"
-					className="block text-base font-bold leading-7 text-gray-700 tracking-wide mb-0"
-				>
-					全体コメント（任意）
-				</label>
-				<textarea
-					id="overall-comment"
-					value={comment}
-					onChange={(e) => setComment(e.target.value)}
-					rows={4}
-					className="w-[calc(100%-96px)] mx-auto mt-5 block px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-					placeholder="全チームへのコメントを入力してください（任意）"
-				/>
-			</div>
 
 			<div className="w-full max-w-[800px] mx-auto mt-12 mb-20">
 				<button

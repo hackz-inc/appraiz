@@ -158,14 +158,25 @@ function TeamResultPage() {
 										})}
 									</div>
 
-									{judge.comment && (
-										<div className="bg-gray-50 rounded-lg px-4 py-3">
-											<p className="text-xs text-gray-400 mb-1">コメント</p>
-											<p className="text-sm text-gray-700 whitespace-pre-wrap">
-												{judge.comment}
-											</p>
-										</div>
-									)}
+									{(() => {
+											let teamComment = judge.comment;
+											try {
+												const parsed = JSON.parse(judge.comment);
+												if (parsed && typeof parsed === "object") {
+													teamComment = parsed[teamData.id] ?? "";
+												}
+											} catch {
+												// raw string のまま使用
+											}
+											return teamComment ? (
+												<div className="bg-gray-50 rounded-lg px-4 py-3">
+													<p className="text-xs text-gray-400 mb-1">一言コメント</p>
+													<p className="text-sm text-gray-700 whitespace-pre-wrap">
+														{teamComment}
+													</p>
+												</div>
+											) : null;
+										})()}
 								</div>
 							))}
 						</div>

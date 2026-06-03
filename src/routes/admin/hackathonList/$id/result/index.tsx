@@ -157,10 +157,15 @@ function AdminResultPage() {
 									)}
 								</div>
 								<div className="flex flex-col items-end">
-									<ScoreFraction
-										score={team.totalScore}
-										maxScore={maxTotal * Math.max(1, team.judges.length)}
-									/>
+									<div className="flex items-end gap-3">
+										<ScoreFraction
+											score={team.totalScore}
+											maxScore={maxTotal * Math.max(1, team.judges.length)}
+										/>
+										<p className="text-2xl font-bold text-yellow-500 mb-2">
+											({team.totalPoint}Pt)
+										</p>
+									</div>
 									<p className="text-xs text-gray-400 mt-1">
 										{team.judges.length}名の合計
 									</p>

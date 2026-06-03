@@ -20,38 +20,37 @@ export const Route = createFileRoute("/admin/hackathonList/")({
 	component: HackathonListPage,
 });
 
+type EditTarget = {
+	id: string;
+	name: string;
+	scoringDate: Date;
+	mode: "name" | "date";
+};
+
 function HackathonListPage() {
 	const { hackathonsPromise } = Route.useLoaderData();
 	const [deleteTarget, setDeleteTarget] = useState<{
 		id: string;
 		name: string;
 	} | null>(null);
-	const [editTarget, setEditTarget] = useState<{
-		id: string;
-		name: string;
-		scoringDate: Date;
-	} | null>(null);
-	const [_collaboratorTarget, setCollaboratorTarget] = useState<{
-		id: string;
-	} | null>(null);
+	const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
 	const handleDeleteClick = (id: string, name: string) => {
 		setDeleteTarget({ id, name });
 	};
 
-	const handleEditClick = (id: string, name: string, scoringDate: string) => {
-		setEditTarget({ id, name, scoringDate: new Date(scoringDate) });
+	const handleEditNameClick = (id: string, name: string, scoringDate: string) => {
+		setEditTarget({ id, name, scoringDate: new Date(scoringDate), mode: "name" });
 	};
 
-	const handleCollaboratorClick = (id: string) => {
-		setCollaboratorTarget({ id });
+	const handleEditDateClick = (id: string, name: string, scoringDate: string) => {
+		setEditTarget({ id, name, scoringDate: new Date(scoringDate), mode: "date" });
 	};
 
 	const handleCloseModal = () => {
 		setDeleteTarget(null);
 		setEditTarget(null);
-		setCollaboratorTarget(null);
 	};
 
 	return (
@@ -92,8 +91,15 @@ function HackathonListPage() {
 											<AdminHackathonCard
 												key={hackathon.id}
 												hackathon={hackathon}
-												onEdit={() =>
-													handleEditClick(
+												onEditName={() =>
+													handleEditNameClick(
+														hackathon.id,
+														hackathon.name,
+														hackathon.scoring_date,
+													)
+												}
+												onEditDate={() =>
+													handleEditDateClick(
 														hackathon.id,
 														hackathon.name,
 														hackathon.scoring_date,
@@ -101,9 +107,6 @@ function HackathonListPage() {
 												}
 												onDelete={() =>
 													handleDeleteClick(hackathon.id, hackathon.name)
-												}
-												onCollaboratorClick={() =>
-													handleCollaboratorClick(hackathon.id)
 												}
 											/>
 										))
@@ -128,6 +131,7 @@ function HackathonListPage() {
 					hackathonId={editTarget.id}
 					name={editTarget.name}
 					scoringDate={editTarget.scoringDate}
+					mode={editTarget.mode}
 					onClose={handleCloseModal}
 					onUpdate={() => window.location.reload()}
 				/>

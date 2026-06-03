@@ -5,9 +5,10 @@ import { ScoreFraction } from "#/components/ui/ScoreFraction";
 type Props = {
 	team: ScoringFormData;
 	onScoreChange: (teamId: string, scoringItemId: string, score: number) => void;
+	onCommentChange: (teamId: string, comment: string) => void;
 };
 
-export function ScoringFormItem({ team, onScoreChange }: Props) {
+export function ScoringFormItem({ team, onScoreChange, onCommentChange }: Props) {
 	const totalScore = team.scoringItems.reduce((sum, item) => sum + item.score, 0);
 
 	return (
@@ -64,6 +65,23 @@ export function ScoringFormItem({ team, onScoreChange }: Props) {
 				))}
 			</div>
 
+			{/* Comment */}
+			<div className="mt-6">
+				<label
+					htmlFor={`comment-${team.teamId}`}
+					className="block text-base font-bold leading-7 text-gray-700 tracking-wide mb-0"
+				>
+					一言コメント（任意）
+				</label>
+				<textarea
+					id={`comment-${team.teamId}`}
+					value={team.comment}
+					onChange={(e) => onCommentChange(team.teamId, e.target.value)}
+					rows={3}
+					className="w-[calc(100%-96px)] mx-auto mt-5 block px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+					placeholder="このチームへのコメントを入力してください（任意）"
+				/>
+			</div>
 		</div>
 	);
 }

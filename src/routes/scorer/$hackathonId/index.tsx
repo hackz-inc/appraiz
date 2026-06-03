@@ -75,6 +75,16 @@ function ScorerPage() {
 
 	const storageKey = `scorer_access_password_${hackathonData.id}`;
 	const scoredCookieKey = `scored_${hackathonData.id}`;
+	const sessionIdKey = `scorer_session_id_${hackathonData.id}`;
+
+	const getOrCreateSessionId = () => {
+		let id = localStorage.getItem(sessionIdKey);
+		if (!id) {
+			id = crypto.randomUUID();
+			localStorage.setItem(sessionIdKey, id);
+		}
+		return id;
+	};
 
 	const [alreadyScored, setAlreadyScored] = useState(false);
 
@@ -96,8 +106,10 @@ function ScorerPage() {
 			return () => { cancelled = true; };
 		}
 
+		const sessionId = getOrCreateSessionId();
+
 		checkUaScored({
-			data: { hackathonId: hackathonData.id, userAgent: navigator.userAgent },
+			data: { hackathonId: hackathonData.id, userAgent: sessionId },
 		})
 			.then((result) => {
 				if (!cancelled) {
@@ -137,16 +149,16 @@ function ScorerPage() {
 		const raw = localStorage.getItem(previewKey);
 		if (raw) {
 			try {
-				const { judgeName, comment, scoringData } = JSON.parse(raw) as {
+				const { judgeName, scoringData } = JSON.parse(raw) as {
 					judgeName: string;
-					comment: string;
 					scoringData: ScoringFormData[];
 				};
 				const fixedData = scoringData.map((item, index) => ({
 					...item,
+					comment: item.comment ?? "",
 					order: item.order || index + 1,
 				}));
-				return <ScoringPreview judgeName={judgeName} comment={comment ?? ""} scoringData={fixedData} />;
+				return <ScoringPreview judgeName={judgeName} scoringData={fixedData} />;
 			} catch {
 				// fall through to simple message
 			}
@@ -211,7 +223,7 @@ function ScorerPage() {
 				)} */}
 
 				<main className="flex-1">
-					<ScoringForm hackathon={hackathonData} />
+					<ScoringForm hackathon={hackathonData} sessionId={getOrCreateSessionId()} />
 				</main>
 			</div>
 		</div>

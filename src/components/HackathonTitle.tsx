@@ -1,13 +1,9 @@
-import { SquarePenIcon, Trash2Icon } from "lucide-react";
-
 interface HackathonTitleProps {
 	name: string;
 	id: string;
 	scoringDate: Date;
 	status?: "scheduled" | "finished";
 	className?: string;
-	onEdit?: () => void;
-	onDelete?: () => void;
 }
 
 export const HackathonTitle = ({
@@ -16,8 +12,6 @@ export const HackathonTitle = ({
 	scoringDate,
 	status: _status,
 	className = "",
-	onEdit,
-	onDelete,
 }: HackathonTitleProps) => {
 	const formatDate = (date: Date) => {
 		const year = date.getFullYear();
@@ -28,35 +22,13 @@ export const HackathonTitle = ({
 
 	return (
 		<div className={className}>
-			<div className="flex justify-between items-start gap-5 mb-2.5 pb-2.5 border-b-2 border-yellow-500">
+			<div className="mb-2.5 pb-2.5 border-b-2 border-yellow-500">
 				<h2
 					className="text-2xl font-bold break-all"
 					data-testid="hackathon-title"
 				>
 					{name}
 				</h2>
-				<div className="flex gap-3">
-					{onEdit && (
-						<button
-							type="button"
-							onClick={onEdit}
-							aria-label="編集する"
-							className="relative group hover:opacity-70 transition-opacity"
-						>
-							<SquarePenIcon />
-						</button>
-					)}
-					{onDelete && (
-						<button
-							type="button"
-							onClick={onDelete}
-							aria-label="削除する"
-							className="relative group hover:opacity-70 transition-opacity"
-						>
-							<Trash2Icon />
-						</button>
-					)}
-				</div>
 			</div>
 			<p className="text-xl font-bold text-gray-600">
 				{formatDate(scoringDate)}
