@@ -25,7 +25,9 @@ const fetchHackathonDetail = createServerFn({ method: "GET" })
 	});
 
 export const Route = createFileRoute("/guest/hackathonList/$id/")({
-	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.hackathon.name} | appraiz` }] }),
+	head: ({ loaderData }) => ({
+		meta: [{ title: `${loaderData?.hackathon.name} | Apprai'z` }],
+	}),
 	beforeLoad: guestBeforeLoad,
 	loader: async ({ params }) => {
 		const hackathonData = await fetchHackathonDetail({ data: params.id });

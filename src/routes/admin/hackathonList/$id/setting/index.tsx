@@ -4,10 +4,7 @@ import { z } from "zod";
 import Header from "#/components/Header";
 import type { SafeGuest } from "#/lib/db/types";
 import { adminBeforeLoad } from "#/routes/admin/-beforeLoad";
-import {
-	fetchAllGuests,
-	fetchHackathonById,
-} from "../../-functions/hackathon";
+import { fetchAllGuests, fetchHackathonById } from "../../-functions/hackathon";
 import { GuestList } from "./-components/GuestList";
 import { ScoringItemList } from "./-components/ScoringItemList";
 import { TeamList } from "./-components/TeamList";
@@ -17,7 +14,9 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/admin/hackathonList/$id/setting/")({
-	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.hackathon.name} - 設定 | appraiz` }] }),
+	head: ({ loaderData }) => ({
+		meta: [{ title: `${loaderData?.hackathon.name} - 設定 | Apprai'z` }],
+	}),
 	validateSearch: searchSchema,
 	loader: async ({ params }) => {
 		const [hackathon, allGuests] = await Promise.all([

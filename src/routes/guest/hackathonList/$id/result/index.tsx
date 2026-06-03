@@ -29,7 +29,9 @@ const fetchHackathonResult = createServerFn({ method: "GET" })
 	});
 
 export const Route = createFileRoute("/guest/hackathonList/$id/result/")({
-	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.name} - 結果 | appraiz` }] }),
+	head: ({ loaderData }) => ({
+		meta: [{ title: `${loaderData?.name} - 結果 | Apprai'z` }],
+	}),
 	beforeLoad: guestBeforeLoad,
 	loader: async ({ params }) => fetchHackathonResult({ data: params.id }),
 	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,
@@ -47,7 +49,10 @@ function GuestResultPage() {
 		for (const ir of r.scoring_item_results) {
 			teamTotals.set(ir.team_id, (teamTotals.get(ir.team_id) ?? 0) + ir.score);
 		}
-		return Array.from(teamTotals.entries()).map(([teamId, total]) => ({ teamId, total }));
+		return Array.from(teamTotals.entries()).map(([teamId, total]) => ({
+			teamId,
+			total,
+		}));
 	});
 
 	// 審査員ごとに正規化ポイントを計算（legacyのtotalPoint方式）
@@ -89,7 +94,14 @@ function GuestResultPage() {
 				}, 0);
 				return { ...item, itemTotal, maxScore: item.max_score * judgeCount };
 			});
-			return { ...team, judges, totalScore, totalPoint, itemTotals, judgeCount };
+			return {
+				...team,
+				judges,
+				totalScore,
+				totalPoint,
+				itemTotals,
+				judgeCount,
+			};
 		})
 		.sort((a, b) =>
 			b.totalPoint !== a.totalPoint

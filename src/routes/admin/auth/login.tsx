@@ -5,7 +5,7 @@ import { auth } from "#/lib/auth";
 import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
 export const Route = createFileRoute("/admin/auth/login")({
-	head: () => ({ meta: [{ title: "ログイン | appraiz" }] }),
+	head: () => ({ meta: [{ title: "ログイン | Apprai'z" }] }),
 	beforeLoad: async () => {
 		return await redirectIfAuthenticated();
 	},
@@ -51,7 +51,7 @@ function AdminLoginPage() {
 			<Container maxWidth="sm">
 				<Card>
 					<div className="text-center mb-8">
-						<h1 className="text-6xl font-bold text-black mb-2">Appraiz</h1>
+						<h1 className="text-6xl font-bold text-black mb-2">Apprai'z</h1>
 						<p className="text-lg text-gray-600">管理者ログイン</p>
 					</div>
 
