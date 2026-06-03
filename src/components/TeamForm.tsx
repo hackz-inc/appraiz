@@ -1,12 +1,12 @@
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { createTeam } from "#/routes/admin/hackathonList/-functions/hackathon";
 
 interface TeamFormProps {
 	hackathonId: string;
-	onTeamAdded?: () => void;
 }
 
-export const TeamForm = ({ hackathonId, onTeamAdded }: TeamFormProps) => {
+export const TeamForm = ({ hackathonId }: TeamFormProps) => {
 	const [teamName, setTeamName] = useState("");
 	const [topazLink, setTopazLink] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -17,18 +17,17 @@ export const TeamForm = ({ hackathonId, onTeamAdded }: TeamFormProps) => {
 
 		setIsLoading(true);
 		try {
-			// TODO: API呼び出しを実装
-			console.log("Creating team:", { hackathonId, teamName, topazLink });
-
-			// フォームをリセット
-			setTeamName("");
-			setTopazLink("");
-
-			if (onTeamAdded) {
-				onTeamAdded();
-			}
+			await createTeam({
+				data: {
+					hackathonId,
+					name: teamName.trim(),
+					topazLink: topazLink.trim() || undefined,
+				},
+			});
+			window.location.reload();
 		} catch (error) {
 			console.error("Failed to create team:", error);
+			alert("チームの作成に失敗しました");
 		} finally {
 			setIsLoading(false);
 		}

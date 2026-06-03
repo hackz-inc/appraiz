@@ -17,20 +17,20 @@ export const Breadcrumb = ({ items }: BreadcrumbProps) => {
 					{item.path ? (
 						<Link
 							to={item.path}
-							className="text-base font-bold text-black no-underline hover:opacity-70 transition-opacity"
+							className="text-base font-bold text-white no-underline hover:opacity-70 transition-opacity"
 						>
 							{item.name}
 						</Link>
 					) : (
 						<span
-							className="text-base font-bold text-black"
+							className="text-base font-bold text-white"
 							data-testid="current-page"
 						>
 							{item.name}
 						</span>
 					)}
 					{index < items.length - 1 && (
-						<span className="mx-2 text-base font-bold text-gray-500">/</span>
+						<span className="mx-2 text-base font-bold text-white/60">/</span>
 					)}
 				</div>
 			))}

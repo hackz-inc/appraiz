@@ -58,9 +58,10 @@ export const scoring_result = sqliteTable("scoring_result", {
 	id: text("id").primaryKey().notNull(),
 	judge_name: text("judge_name").notNull(),
 	comment: text("comment").notNull().default(""),
-	team_id: text("team_id")
+	user_agent: text("user_agent"),
+	hackathon_id: text("hackathon_id")
 		.notNull()
-		.references(() => team.id, { onDelete: "cascade" }),
+		.references(() => hackathon.id, { onDelete: "cascade" }),
 	...timestamps,
 });
 
@@ -73,6 +74,9 @@ export const scoring_item_result = sqliteTable("scoring_item_result", {
 	scoring_result_id: text("scoring_result_id")
 		.notNull()
 		.references(() => scoring_result.id, { onDelete: "cascade" }),
+	team_id: text("team_id")
+		.notNull()
+		.references(() => team.id, { onDelete: "cascade" }),
 	...timestamps,
 });
 
@@ -86,6 +90,7 @@ export const hackathon_guest = sqliteTable(
 		guest_id: text("guest_id")
 			.notNull()
 			.references(() => guest.id, { onDelete: "cascade" }),
+		permission: text("permission").notNull().default("view"),
 		...timestamps,
 	},
 	(t) => [unique().on(t.hackathon_id, t.guest_id)],
@@ -123,6 +128,7 @@ export const team_social = sqliteTable("team_social", {
 export const hackathonRelations = relations(hackathon, ({ many }) => ({
 	teams: many(team),
 	scoring_items: many(scoring_item),
+	scoring_results: many(scoring_result),
 	hackathon_guests: many(hackathon_guest),
 	confirmed_team_orders: many(confirmed_team_order),
 }));
@@ -133,7 +139,7 @@ export const teamRelations = relations(team, ({ one, many }) => ({
 		references: [hackathon.id],
 	}),
 	presentation_orders: many(presentation_order),
-	scoring_results: many(scoring_result),
+	scoring_item_results: many(scoring_item_result),
 	team_socials: many(team_social),
 }));
 
@@ -146,9 +152,9 @@ export const scoring_itemRelations = relations(scoring_item, ({ one, many }) => 
 }));
 
 export const scoring_resultRelations = relations(scoring_result, ({ one, many }) => ({
-	team: one(team, {
-		fields: [scoring_result.team_id],
-		references: [team.id],
+	hackathon: one(hackathon, {
+		fields: [scoring_result.hackathon_id],
+		references: [hackathon.id],
 	}),
 	scoring_item_results: many(scoring_item_result),
 }));
@@ -161,6 +167,10 @@ export const scoring_item_resultRelations = relations(scoring_item_result, ({ on
 	scoring_result: one(scoring_result, {
 		fields: [scoring_item_result.scoring_result_id],
 		references: [scoring_result.id],
+	}),
+	team: one(team, {
+		fields: [scoring_item_result.team_id],
+		references: [team.id],
 	}),
 }));
 

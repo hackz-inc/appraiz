@@ -16,14 +16,11 @@ const fetchHackathonResult = createServerFn({ method: "GET" })
 		const data = await db.query.hackathon.findFirst({
 			where: eq(hackathon.id, ctx.data),
 			with: {
-				teams: {
-					with: {
-						scoring_results: {
-							with: { scoring_item_results: true },
-						},
-					},
-				},
+				teams: true,
 				scoring_items: true,
+				scoring_results: {
+					with: { scoring_item_results: true },
+				},
 			},
 		});
 		if (!data) throw new Error("Hackathon not found");
@@ -42,20 +39,19 @@ function AdminResultPage() {
 
 	const maxTotal = data.scoring_items.reduce((s, i) => s + i.max_score, 0);
 
-	// 審査員ごとのチーム別スコアを集計
-	const judgeMap = new Map<string, { teamId: string; total: number }[]>();
-	for (const team of data.teams) {
-		for (const r of team.scoring_results) {
-			const total = r.scoring_item_results.reduce((s, ir) => s + ir.score, 0);
-			const existing = judgeMap.get(r.judge_name) ?? [];
-			existing.push({ teamId: team.id, total });
-			judgeMap.set(r.judge_name, existing);
+	// 審査員ごとのチーム別合計スコアを集計（キーはidで同名審査員の衝突を防ぐ）
+	const judgeEntries = data.scoring_results.map((r) => {
+		const teamTotals = new Map<string, number>();
+		for (const ir of r.scoring_item_results) {
+			teamTotals.set(ir.team_id, (teamTotals.get(ir.team_id) ?? 0) + ir.score);
 		}
-	}
+		return Array.from(teamTotals.entries()).map(([teamId, total]) => ({ teamId, total }));
+	});
 
 	// 審査員ごとに正規化ポイントを計算（legacyのtotalPoint方式）
 	const teamPoints = new Map<string, number>();
-	for (const judgeResults of judgeMap.values()) {
+	for (const judgeResults of judgeEntries) {
+		if (judgeResults.length === 0) continue;
 		const scores = judgeResults.map((r) => r.total);
 		const min = Math.min(...scores);
 		const max = Math.max(...scores);
@@ -67,13 +63,21 @@ function AdminResultPage() {
 		}
 	}
 
-	const teams = data.teams
+	const sortedTeams = data.teams
 		.map((team) => {
-			const judges = team.scoring_results.map((r) => ({
-				name: r.judge_name,
-				total: r.scoring_item_results.reduce((s, ir) => s + ir.score, 0),
-				itemScores: r.scoring_item_results,
-			}));
+			const judges = data.scoring_results
+				.map((r) => {
+					const teamItems = r.scoring_item_results.filter(
+						(ir) => ir.team_id === team.id,
+					);
+					return {
+						name: r.judge_name,
+						total: teamItems.reduce((s, ir) => s + ir.score, 0),
+						itemScores: teamItems,
+					};
+				})
+				.filter((j) => j.itemScores.length > 0);
+
 			const totalScore = judges.reduce((s, j) => s + j.total, 0);
 			const totalPoint = teamPoints.get(team.id) ?? 0;
 			const itemTotals = data.scoring_items.map((item) => {
@@ -81,11 +85,35 @@ function AdminResultPage() {
 					const ir = j.itemScores.find((r) => r.scoring_item_id === item.id);
 					return s + (ir?.score ?? 0);
 				}, 0);
-				return { ...item, itemTotal, maxScore: item.max_score * judges.length };
+				return {
+					...item,
+					itemTotal,
+					maxScore: item.max_score * Math.max(1, judges.length),
+				};
 			});
 			return { ...team, judges, totalScore, totalPoint, itemTotals };
 		})
-		.sort((a, b) => b.totalPoint - a.totalPoint);
+		// 1位: totalPoint降順、同点なら totalScore降順
+		.sort((a, b) =>
+			b.totalPoint !== a.totalPoint
+				? b.totalPoint - a.totalPoint
+				: b.totalScore - a.totalScore,
+		);
+
+	// 同点考慮した順位計算
+	const rankedTeams = sortedTeams.map((team, index) => {
+		let rank = index + 1;
+		if (index > 0) {
+			const prev = sortedTeams[index - 1];
+			if (
+				prev.totalPoint === team.totalPoint &&
+				prev.totalScore === team.totalScore
+			) {
+				rank = (rankedTeams[index - 1] as typeof team & { rank: number }).rank;
+			}
+		}
+		return { ...team, rank };
+	});
 
 	return (
 		<>
@@ -98,11 +126,11 @@ function AdminResultPage() {
 			/>
 			<div className="min-h-screen bg-white py-10 px-4">
 				<div className="max-w-[928px] mx-auto space-y-0">
-					{teams.length === 0 && (
+					{rankedTeams.length === 0 && (
 						<p className="text-gray-500 py-12 text-center">まだ採点データがありません。</p>
 					)}
 
-					{teams.map((team, index) => (
+					{rankedTeams.map((team) => (
 						<div
 							key={team.id}
 							id={team.id}
@@ -112,7 +140,7 @@ function AdminResultPage() {
 							<div className="flex items-start justify-between mb-8">
 								<div>
 									<p className="text-sm text-gray-400 font-bold mb-1">
-										#{index + 1}
+										#{team.rank}
 									</p>
 									<h2 className="text-4xl font-black text-gray-900 leading-tight">
 										{team.name}
@@ -131,7 +159,7 @@ function AdminResultPage() {
 								<div className="flex flex-col items-end">
 									<ScoreFraction
 										score={team.totalScore}
-										maxScore={maxTotal * team.judges.length}
+										maxScore={maxTotal * Math.max(1, team.judges.length)}
 									/>
 									<p className="text-xs text-gray-400 mt-1">
 										{team.judges.length}名の合計

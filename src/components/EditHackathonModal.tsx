@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { updateHackathon } from "#/routes/admin/hackathonList/-functions/hackathon";
 import { BaseModal } from "./BaseModal";
 
 interface EditHackathonModalProps {
@@ -27,11 +28,8 @@ export const EditHackathonModal = ({
 		setIsLoading(true);
 
 		try {
-			// TODO: API呼び出しを実装
-			console.log("Updating hackathon:", {
-				hackathonId,
-				name: hackathonName,
-				scoringDate: date,
+			await updateHackathon({
+				data: { id: hackathonId, name: hackathonName, scoringDate: date },
 			});
 
 			if (onUpdate) {

@@ -8,6 +8,7 @@ main = "./src/entry.cloudflare.ts"
 [[d1_databases]]
 binding = "DB"
 database_name = "appraiz"
+migrations_dir = "drizzle/migrations"
 
 [vars]
 ENVIRONMENT = "development"
@@ -20,6 +21,7 @@ name = "appraiz-staging"
 binding = "DB"
 database_name = "appraiz-staging"
 database_id = "bc8c769f-a750-4bf3-ae3c-295083f46a88"
+migrations_dir = "drizzle/migrations"
 
 [env.staging.vars]
 ENVIRONMENT = "staging"
@@ -32,6 +34,7 @@ name = "appraiz-production"
 binding = "DB"
 database_name = "appraiz-production"
 database_id = "e87329db-43e0-4a3e-b5f9-120f556f681d"
+migrations_dir = "drizzle/migrations"
 
 [env.production.vars]
 ENVIRONMENT = "production"

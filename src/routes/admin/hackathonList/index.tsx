@@ -1,6 +1,7 @@
 import { Await, createFileRoute, defer } from "@tanstack/react-router";
 import { Suspense, useState } from "react";
 import { AdminHackathonCard } from "#/components/AdminHackathonCard";
+import { CreateHackathonModal } from "#/components/CreateHackathonModal";
 import { DeleteHackathonModal } from "#/components/DeleteHackathonModal";
 import { EditHackathonModal } from "#/components/EditHackathonModal";
 import Header from "#/components/Header";
@@ -33,6 +34,7 @@ function HackathonListPage() {
 	const [_collaboratorTarget, setCollaboratorTarget] = useState<{
 		id: string;
 	} | null>(null);
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
 	const handleDeleteClick = (id: string, name: string) => {
 		setDeleteTarget({ id, name });
@@ -60,7 +62,7 @@ function HackathonListPage() {
 					<PlusIconButton
 						type="button"
 						aria-label="ハッカソンを作成する"
-						onClick={() => {}}
+						onClick={() => setIsCreateModalOpen(true)}
 					/>
 				}
 			/>
@@ -127,6 +129,14 @@ function HackathonListPage() {
 					name={editTarget.name}
 					scoringDate={editTarget.scoringDate}
 					onClose={handleCloseModal}
+					onUpdate={() => window.location.reload()}
+				/>
+			)}
+
+			{isCreateModalOpen && (
+				<CreateHackathonModal
+					onClose={() => setIsCreateModalOpen(false)}
+					onCreated={() => window.location.reload()}
 				/>
 			)}
 		</>

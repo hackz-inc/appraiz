@@ -50,7 +50,7 @@ export const AdminHackathonCard = ({
 			</div>
 			<div className="flex gap-[34px] justify-center">
 				<LinkButton to={`/admin/hackathonList/${hackathon.id}/setting`}>
-					チーム・採点項目を設定
+					フォームの設定
 				</LinkButton>
 
 				<LinkButton to={`/admin/hackathonList/${hackathon.id}/result`}>

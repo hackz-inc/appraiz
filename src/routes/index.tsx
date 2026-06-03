@@ -1,81 +1,75 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({ component: TopPage });
 
-function App() {
+function TopPage() {
+	const handleScorerClick = () => {
+		const id = window.prompt("採点URLに含まれるハッカソンIDを入力してください");
+		if (id?.trim()) {
+			window.location.href = `/scorer/${id.trim()}`;
+		}
+	};
+
 	return (
-		<main className="page-wrap px-4 pb-8 pt-14">
-			<section className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14">
-				<div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-				<div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-				<p className="island-kicker mb-3">TanStack Start Base Template</p>
-				<h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.02] font-bold tracking-tight text-[var(--sea-ink)] sm:text-6xl">
-					Start simple, ship quickly.
-				</h1>
-				<p className="mb-8 max-w-2xl text-base text-[var(--sea-ink-soft)] sm:text-lg">
-					This base starter intentionally keeps things light: two routes, clean
-					structure, and the essentials you need to build from scratch.
-				</p>
-				<div className="flex flex-wrap gap-3">
-					<a
-						href="https://tanstack.com/router"
-						target="_blank"
-						rel="noopener noreferrer"
-						className="rounded-full border border-[rgba(23,58,64,0.2)] bg-white/50 px-5 py-2.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5 hover:border-[rgba(23,58,64,0.35)]"
-					>
-						Router Guide
-					</a>
+		<div className="min-h-screen flex flex-col">
+			<div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-brand-teal to-brand-yellow px-6 py-20">
+				<div className="text-center mb-16">
+					<h1 className="text-6xl sm:text-8xl font-black text-white tracking-tight mb-4">
+						appraiz
+					</h1>
+					<p className="text-white/80 text-lg sm:text-xl font-medium">
+						ハッカソン採点プラットフォーム
+					</p>
 				</div>
-			</section>
 
-			<section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-				{[
-					[
-						"Type-Safe Routing",
-						"Routes and links stay in sync across every page.",
-					],
-					[
-						"Server Functions",
-						"Call server code from your UI without creating API boilerplate.",
-					],
-					[
-						"Streaming by Default",
-						"Ship progressively rendered responses for faster experiences.",
-					],
-					[
-						"Tailwind Native",
-						"Design quickly with utility-first styling and reusable tokens.",
-					],
-				].map(([title, desc], index) => (
-					<article
-						key={title}
-						className="island-shell feature-card rise-in rounded-2xl p-5"
-						style={{ animationDelay: `${index * 90 + 80}ms` }}
+				<div className="flex flex-col sm:flex-row gap-6 w-full max-w-2xl">
+					{/* Guest */}
+					<Link
+						to="/guest/hackathonList"
+						className="flex-1 group bg-white rounded-[28px_0_28px_28px] p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
 					>
-						<h2 className="mb-2 text-base font-semibold text-[var(--sea-ink)]">
-							{title}
-						</h2>
-						<p className="m-0 text-sm text-[var(--sea-ink-soft)]">{desc}</p>
-					</article>
-				))}
-			</section>
+						<div className="mb-4">
+							<span className="inline-block text-3xl mb-3">🤝</span>
+							<h2 className="text-xl font-black text-gray-900">共同開催者</h2>
+						</div>
+						<p className="text-sm text-gray-500 mb-6 leading-relaxed">
+							ハッカソンのチームや採点項目を管理し、結果を確認できます。
+						</p>
+						<div className="flex items-center gap-2 text-sm font-bold text-brand-teal group-hover:gap-3 transition-all">
+							<span>ログイン</span>
+							<span>→</span>
+						</div>
+					</Link>
 
-			<section className="island-shell mt-8 rounded-2xl p-6">
-				<p className="island-kicker mb-2">Quick Start</p>
-				<ul className="m-0 list-disc space-y-2 pl-5 text-sm text-[var(--sea-ink-soft)]">
-					<li>
-						Edit <code>src/routes/index.tsx</code> to customize the home page.
-					</li>
-					<li>
-						Update <code>src/components/Header.tsx</code> and{" "}
-						<code>src/components/Footer.tsx</code> for brand links.
-					</li>
-					<li>
-						Add routes in <code>src/routes</code> and tweak visual tokens in{" "}
-						<code>src/styles.css</code>.
-					</li>
-				</ul>
-			</section>
-		</main>
+					{/* Scorer */}
+					<button
+						type="button"
+						className="flex-1 group bg-white rounded-[28px_0_28px_28px] p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-left"
+						onClick={handleScorerClick}
+					>
+						<div className="mb-4">
+							<span className="inline-block text-3xl mb-3">✍️</span>
+							<h2 className="text-xl font-black text-gray-900">採点者</h2>
+						</div>
+						<p className="text-sm text-gray-500 mb-6 leading-relaxed">
+							主催者から共有された採点URLからアクセスしてください。
+						</p>
+						<div className="flex items-center gap-2 text-sm font-bold text-brand-teal group-hover:gap-3 transition-all">
+							<span>採点を始める</span>
+							<span>→</span>
+						</div>
+					</button>
+				</div>
+
+				<div className="mt-12">
+					<Link
+						to="/admin/hackathonList"
+						className="text-white/60 text-sm hover:text-white/90 transition-colors underline underline-offset-4"
+					>
+						管理者の方はこちら
+					</Link>
+				</div>
+			</div>
+		</div>
 	);
 }

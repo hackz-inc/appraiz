@@ -1,14 +1,11 @@
 import { useState } from "react";
+import { createScoringItem } from "#/routes/admin/hackathonList/-functions/hackathon";
 
 interface ScoringItemFormProps {
 	hackathonId: string;
-	onItemAdded?: () => void;
 }
 
-export const ScoringItemForm = ({
-	hackathonId,
-	onItemAdded,
-}: ScoringItemFormProps) => {
+export const ScoringItemForm = ({ hackathonId }: ScoringItemFormProps) => {
 	const [itemName, setItemName] = useState("");
 	const [maxScore, setMaxScore] = useState<number>(0);
 	const [isLoading, setIsLoading] = useState(false);
@@ -19,22 +16,17 @@ export const ScoringItemForm = ({
 
 		setIsLoading(true);
 		try {
-			// TODO: API呼び出しを実装
-			console.log("Creating scoring item:", {
-				hackathonId,
-				itemName,
-				maxScore,
+			await createScoringItem({
+				data: {
+					hackathonId,
+					name: itemName.trim(),
+					maxScore,
+				},
 			});
-
-			// フォームをリセット
-			setItemName("");
-			setMaxScore(0);
-
-			if (onItemAdded) {
-				onItemAdded();
-			}
+			window.location.reload();
 		} catch (error) {
 			console.error("Failed to create scoring item:", error);
+			alert("採点項目の作成に失敗しました");
 		} finally {
 			setIsLoading(false);
 		}

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { TeamForm } from "#/components/TeamForm";
+import { deleteTeam } from "#/routes/admin/hackathonList/-functions/hackathon";
 
 interface Team {
 	id: string;
@@ -12,6 +14,21 @@ interface TeamListProps {
 }
 
 export const TeamList = ({ hackathonId, teams }: TeamListProps) => {
+	const [deletingId, setDeletingId] = useState<string | null>(null);
+
+	const handleDelete = async (id: string, name: string) => {
+		if (!window.confirm(`「${name}」を削除してもよろしいですか？`)) return;
+		setDeletingId(id);
+		try {
+			await deleteTeam({ data: id });
+			window.location.reload();
+		} catch (error) {
+			console.error("Failed to delete team:", error);
+			alert("チームの削除に失敗しました");
+			setDeletingId(null);
+		}
+	};
+
 	return (
 		<div>
 			<TeamForm hackathonId={hackathonId} />
@@ -21,7 +38,7 @@ export const TeamList = ({ hackathonId, teams }: TeamListProps) => {
 					<p className="text-gray-500">チームがまだ登録されていません</p>
 				</div>
 			) : (
-				<div className="flex flex-col bg-white border border-gray-300 rounded-lg">
+				<div className="flex flex-col bg-white border border-gray-300 rounded-lg mt-4">
 					{teams.map((team) => (
 						<div
 							key={team.id}
@@ -40,57 +57,29 @@ export const TeamList = ({ hackathonId, teams }: TeamListProps) => {
 									</a>
 								)}
 							</div>
-							<div className="flex gap-3">
-								<button
-									type="button"
-									className="hover:opacity-70 transition-opacity"
-									aria-label="編集する"
+							<button
+								type="button"
+								onClick={() => handleDelete(team.id, team.name)}
+								disabled={deletingId === team.id}
+								className="hover:opacity-70 transition-opacity disabled:opacity-30"
+								aria-label="削除する"
+							>
+								<svg
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
 								>
-									<svg
-										width="20"
-										height="20"
-										viewBox="0 0 24 24"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
-											stroke="#333"
-											strokeWidth="2"
-											strokeLinecap="round"
-											strokeLinejoin="round"
-										/>
-										<path
-											d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"
-											stroke="#333"
-											strokeWidth="2"
-											strokeLinecap="round"
-											strokeLinejoin="round"
-										/>
-									</svg>
-								</button>
-								<button
-									type="button"
-									className="hover:opacity-70 transition-opacity"
-									aria-label="削除する"
-								>
-									<svg
-										width="20"
-										height="20"
-										viewBox="0 0 24 24"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"
-											stroke="#333"
-											strokeWidth="2"
-											strokeLinecap="round"
-											strokeLinejoin="round"
-										/>
-									</svg>
-								</button>
-							</div>
+									<path
+										d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"
+										stroke="#333"
+										strokeWidth="2"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									/>
+								</svg>
+							</button>
 						</div>
 					))}
 				</div>

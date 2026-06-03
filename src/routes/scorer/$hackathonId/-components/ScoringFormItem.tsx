@@ -5,10 +5,9 @@ import { ScoreFraction } from "#/components/ui/ScoreFraction";
 type Props = {
 	team: ScoringFormData;
 	onScoreChange: (teamId: string, scoringItemId: string, score: number) => void;
-	onCommentChange: (teamId: string, comment: string) => void;
 };
 
-export function ScoringFormItem({ team, onScoreChange, onCommentChange }: Props) {
+export function ScoringFormItem({ team, onScoreChange }: Props) {
 	const totalScore = team.scoringItems.reduce((sum, item) => sum + item.score, 0);
 
 	return (
@@ -34,7 +33,7 @@ export function ScoringFormItem({ team, onScoreChange, onCommentChange }: Props)
 							</a>
 						)}
 					</div>
-					<div className="text-center font-bold text-yellow-500">
+					<div className="text-center font-bold text-brand-teal">
 						<p className="text-4xl">
 							<span>{totalScore}</span>
 							<span className="text-2xl">点</span>
@@ -65,20 +64,6 @@ export function ScoringFormItem({ team, onScoreChange, onCommentChange }: Props)
 				))}
 			</div>
 
-			{/* Comment */}
-			<div className="mb-5">
-				<label htmlFor={`${team.teamId}-comment`} className="block text-base font-bold leading-7 text-gray-700 tracking-wide mb-0">
-					一言コメント
-				</label>
-				<textarea
-					id={`${team.teamId}-comment`}
-					value={team.comment}
-					onChange={(e) => onCommentChange(team.teamId, e.target.value)}
-					rows={4}
-					className="w-[calc(100%-96px)] mx-auto mt-5 block px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-					placeholder="コメントを入力してください（任意）"
-				/>
-			</div>
 		</div>
 	);
 }

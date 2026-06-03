@@ -20,7 +20,6 @@ export type ScoringFormData = {
 	teamName: string;
 	topazLink: string | null;
 	order: number;
-	comment: string;
 	scoringItems: {
 		id: string;
 		name: string;
@@ -35,34 +34,42 @@ type Props = {
 
 const STORAGE_KEY_PREFIX = "hackathon_scoring_";
 
-type SubmitScoringInput = { judgeName: string; scoringData: ScoringFormData[] };
+type SubmitScoringInput = {
+	hackathonId: string;
+	judgeName: string;
+	comment: string;
+	scoringData: ScoringFormData[];
+	userAgent: string;
+};
 
 const submitScoringFn = createServerFn({ method: "POST" })
 	.inputValidator((data: SubmitScoringInput) => data)
 	.handler(async (ctx) => {
-		const { judgeName, scoringData } = ctx.data;
+		const { hackathonId, judgeName, comment, scoringData, userAgent } = ctx.data;
 		// biome-ignore lint/style/noNonNullAssertion: always set in Cloudflare Worker
 		const db = getDb(ctx.context!);
 
-		for (const team of scoringData) {
-			const resultId = crypto.randomUUID();
-			await db.insert(scoring_result).values({
-				id: resultId,
-				judge_name: judgeName,
-				comment: team.comment,
-				team_id: team.teamId,
-			});
+		const resultId = crypto.randomUUID();
+		await db.insert(scoring_result).values({
+			id: resultId,
+			judge_name: judgeName,
+			comment,
+			user_agent: userAgent,
+			hackathon_id: hackathonId,
+		});
 
-			if (team.scoringItems.length > 0) {
-				await db.insert(scoring_item_result).values(
-					team.scoringItems.map((item) => ({
-						id: crypto.randomUUID(),
-						score: item.score,
-						scoring_item_id: item.id,
-						scoring_result_id: resultId,
-					})),
-				);
-			}
+		const allItemResults = scoringData.flatMap((team) =>
+			team.scoringItems.map((item) => ({
+				id: crypto.randomUUID(),
+				score: item.score,
+				scoring_item_id: item.id,
+				scoring_result_id: resultId,
+				team_id: team.teamId,
+			})),
+		);
+
+		if (allItemResults.length > 0) {
+			await db.insert(scoring_item_result).values(allItemResults);
 		}
 
 		return { success: true };
@@ -76,6 +83,9 @@ export function ScoringForm({ hackathon }: Props) {
 		return stored || "";
 	});
 	const [judgeNameError, setJudgeNameError] = useState("");
+	const [comment, setComment] = useState(() => {
+		return localStorage.getItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_comment`) || "";
+	});
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
@@ -86,17 +96,20 @@ export function ScoringForm({ hackathon }: Props) {
 		);
 		if (stored) {
 			try {
-				return JSON.parse(stored);
+				const parsed = JSON.parse(stored) as ScoringFormData[];
+				return parsed.map((item, index) => ({
+					...item,
+					order: item.order || index + 1,
+				}));
 			} catch {
 				// fall through
 			}
 		}
-		return hackathon.teams.map((team) => ({
+		return hackathon.teams.map((team, index) => ({
 			teamId: team.id,
 			teamName: team.name,
 			topazLink: team.topaz_link,
-			order: team.order,
-			comment: "",
+			order: team.order || index + 1,
 			scoringItems: hackathon.scoring_items.map((item) => ({
 				id: item.id,
 				name: item.name,
@@ -134,14 +147,6 @@ export function ScoringForm({ hackathon }: Props) {
 		);
 	};
 
-	const handleCommentChange = (teamId: string, comment: string) => {
-		setScoringData((prev) =>
-			prev.map((team) =>
-				team.teamId === teamId ? { ...team, comment } : team,
-			),
-		);
-	};
-
 	const handleSave = () => {
 		localStorage.setItem(
 			`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
@@ -151,6 +156,7 @@ export function ScoringForm({ hackathon }: Props) {
 			`${STORAGE_KEY_PREFIX}${hackathon.id}_data`,
 			JSON.stringify(scoringData),
 		);
+		localStorage.setItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_comment`, comment);
 		alert("一時保存しました");
 	};
 
@@ -173,15 +179,22 @@ export function ScoringForm({ hackathon }: Props) {
 		setIsSubmitting(true);
 
 		try {
-			await submitScoringFn({ data: { judgeName, scoringData } });
+			await submitScoringFn({
+				data: {
+					hackathonId: hackathon.id,
+					judgeName,
+					comment,
+					scoringData,
+					userAgent: navigator.userAgent,
+				},
+			});
 
-			localStorage.removeItem(
-				`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`,
-			);
+			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_judge_name`);
 			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_data`);
+			localStorage.removeItem(`${STORAGE_KEY_PREFIX}${hackathon.id}_comment`);
 			localStorage.setItem(
 				`${STORAGE_KEY_PREFIX}${hackathon.id}_preview`,
-				JSON.stringify({ judgeName, scoringData }),
+				JSON.stringify({ judgeName, comment, scoringData }),
 			);
 
 			const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
@@ -198,7 +211,7 @@ export function ScoringForm({ hackathon }: Props) {
 	};
 
 	if (isSubmitted) {
-		return <ScoringPreview judgeName={judgeName} scoringData={scoringData} />;
+		return <ScoringPreview judgeName={judgeName} comment={comment} scoringData={scoringData} />;
 	}
 
 	return (
@@ -229,16 +242,32 @@ export function ScoringForm({ hackathon }: Props) {
 					key={team.teamId}
 					team={team}
 					onScoreChange={handleScoreChange}
-					onCommentChange={handleCommentChange}
 				/>
 			))}
+
+			<div className="w-full max-w-[800px] mx-auto py-12 border-b border-gray-300">
+				<label
+					htmlFor="overall-comment"
+					className="block text-base font-bold leading-7 text-gray-700 tracking-wide mb-0"
+				>
+					全体コメント（任意）
+				</label>
+				<textarea
+					id="overall-comment"
+					value={comment}
+					onChange={(e) => setComment(e.target.value)}
+					rows={4}
+					className="w-[calc(100%-96px)] mx-auto mt-5 block px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+					placeholder="全チームへのコメントを入力してください（任意）"
+				/>
+			</div>
 
 			<div className="w-full max-w-[800px] mx-auto mt-12 mb-20">
 				<button
 					type="button"
 					onClick={handleConfirm}
 					disabled={isSubmitting}
-					className="w-full max-w-md mx-auto block bg-gradient-to-r from-blue-600 to-blue-500 text-white px-8 py-4 rounded-[26px_0_26px_26px] text-base font-bold shadow-md hover:shadow-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
+					className="w-full max-w-md mx-auto block bg-gradient-to-r from-brand-teal to-brand-yellow text-white px-8 py-4 rounded-[26px_0_26px_26px] text-base font-bold shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					{isSubmitting ? "送信中..." : "採点データを送信"}
 				</button>
@@ -247,7 +276,7 @@ export function ScoringForm({ hackathon }: Props) {
 			<button
 				type="button"
 				onClick={handleSave}
-				className="fixed right-20 lg:right-40 bottom-20 bg-gradient-to-r from-gray-600 to-gray-500 text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all"
+				className="fixed right-20 lg:right-40 bottom-20 bg-gradient-to-r from-brand-teal to-brand-yellow text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all"
 			>
 				一時保存
 			</button>

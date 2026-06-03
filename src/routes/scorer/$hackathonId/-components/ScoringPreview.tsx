@@ -2,10 +2,11 @@ import type { ScoringFormData } from "./ScoringForm";
 
 type Props = {
 	judgeName: string;
+	comment: string;
 	scoringData: ScoringFormData[];
 };
 
-export function ScoringPreview({ judgeName, scoringData }: Props) {
+export function ScoringPreview({ judgeName, comment, scoringData }: Props) {
 	return (
 		<div className="min-h-screen bg-white">
 			<div className="max-w-[800px] mx-auto px-4 py-12 space-y-8">
@@ -22,7 +23,7 @@ export function ScoringPreview({ judgeName, scoringData }: Props) {
 						<div key={team.teamId} className="border border-gray-200 rounded-lg p-6 space-y-4">
 							<div className="flex items-center justify-between">
 								<h2 className="text-lg font-bold text-gray-800">
-									No.{team.order} {team.name}
+									No.{team.order} {team.teamName}
 								</h2>
 								<span className="text-xl font-bold text-blue-600">
 									{total} / {maxTotal}点
@@ -39,16 +40,16 @@ export function ScoringPreview({ judgeName, scoringData }: Props) {
 									</div>
 								))}
 							</div>
-
-							{team.comment && (
-								<div className="bg-gray-50 rounded p-3">
-									<p className="text-xs text-gray-400 mb-1">コメント</p>
-									<p className="text-sm text-gray-700 whitespace-pre-wrap">{team.comment}</p>
-								</div>
-							)}
 						</div>
 					);
 				})}
+
+				{comment && (
+					<div className="bg-gray-50 rounded-lg p-4">
+						<p className="text-xs text-gray-400 mb-1">全体コメント</p>
+						<p className="text-sm text-gray-700 whitespace-pre-wrap">{comment}</p>
+					</div>
+				)}
 			</div>
 		</div>
 	);

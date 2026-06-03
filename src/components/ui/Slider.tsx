@@ -41,10 +41,10 @@ export function Slider({
 				[&::-webkit-slider-thumb]:w-5
 				[&::-webkit-slider-thumb]:h-5
 				[&::-webkit-slider-thumb]:rounded-full
-				[&::-webkit-slider-thumb]:bg-yellow-500
+				[&::-webkit-slider-thumb]:bg-brand-teal
 				[&::-webkit-slider-thumb]:cursor-pointer
 				[&::-webkit-slider-thumb]:shadow-sm
-				[&::-webkit-slider-thumb]:hover:shadow-[0_0_0_10px_rgba(234,179,8,0.3)]
+				[&::-webkit-slider-thumb]:hover:shadow-[0_0_0_10px_rgba(76,198,187,0.3)]
 				[&::-webkit-slider-thumb]:transition-shadow
 				[&::-moz-range-track]:bg-gray-300
 				[&::-moz-range-track]:rounded-lg
@@ -53,11 +53,11 @@ export function Slider({
 				[&::-moz-range-thumb]:w-5
 				[&::-moz-range-thumb]:h-5
 				[&::-moz-range-thumb]:rounded-full
-				[&::-moz-range-thumb]:bg-yellow-500
+				[&::-moz-range-thumb]:bg-brand-teal
 				[&::-moz-range-thumb]:cursor-pointer
 				[&::-moz-range-thumb]:border-0
 				[&::-moz-range-thumb]:shadow-sm
-				[&::-moz-range-thumb]:hover:shadow-[0_0_0_10px_rgba(234,179,8,0.3)]
+				[&::-moz-range-thumb]:hover:shadow-[0_0_0_10px_rgba(76,198,187,0.3)]
 				[&::-moz-range-thumb]:transition-shadow
 				${className}
 			`}

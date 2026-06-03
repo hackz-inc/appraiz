@@ -4,9 +4,18 @@
 
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-teal: #28a2bf;
+  --color-brand-yellow: #fabe00;
 }
 
 * {
   box-sizing: border-box;
-  color: #000000;
+}
+
+@layer base {
+  body {
+    color: #000;
+    background-color: #fff;
+  }
 }

@@ -74,7 +74,7 @@ function HackathonSettingPage() {
 												transition-colors
 												${
 													isActive
-														? "border-yellow-500 text-black"
+														? "border-brand-yellow text-black"
 														: "border-transparent text-gray-500 hover:text-gray-700"
 												}
 											`}
@@ -103,12 +103,17 @@ function HackathonSettingPage() {
 						{tab === "guest" && (
 							<GuestList
 								hackathonId={hackathon.id}
-								guests={(allGuests as SafeGuest[]).map((g) => ({
-									...g,
-									is_invited: hackathon.hackathon_guests.some(
-										(hg: { guest_id: string }) => hg.guest_id === g.id,
-									),
-								}))}
+								guests={(allGuests as SafeGuest[]).map((g) => {
+									const hg = hackathon.hackathon_guests.find(
+										(hg: { guest_id: string; permission?: string }) =>
+											hg.guest_id === g.id,
+									);
+									return {
+										...g,
+										is_invited: !!hg,
+										permission: (hg?.permission ?? "view") as "view" | "edit",
+									};
+								})}
 							/>
 						)}
 					</div>

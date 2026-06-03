@@ -6,6 +6,7 @@ import { getDb } from "#/lib/db/client";
 import { hackathon } from "#/lib/db/schema";
 import "#/types/cloudflare";
 import type { Hackathon, ScoringItem, Team } from "#/lib/db/types";
+import { checkUaScored } from "#/routes/admin/hackathonList/-functions/hackathon";
 import { AccessPasswordForm } from "./-components/AccessPasswordForm";
 import { ScoringForm } from "./-components/ScoringForm";
 import { ScoringPreview } from "./-components/ScoringPreview";
@@ -68,7 +69,6 @@ export const Route = createFileRoute("/scorer/$hackathonId/")({
 
 function ScorerPage() {
 	const { hackathon: hackathonData } = Route.useLoaderData();
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [isChecking, setIsChecking] = useState(true);
 	const [passwordError, setPasswordError] = useState("");
@@ -79,16 +79,44 @@ function ScorerPage() {
 	const [alreadyScored, setAlreadyScored] = useState(false);
 
 	useEffect(() => {
+		let cancelled = false;
+
 		const storedPassword = localStorage.getItem(storageKey);
 		if (storedPassword === hackathonData.access_password) {
 			setIsAuthenticated(true);
 		}
-		const scored = document.cookie
+
+		const cookieScored = document.cookie
 			.split(";")
 			.some((c) => c.trim().startsWith(`${scoredCookieKey}=`));
-		setAlreadyScored(scored);
-		setIsChecking(false);
-	}, [hackathonData.access_password, storageKey, scoredCookieKey]);
+
+		if (cookieScored) {
+			setAlreadyScored(true);
+			setIsChecking(false);
+			return () => { cancelled = true; };
+		}
+
+		checkUaScored({
+			data: { hackathonId: hackathonData.id, userAgent: navigator.userAgent },
+		})
+			.then((result) => {
+				if (!cancelled) {
+					if (result.scored) {
+						setAlreadyScored(true);
+						const expires = new Date(
+							Date.now() + 30 * 24 * 60 * 60 * 1000,
+						).toUTCString();
+						document.cookie = `${scoredCookieKey}=true; expires=${expires}; path=/; SameSite=Lax`;
+					}
+					setIsChecking(false);
+				}
+			})
+			.catch(() => {
+				if (!cancelled) setIsChecking(false);
+			});
+
+		return () => { cancelled = true; };
+	}, [hackathonData.access_password, hackathonData.id, storageKey, scoredCookieKey]);
 
 	const handlePasswordSubmit = (password: string) => {
 		if (password === hackathonData.access_password) {
@@ -109,11 +137,16 @@ function ScorerPage() {
 		const raw = localStorage.getItem(previewKey);
 		if (raw) {
 			try {
-				const { judgeName, scoringData } = JSON.parse(raw) as {
+				const { judgeName, comment, scoringData } = JSON.parse(raw) as {
 					judgeName: string;
+					comment: string;
 					scoringData: ScoringFormData[];
 				};
-				return <ScoringPreview judgeName={judgeName} scoringData={scoringData} />;
+				const fixedData = scoringData.map((item, index) => ({
+					...item,
+					order: item.order || index + 1,
+				}));
+				return <ScoringPreview judgeName={judgeName} comment={comment ?? ""} scoringData={fixedData} />;
 			} catch {
 				// fall through to simple message
 			}

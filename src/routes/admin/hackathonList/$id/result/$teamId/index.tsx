@@ -20,21 +20,34 @@ const fetchTeamResult = createServerFn({ method: "GET" })
 		const [hackathonData, teamData] = await Promise.all([
 			db.query.hackathon.findFirst({
 				where: eq(hackathon.id, hackathonId),
-				with: { scoring_items: true },
-			}),
-			db.query.team.findFirst({
-				where: eq(team.id, teamId),
 				with: {
+					scoring_items: true,
 					scoring_results: {
 						with: { scoring_item_results: true },
 					},
 				},
 			}),
+			db.query.team.findFirst({
+				where: eq(team.id, teamId),
+			}),
 		]);
 
 		if (!hackathonData) throw new Error("Hackathon not found");
 		if (!teamData) throw new Error("Team not found");
-		return { hackathon: hackathonData, team: teamData };
+
+		const judges = hackathonData.scoring_results
+			.map((r) => ({
+				name: r.judge_name,
+				comment: r.comment,
+				itemScores: r.scoring_item_results.filter((ir) => ir.team_id === teamId),
+			}))
+			.filter((j) => j.itemScores.length > 0)
+			.map((j) => ({
+				...j,
+				total: j.itemScores.reduce((s, ir) => s + ir.score, 0),
+			}));
+
+		return { hackathon: hackathonData, team: teamData, judges };
 	});
 
 export const Route = createFileRoute(
@@ -48,19 +61,12 @@ export const Route = createFileRoute(
 });
 
 function TeamResultPage() {
-	const { hackathon: hackathonData, team: teamData } = Route.useLoaderData();
+	const { hackathon: hackathonData, team: teamData, judges } = Route.useLoaderData();
 
 	const maxTotal = hackathonData.scoring_items.reduce(
 		(s, i) => s + i.max_score,
 		0,
 	);
-
-	const judges = teamData.scoring_results.map((r) => ({
-		name: r.judge_name,
-		comment: r.comment,
-		total: r.scoring_item_results.reduce((s, ir) => s + ir.score, 0),
-		itemScores: r.scoring_item_results,
-	}));
 
 	const totalSum = judges.reduce((s, j) => s + j.total, 0);
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
 	addGuestToHackathon,
 	removeGuestFromHackathon,
+	updateGuestPermission,
 } from "../../../-functions/hackathon";
 
 interface Guest {
@@ -10,6 +11,7 @@ interface Guest {
 	company_name: string;
 	email: string;
 	is_invited: boolean;
+	permission: "view" | "edit";
 }
 
 interface GuestListProps {
@@ -25,29 +27,24 @@ export const GuestList = ({ hackathonId, guests }: GuestListProps) => {
 		setIsUpdating(true);
 		try {
 			if (currentStatus) {
-				// Remove guest from hackathon
-				await removeGuestFromHackathon({
-					data: {
-						hackathonId,
-						guestId,
-					},
-				});
+				await removeGuestFromHackathon({ data: { hackathonId, guestId } });
+				setLocalGuests(
+					localGuests.map((g) =>
+						g.id === guestId ? { ...g, is_invited: false } : g,
+					),
+				);
 			} else {
-				// Add guest to hackathon
 				await addGuestToHackathon({
-					data: {
-						hackathonId,
-						guestId,
-					},
+					data: { hackathonId, guestId, permission: "view" },
 				});
+				setLocalGuests(
+					localGuests.map((g) =>
+						g.id === guestId
+							? { ...g, is_invited: true, permission: "view" }
+							: g,
+					),
+				);
 			}
-
-			// Update local state
-			setLocalGuests(
-				localGuests.map((g) =>
-					g.id === guestId ? { ...g, is_invited: !currentStatus } : g,
-				),
-			);
 		} catch (error) {
 			console.error("Failed to update guest status:", error);
 			alert("エラーが発生しました。もう一度お試しください。");
@@ -56,12 +53,31 @@ export const GuestList = ({ hackathonId, guests }: GuestListProps) => {
 		}
 	};
 
+	const handlePermissionChange = async (
+		guestId: string,
+		permission: "view" | "edit",
+	) => {
+		setIsUpdating(true);
+		try {
+			await updateGuestPermission({ data: { hackathonId, guestId, permission } });
+			setLocalGuests(
+				localGuests.map((g) =>
+					g.id === guestId ? { ...g, permission } : g,
+				),
+			);
+		} catch (error) {
+			console.error("Failed to update permission:", error);
+			alert("権限の更新に失敗しました。");
+		} finally {
+			setIsUpdating(false);
+		}
+	};
 
 	return (
 		<div>
 			<div className="mb-6">
 				<p className="text-sm text-gray-600 mb-2">
-					全てのゲストが表示されています。トグルボタンでこのハッカソンの共同開催者として追加/削除できます。
+					トグルで招待/解除、招待中のゲストには閲覧・編集権限を設定できます。
 				</p>
 			</div>
 
@@ -74,33 +90,52 @@ export const GuestList = ({ hackathonId, guests }: GuestListProps) => {
 					{localGuests.map((guest, index) => (
 						<div
 							key={guest.id}
-							className={`flex items-center justify-between p-6 ${
+							className={`flex items-center justify-between p-6 gap-4 ${
 								index !== localGuests.length - 1
 									? "border-b border-gray-300"
 									: ""
 							}`}
 						>
-							<div className="flex-1">
-								<p className="text-base font-bold mb-1">
+							<div className="flex-1 min-w-0">
+								<p className="text-base font-bold mb-1 truncate">
 									{guest.name} - {guest.company_name}
 								</p>
 								<p className="text-sm text-gray-600">{guest.email}</p>
 							</div>
-							<label className="relative inline-flex items-center cursor-pointer">
-								<input
-									type="checkbox"
-									checked={guest.is_invited}
-									onChange={() => handleToggle(guest.id, guest.is_invited)}
-									disabled={isUpdating}
-									className="sr-only peer"
-								/>
-								<div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500" />
-							</label>
+
+							<div className="flex items-center gap-4 shrink-0">
+								{guest.is_invited && (
+									<select
+										value={guest.permission}
+										onChange={(e) =>
+											handlePermissionChange(
+												guest.id,
+												e.target.value as "view" | "edit",
+											)
+										}
+										disabled={isUpdating}
+										className="text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-yellow-500 disabled:opacity-50"
+									>
+										<option value="view">閲覧のみ</option>
+										<option value="edit">編集可</option>
+									</select>
+								)}
+
+								<label className="relative inline-flex items-center cursor-pointer">
+									<input
+										type="checkbox"
+										checked={guest.is_invited}
+										onChange={() => handleToggle(guest.id, guest.is_invited)}
+										disabled={isUpdating}
+										className="sr-only peer"
+									/>
+									<div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500" />
+								</label>
+							</div>
 						</div>
 					))}
 				</div>
 			)}
-
 		</div>
 	);
 };

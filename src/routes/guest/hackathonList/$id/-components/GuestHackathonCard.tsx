@@ -9,9 +9,10 @@ type Props = {
 		scoring_date: string;
 		access_password: string;
 	};
+	permission?: "view" | "edit";
 };
 
-export const GuestHackathonCard = ({ hackathon }: Props) => {
+export const GuestHackathonCard = ({ hackathon, permission }: Props) => {
 	return (
 		<div
 			className="w-full px-8 py-7 pb-10 shadow-md rounded-lg bg-white"
@@ -37,6 +38,11 @@ export const GuestHackathonCard = ({ hackathon }: Props) => {
 				/>
 			</div>
 			<div className="flex gap-[34px] justify-center">
+				{permission === "edit" && (
+					<LinkButton to={`/guest/hackathonList/${hackathon.id}/setting`}>
+						チーム・採点項目を設定
+					</LinkButton>
+				)}
 				<LinkButton to={`/guest/hackathonList/${hackathon.id}/result`}>
 					結果を見る
 				</LinkButton>
