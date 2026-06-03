@@ -95,6 +95,44 @@ pnpm secret:put:staging JWT_SECRET
 pnpm secret:put:production JWT_SECRET
 ```
 
+## アップデートのデプロイ手順
+
+開発は必ず **ローカル → Staging → Production** の順で確認しながら進める。
+
+### コードのみの変更（スキーマ変更なし）
+
+```bash
+# 1. ローカルで動作確認
+pnpm dev
+
+# 2. Stagingにデプロイして確認
+pnpm deploy:staging
+
+# 3. StagingのURLで動作確認後、Productionにデプロイ
+pnpm deploy:production
+```
+
+### スキーマ変更を含む場合
+
+```bash
+# 1. スキーマ編集後、マイグレーションファイルを生成
+pnpm db:generate
+
+# 2. ローカルに適用して動作確認
+pnpm db:migrate:local
+pnpm dev
+
+# 3. Stagingに適用してデプロイ・確認
+pnpm db:migrate:staging
+pnpm deploy:staging
+
+# 4. ProductionにDBマイグレーションを適用してからデプロイ
+pnpm db:migrate:production
+pnpm deploy:production
+```
+
+> **注意**: `deploy:staging` / `deploy:production` はビルド時に環境が確定する仕組みのため `--env` フラグは不要（付けるとエラーになる）。
+
 ## スクリプト一覧
 
 | コマンド | 内容 |
