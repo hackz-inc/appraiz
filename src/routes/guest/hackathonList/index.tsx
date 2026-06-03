@@ -7,6 +7,7 @@ import { guestBeforeLoad } from "../-beforeLoad";
 import { fetchGuestHackathons } from "../-functions/hackathon";
 
 export const Route = createFileRoute("/guest/hackathonList/")({
+	head: () => ({ meta: [{ title: "ハッカソン一覧 | appraiz" }] }),
 	beforeLoad: guestBeforeLoad,
 	loader: async () => {
 		const hackathons = await fetchGuestHackathons();

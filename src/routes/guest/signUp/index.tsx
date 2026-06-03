@@ -5,6 +5,7 @@ import { auth } from "#/lib/auth";
 import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
 export const Route = createFileRoute("/guest/signUp/")({
+	head: () => ({ meta: [{ title: "新規登録 | appraiz" }] }),
 	beforeLoad: async () => {
 		return await redirectIfAuthenticated();
 	},

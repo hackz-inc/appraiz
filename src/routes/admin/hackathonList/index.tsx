@@ -10,6 +10,7 @@ import { PlusIconButton } from "../-components/PlusIconButton";
 import { fetchHackathons } from "./-functions/hackathon";
 
 export const Route = createFileRoute("/admin/hackathonList/")({
+	head: () => ({ meta: [{ title: "ハッカソン一覧 | appraiz" }] }),
 	loader: async () => {
 		const hackathonsPromise = fetchHackathons();
 		return {

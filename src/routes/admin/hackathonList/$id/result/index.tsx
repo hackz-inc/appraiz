@@ -28,6 +28,7 @@ const fetchHackathonResult = createServerFn({ method: "GET" })
 	});
 
 export const Route = createFileRoute("/admin/hackathonList/$id/result/")({
+	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.name} - 結果 | appraiz` }] }),
 	beforeLoad: adminBeforeLoad,
 	loader: async ({ params }) => fetchHackathonResult({ data: params.id }),
 	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,

@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import Header from "#/components/Header";
+// import Header from "#/components/Header";
 import { auth } from "#/lib/auth";
 import { redirectIfAuthenticated } from "#/lib/auth/middleware";
 
 export const Route = createFileRoute("/guest/login/")({
+	head: () => ({ meta: [{ title: "ログイン | appraiz" }] }),
 	beforeLoad: async () => {
 		return await redirectIfAuthenticated();
 	},

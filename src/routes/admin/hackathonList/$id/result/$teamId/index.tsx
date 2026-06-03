@@ -53,6 +53,7 @@ const fetchTeamResult = createServerFn({ method: "GET" })
 export const Route = createFileRoute(
 	"/admin/hackathonList/$id/result/$teamId/",
 )({
+	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.team.name} - ${loaderData?.hackathon.name} | appraiz` }] }),
 	beforeLoad: adminBeforeLoad,
 	loader: async ({ params }) =>
 		fetchTeamResult({ data: { hackathonId: params.id, teamId: params.teamId } }),

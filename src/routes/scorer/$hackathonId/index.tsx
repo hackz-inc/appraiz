@@ -57,6 +57,7 @@ const fetchScorerHackathon = createServerFn({ method: "GET" })
 	});
 
 export const Route = createFileRoute("/scorer/$hackathonId/")({
+	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.hackathon.name} - 採点 | appraiz` }] }),
 	loader: async ({ params }) => {
 		const hackathonData = await fetchScorerHackathon({
 			data: params.hackathonId,

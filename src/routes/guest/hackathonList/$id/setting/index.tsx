@@ -17,6 +17,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/guest/hackathonList/$id/setting/")({
+	head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.hackathon.name} - 設定 | appraiz` }] }),
 	validateSearch: searchSchema,
 	beforeLoad: guestBeforeLoad,
 	loader: async ({ params }) => {

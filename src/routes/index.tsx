@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({ component: TopPage });
+export const Route = createFileRoute("/")({
+	head: () => ({ meta: [{ title: "appraiz" }] }),
+	component: TopPage,
+});
 
 function TopPage() {
 	return (
