@@ -5,13 +5,13 @@ main = "./src/entry.cloudflare.ts"
 
 # ローカル開発用（pnpm dev）
 # database_id はminiflareが自動でローカルSQLiteを生成するため参照されない
-[[d1_databases]]
-binding = "DB"
-database_name = "appraiz"
-migrations_dir = "drizzle/migrations"
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "appraiz"
+# migrations_dir = "drizzle/migrations"
 
-[vars]
-ENVIRONMENT = "development"
+# [vars]
+# ENVIRONMENT = "development"
 
 # --- Staging ---
 [env.staging]
