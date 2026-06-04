@@ -1,7 +1,13 @@
-name = "appraiz-production"
+name = "appraiz"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 main = "./src/entry.cloudflare.ts"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "appraiz-production"
+database_id = "e87329db-43e0-4a3e-b5f9-120f556f681d"
+preview_database_id = "bc8c769f-a750-4bf3-ae3c-295083f46a88"
 
 # ローカル開発用（pnpm dev）
 # database_id はminiflareが自動でローカルSQLiteを生成するため参照されない
@@ -14,27 +20,27 @@ main = "./src/entry.cloudflare.ts"
 # ENVIRONMENT = "development"
 
 # --- Staging ---
-[env.staging]
-name = "appraiz-staging"
+# [env.staging]
+# name = "appraiz-staging"
 
-[[env.staging.d1_databases]]
-binding = "DB"
-database_name = "appraiz-staging"
-database_id = "bc8c769f-a750-4bf3-ae3c-295083f46a88"
-migrations_dir = "drizzle/migrations"
+# [[env.staging.d1_databases]]
+# binding = "DB"
+# database_name = "appraiz-staging"
+# database_id = "bc8c769f-a750-4bf3-ae3c-295083f46a88"
+# migrations_dir = "drizzle/migrations"
 
-[env.staging.vars]
-ENVIRONMENT = "staging"
+# [env.staging.vars]
+# ENVIRONMENT = "staging"
 
-# --- Production ---
-[env.production]
-name = "appraiz-production"
+# # --- Production ---
+# [env.production]
+# name = "appraiz-production"
 
-[[env.production.d1_databases]]
-binding = "DB"
-database_name = "appraiz-production"
-database_id = "e87329db-43e0-4a3e-b5f9-120f556f681d"
-migrations_dir = "drizzle/migrations"
+# [[env.production.d1_databases]]
+# binding = "DB"
+# database_name = "appraiz-production"
+# database_id = "e87329db-43e0-4a3e-b5f9-120f556f681d"
+# migrations_dir = "drizzle/migrations"
 
-[env.production.vars]
-ENVIRONMENT = "production"
+# [env.production.vars]
+# ENVIRONMENT = "production"
