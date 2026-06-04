@@ -14,7 +14,7 @@ function TopPage() {
 						Apprai'z
 					</h1>
 					<p className="text-lg sm:text-xl font-medium">
-						ハッカソン採点プラットフォーム
+						ハッカソン採点プラットフォームああああ
 					</p>
 				</div>
 

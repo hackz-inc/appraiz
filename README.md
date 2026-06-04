@@ -69,11 +69,13 @@ pnpm db:studio
 
 ## 環境構成
 
-| 環境 | DB | デプロイコマンド |
-|------|-----|----------------|
-| ローカル (dev) | miniflare自動生成SQLite | `pnpm dev` |
-| Staging | Cloudflare D1（STG用） | `pnpm deploy:staging` |
-| Production | Cloudflare D1（PRD用） | `pnpm deploy:production` |
+Worker は1つ。DB だけ staging / production で分けている。
+
+| 環境 | DB | 用途 |
+|------|-----|------|
+| ローカル (dev) | miniflare自動生成SQLite | 開発 |
+| Staging (preview) | `appraiz-staging`（`preview_database_id`） | `pnpm preview` でリモート確認 |
+| Production | `appraiz-production`（`database_id`） | `pnpm deploy` で本番反映 |
 
 ## STG/PRD 初回セットアップ
 
@@ -84,20 +86,19 @@ pnpm wrangler login
 # 2. D1データベースをSTG/PRD別に作成
 pnpm wrangler d1 create appraiz-staging
 pnpm wrangler d1 create appraiz-production
-# 出力された database_id を wrangler.toml の各envセクションに設定
+# 出力された database_id を wrangler.toml の database_id / preview_database_id に設定
 
 # 3. DBにマイグレーションを適用
 pnpm db:migrate:staging
 pnpm db:migrate:production
 
 # 4. JWT_SECRETをシークレットに登録
-pnpm secret:put:staging JWT_SECRET
-pnpm secret:put:production JWT_SECRET
+pnpm secret:put
 ```
 
 ## アップデートのデプロイ手順
 
-開発は必ず **ローカル → Staging → Production** の順で確認しながら進める。
+開発は必ず **ローカル → Staging確認 → Production** の順で進める。
 
 ### コードのみの変更（スキーマ変更なし）
 
@@ -105,11 +106,11 @@ pnpm secret:put:production JWT_SECRET
 # 1. ローカルで動作確認
 pnpm dev
 
-# 2. Stagingにデプロイして確認
-pnpm deploy:staging
+# 2. Stagingで確認（リモートのSTG DBに接続した状態で起動）
+pnpm preview
 
-# 3. StagingのURLで動作確認後、Productionにデプロイ
-pnpm deploy:production
+# 3. 確認後、Productionにデプロイ
+pnpm deploy
 ```
 
 ### スキーマ変更を含む場合
@@ -122,16 +123,14 @@ pnpm db:generate
 pnpm db:migrate:local
 pnpm dev
 
-# 3. Stagingに適用してデプロイ・確認
+# 3. Staging DBに適用して確認
 pnpm db:migrate:staging
-pnpm deploy:staging
+pnpm preview
 
-# 4. ProductionにDBマイグレーションを適用してからデプロイ
+# 4. Production DBにマイグレーションを適用してからデプロイ
 pnpm db:migrate:production
-pnpm deploy:production
+pnpm deploy
 ```
-
-> **注意**: `deploy:staging` / `deploy:production` はビルド時に環境が確定する仕組みのため `--env` フラグは不要（付けるとエラーになる）。
 
 ## スクリプト一覧
 
@@ -139,8 +138,8 @@ pnpm deploy:production
 |---------|------|
 | `pnpm dev` | 開発サーバー起動（ローカルDB自動生成） |
 | `pnpm build` | 本番ビルド |
-| `pnpm deploy:staging` | ビルド + Stagingへデプロイ |
-| `pnpm deploy:production` | ビルド + Productionへデプロイ |
+| `pnpm preview` | ビルド + STG DBに接続してリモート確認 |
+| `pnpm deploy` | ビルド + Productionへデプロイ |
 | `pnpm db:generate` | スキーマ変更からマイグレーションファイルを生成 |
 | `pnpm db:migrate:local` | ローカルD1にマイグレーションを適用 |
 | `pnpm db:migrate:staging` | STG D1にマイグレーションを適用 |
