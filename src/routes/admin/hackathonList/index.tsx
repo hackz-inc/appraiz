@@ -10,6 +10,7 @@ import { PlusIconButton } from "../-components/PlusIconButton";
 import { fetchHackathons } from "./-functions/hackathon";
 
 export const Route = createFileRoute("/admin/hackathonList/")({
+	head: () => ({ meta: [{ title: "ハッカソン一覧 | Apprai'z" }] }),
 	loader: async () => {
 		const hackathonsPromise = fetchHackathons();
 		return {
@@ -40,12 +41,30 @@ function HackathonListPage() {
 		setDeleteTarget({ id, name });
 	};
 
-	const handleEditNameClick = (id: string, name: string, scoringDate: string) => {
-		setEditTarget({ id, name, scoringDate: new Date(scoringDate), mode: "name" });
+	const handleEditNameClick = (
+		id: string,
+		name: string,
+		scoringDate: string,
+	) => {
+		setEditTarget({
+			id,
+			name,
+			scoringDate: new Date(scoringDate),
+			mode: "name",
+		});
 	};
 
-	const handleEditDateClick = (id: string, name: string, scoringDate: string) => {
-		setEditTarget({ id, name, scoringDate: new Date(scoringDate), mode: "date" });
+	const handleEditDateClick = (
+		id: string,
+		name: string,
+		scoringDate: string,
+	) => {
+		setEditTarget({
+			id,
+			name,
+			scoringDate: new Date(scoringDate),
+			mode: "date",
+		});
 	};
 
 	const handleCloseModal = () => {

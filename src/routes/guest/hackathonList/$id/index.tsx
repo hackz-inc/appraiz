@@ -25,6 +25,10 @@ const fetchHackathonDetail = createServerFn({ method: "GET" })
 	});
 
 export const Route = createFileRoute("/guest/hackathonList/$id/")({
+	head: ({ loaderData }) => {
+		const d = loaderData as { hackathon: { name: string } } | undefined;
+		return { meta: [{ title: `${d?.hackathon?.name ?? ""} | Apprai'z` }] };
+	},
 	beforeLoad: guestBeforeLoad,
 	loader: async ({ params }) => {
 		const hackathonData = await fetchHackathonDetail({ data: params.id });
@@ -34,7 +38,7 @@ export const Route = createFileRoute("/guest/hackathonList/$id/")({
 });
 
 function GuestHackathonDetailPage() {
-	const { hackathon } = Route.useLoaderData();
+	const { hackathon } = Route.useLoaderData() as { hackathon: Hackathon };
 
 	return (
 		<>

@@ -8,9 +8,9 @@ import "#/types/cloudflare";
 import type { Hackathon, ScoringItem, Team } from "#/lib/db/types";
 import { checkUaScored } from "#/routes/admin/hackathonList/-functions/hackathon";
 import { AccessPasswordForm } from "./-components/AccessPasswordForm";
+import type { ScoringFormData } from "./-components/ScoringForm";
 import { ScoringForm } from "./-components/ScoringForm";
 import { ScoringPreview } from "./-components/ScoringPreview";
-import type { ScoringFormData } from "./-components/ScoringForm";
 
 type TeamWithOrder = Team & { order: number };
 
@@ -57,6 +57,10 @@ const fetchScorerHackathon = createServerFn({ method: "GET" })
 	});
 
 export const Route = createFileRoute("/scorer/$hackathonId/")({
+	head: ({ loaderData }) => {
+		const d = loaderData as { hackathon: { name: string } } | undefined;
+		return { meta: [{ title: `${d?.hackathon?.name ?? ""} - 採点 | Apprai'z` }] };
+	},
 	loader: async ({ params }) => {
 		const hackathonData = await fetchScorerHackathon({
 			data: params.hackathonId,
@@ -68,7 +72,7 @@ export const Route = createFileRoute("/scorer/$hackathonId/")({
 });
 
 function ScorerPage() {
-	const { hackathon: hackathonData } = Route.useLoaderData();
+	const { hackathon: hackathonData } = Route.useLoaderData() as { hackathon: HackathonWithDetails };
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [isChecking, setIsChecking] = useState(true);
 	const [passwordError, setPasswordError] = useState("");
@@ -103,7 +107,9 @@ function ScorerPage() {
 		if (cookieScored) {
 			setAlreadyScored(true);
 			setIsChecking(false);
-			return () => { cancelled = true; };
+			return () => {
+				cancelled = true;
+			};
 		}
 
 		const sessionId = getOrCreateSessionId();
@@ -127,8 +133,15 @@ function ScorerPage() {
 				if (!cancelled) setIsChecking(false);
 			});
 
-		return () => { cancelled = true; };
-	}, [hackathonData.access_password, hackathonData.id, storageKey, scoredCookieKey]);
+		return () => {
+			cancelled = true;
+		};
+	}, [
+		hackathonData.access_password,
+		hackathonData.id,
+		storageKey,
+		scoredCookieKey,
+	]);
 
 	const handlePasswordSubmit = (password: string) => {
 		if (password === hackathonData.access_password) {
@@ -223,7 +236,10 @@ function ScorerPage() {
 				)} */}
 
 				<main className="flex-1">
-					<ScoringForm hackathon={hackathonData} sessionId={getOrCreateSessionId()} />
+					<ScoringForm
+						hackathon={hackathonData}
+						sessionId={getOrCreateSessionId()}
+					/>
 				</main>
 			</div>
 		</div>

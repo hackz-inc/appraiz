@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({ component: TopPage });
+export const Route = createFileRoute("/")({
+	head: () => ({ meta: [{ title: "Apprai'z" }] }),
+	component: TopPage,
+});
 
 function TopPage() {
 	return (
@@ -8,7 +11,7 @@ function TopPage() {
 			<div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-brand-teal to-brand-yellow px-6 py-20">
 				<div className="text-center mb-16">
 					<h1 className="text-6xl sm:text-8xl font-black tracking-tight mb-4">
-						Appraiz
+						Apprai'z
 					</h1>
 					<p className="text-lg sm:text-xl font-medium">
 						ハッカソン採点プラットフォーム
@@ -19,7 +22,7 @@ function TopPage() {
 					{/* Guest */}
 					<Link
 						to="/guest/hackathonList"
-						className="flex-1 group bg-white rounded-[28px_0_28px_28px] p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+						className="flex-1 group bg-white rounded-[28px_0_28px_28px] p-8 shadow-xl hover:shadow-2xl transition-all duration-300"
 					>
 						<div className="mb-4">
 							<span className="inline-block text-3xl mb-3">🤝</span>
@@ -46,21 +49,8 @@ function TopPage() {
 						<p className="text-sm text-gray-500 mb-6 leading-relaxed">
 							主催者から共有された採点URLからアクセスしてください。
 						</p>
-						{/* <div className="flex items-center gap-2 text-sm font-bold text-brand-teal group-hover:gap-3 transition-all">
-							<span>採点を始める</span>
-							<span>→</span>
-						</div> */}
 					</button>
 				</div>
-
-				{/* <div className="mt-12">
-					<Link
-						to="/admin/hackathonList"
-						className="text-white/60 text-sm hover:text-white/90 transition-colors underline underline-offset-4"
-					>
-						管理者の方はこちら
-					</Link>
-				</div> */}
 			</div>
 		</div>
 	);

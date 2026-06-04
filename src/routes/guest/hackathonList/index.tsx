@@ -2,11 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import Header from "#/components/Header";
 import { auth } from "#/lib/auth";
-import { GuestHackathonCard } from "./$id/-components/GuestHackathonCard";
 import { guestBeforeLoad } from "../-beforeLoad";
 import { fetchGuestHackathons } from "../-functions/hackathon";
+import { GuestHackathonCard } from "./$id/-components/GuestHackathonCard";
 
 export const Route = createFileRoute("/guest/hackathonList/")({
+	head: () => ({ meta: [{ title: "ハッカソン一覧 | Apprai'z" }] }),
 	beforeLoad: guestBeforeLoad,
 	loader: async () => {
 		const hackathons = await fetchGuestHackathons();

@@ -8,6 +8,16 @@ import { getDb } from "#/lib/db/client";
 import { hackathon, team } from "#/lib/db/schema";
 import "#/types/cloudflare";
 import { adminBeforeLoad } from "#/routes/admin/-beforeLoad";
+import type { Hackathon, ScoringItem, ScoringItemResult, ScoringResult, Team } from "#/lib/db/types";
+
+type TeamResultData = {
+	hackathon: Hackathon & {
+		scoring_items: ScoringItem[];
+		scoring_results: (ScoringResult & { scoring_item_results: ScoringItemResult[] })[];
+	};
+	team: Team;
+	judges: { name: string; comment: string; itemScores: ScoringItemResult[]; total: number }[];
+};
 
 type Input = { hackathonId: string; teamId: string };
 
@@ -39,7 +49,9 @@ const fetchTeamResult = createServerFn({ method: "GET" })
 			.map((r) => ({
 				name: r.judge_name,
 				comment: r.comment,
-				itemScores: r.scoring_item_results.filter((ir) => ir.team_id === teamId),
+				itemScores: r.scoring_item_results.filter(
+					(ir) => ir.team_id === teamId,
+				),
 			}))
 			.filter((j) => j.itemScores.length > 0)
 			.map((j) => ({
@@ -53,15 +65,25 @@ const fetchTeamResult = createServerFn({ method: "GET" })
 export const Route = createFileRoute(
 	"/admin/hackathonList/$id/result/$teamId/",
 )({
+	head: ({ loaderData }) => {
+		const d = loaderData as { hackathon: { name: string }; team: { name: string } } | undefined;
+		return { meta: [{ title: `${d?.team?.name ?? ""} - ${d?.hackathon?.name ?? ""} | Apprai'z` }] };
+	},
 	beforeLoad: adminBeforeLoad,
 	loader: async ({ params }) =>
-		fetchTeamResult({ data: { hackathonId: params.id, teamId: params.teamId } }),
+		fetchTeamResult({
+			data: { hackathonId: params.id, teamId: params.teamId },
+		}),
 	pendingComponent: () => <div className="bg-white">データを読み込み中...</div>,
 	component: TeamResultPage,
 });
 
 function TeamResultPage() {
-	const { hackathon: hackathonData, team: teamData, judges } = Route.useLoaderData();
+	const {
+		hackathon: hackathonData,
+		team: teamData,
+		judges,
+	} = Route.useLoaderData() as TeamResultData;
 
 	const maxTotal = hackathonData.scoring_items.reduce(
 		(s, i) => s + i.max_score,
@@ -115,7 +137,9 @@ function TeamResultPage() {
 
 					{/* 審査員ごとの内訳 */}
 					{judges.length === 0 ? (
-						<p className="text-gray-400 text-center py-12">採点データがありません</p>
+						<p className="text-gray-400 text-center py-12">
+							採点データがありません
+						</p>
 					) : (
 						<div className="space-y-0">
 							{judges.map((judge, ji) => (
@@ -159,24 +183,26 @@ function TeamResultPage() {
 									</div>
 
 									{(() => {
-											let teamComment = judge.comment;
-											try {
-												const parsed = JSON.parse(judge.comment);
-												if (parsed && typeof parsed === "object") {
-													teamComment = parsed[teamData.id] ?? "";
-												}
-											} catch {
-												// raw string のまま使用
+										let teamComment = judge.comment;
+										try {
+											const parsed = JSON.parse(judge.comment);
+											if (parsed && typeof parsed === "object") {
+												teamComment = parsed[teamData.id] ?? "";
 											}
-											return teamComment ? (
-												<div className="bg-gray-50 rounded-lg px-4 py-3">
-													<p className="text-xs text-gray-400 mb-1">一言コメント</p>
-													<p className="text-sm text-gray-700 whitespace-pre-wrap">
-														{teamComment}
-													</p>
-												</div>
-											) : null;
-										})()}
+										} catch {
+											// raw string のまま使用
+										}
+										return teamComment ? (
+											<div className="bg-gray-50 rounded-lg px-4 py-3">
+												<p className="text-xs text-gray-400 mb-1">
+													一言コメント
+												</p>
+												<p className="text-sm text-gray-700 whitespace-pre-wrap">
+													{teamComment}
+												</p>
+											</div>
+										) : null;
+									})()}
 								</div>
 							))}
 						</div>
