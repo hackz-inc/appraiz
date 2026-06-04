@@ -1,4 +1,4 @@
-name = "appraiz"
+name = "appraiz-production"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 main = "./src/entry.cloudflare.ts"
